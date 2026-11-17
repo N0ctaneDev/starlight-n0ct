@@ -26,7 +26,7 @@ const linksByPosition = {
   right: navLinks.filter((item: any) => item.position === 'right'),
 };
 
-const showSearch = nav.showSearch !== false && starlightConfig.pagefind !== false;
+const showSearch = nav.showSearch !== false && (starlightConfig.pagefind !== false || starlightConfig.components.Search !== '@astrojs/starlight/components/Search.astro');
 const showSocial = nav.showSocial !== false && Boolean(starlightConfig.social?.length);
 const showVersions = nav.showVersions !== false && Boolean(versioning && versioning !== false && versioning.versions?.length);
 const showLanguage = nav.showLanguage === true;
