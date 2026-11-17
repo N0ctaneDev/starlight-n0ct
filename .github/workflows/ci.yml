@@ -21,7 +21,7 @@ jobs:
         run: npm install --global npm@latest
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-      - name: Verify package and demo
-        run: npm run check:all
       - name: Verify npm package contents
         run: npm pack --dry-run
+      - name: Verify package and demo
+        run: npm run check:all
