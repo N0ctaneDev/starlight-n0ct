@@ -33,12 +33,28 @@ integrations: {
 | `blog` | `starlight-blog` | Blog posts, tags, RSS and author metadata |
 | `imageZoom` | `starlight-image-zoom` | Accessible image zoom |
 
+## Keyboard shortcut defaults
+
+N0ctane supplies macOS, Windows and Linux keyboard types for `starlight-kbd` when `kbd.types` is omitted. The plugin detects the user's platform; Linux is the fallback type. Provide your own `types` array to replace these presets:
+
+```js
+integrations: {
+  kbd: {
+    types: [
+      { id: 'mac', label: 'macOS', detector: 'apple' },
+      { id: 'windows', label: 'Windows', detector: 'windows' },
+      { id: 'linux', label: 'Linux', detector: 'linux', default: true },
+    ],
+  },
+},
+```
+
 ## LLM index ownership
 
-The dedicated `llmsTxt` integration is enabled by default. `starlight-llm-actions` also supports site-level indexes. To switch ownership to LLM Actions, set `llmsTxt: false`; N0ctane will then enable `llmActions.llmsTxt` by default. Do not enable both generators together: N0ctane rejects that configuration because both plugins would claim the same output routes. You can explicitly set `llmActions: { llmsTxt: false }` to disable its index output.
+The dedicated `llmsTxt` integration is enabled by default. `starlight-llm-actions` also supports site-level indexes. To switch ownership to LLM Actions, set `llmsTxt: false`; N0ctane will then enable `llmActions.llmsTxt` by default. Do not enable both generators at the same time: N0ctane throws a configuration error instead of allowing duplicate routes. You can explicitly set `llmActions: { llmsTxt: false }` to disable its index output.
 
 ## Options are forwarded
 
-N0ctane passes each options object directly to the upstream plugin factory. It intentionally does not invent or rename upstream option names. See the [Announcement](https://github.com/frostybee/starlight-announcement), [Keyboard](https://github.com/HiDeoo/starlight-kbd), [LLMs.txt](https://github.com/delucis/starlight-llms-txt), [Scroll to top](https://github.com/frostybee/starlight-scroll-to-top), [LLM Actions](https://holdenhewett.github.io/starlight-llm-actions/), [Sidebar swipe](https://github.com/trueberryless-org/starlight-sidebar-swipe), [Links validator](https://github.com/HiDeoo/starlight-links-validator), [Blog](https://github.com/HiDeoo/starlight-blog) and [Image zoom](https://github.com/HiDeoo/starlight-image-zoom) documentation for their current options.
+N0ctane passes each options object directly to the upstream plugin factory, adding only its documented default keyboard types when `kbd.types` is omitted and the LLM-index ownership default described above. It intentionally does not invent or rename other upstream option names. See the [Announcement](https://github.com/frostybee/starlight-announcement), [Keyboard](https://github.com/HiDeoo/starlight-kbd), [LLMs.txt](https://github.com/delucis/starlight-llms-txt), [Scroll to top](https://github.com/frostybee/starlight-scroll-to-top), [LLM Actions](https://holdenhewett.github.io/starlight-llm-actions/), [Sidebar swipe](https://github.com/trueberryless-org/starlight-sidebar-swipe), [Links validator](https://github.com/HiDeoo/starlight-links-validator), [Blog](https://github.com/HiDeoo/starlight-blog) and [Image zoom](https://github.com/HiDeoo/starlight-image-zoom) documentation for their current options.
 
 Because plugins can add routes or require specific content conventions, review the upstream guide for each feature you enable. For example, the blog plugin requires its documented collection/content setup.
