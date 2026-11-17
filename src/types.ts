@@ -103,6 +103,33 @@ export interface N0ctExpandedSidebarGroup {
 
 export type N0ctNormalizedSidebarItem = N0ctExpandedSidebarGroup | N0ctNativeSidebarItem;
 
+export type N0ctNavPosition = 'left' | 'center' | 'right';
+export type N0ctNavControl = 'brand' | 'search' | 'social' | 'versions' | 'theme' | 'language' | 'menuToggle';
+
+export interface N0ctNavbarLink {
+  label: string;
+  href?: string;
+  external?: boolean;
+  position?: N0ctNavPosition;
+  items?: Array<{ label: string; href: string; external?: boolean }>;
+}
+
+export interface N0ctNavbarConfig {
+  /** Header height, for example `3.5rem` or `56px`. */
+  height?: string;
+  /** Place native header controls in the left, centre, or right group. */
+  placements?: Partial<Record<N0ctNavControl, N0ctNavPosition>>;
+  /** Custom top-level links and dropdowns. Root-relative paths respect Astro's base. */
+  links?: N0ctNavbarLink[];
+  showBrand?: boolean;
+  showSearch?: boolean;
+  showTheme?: boolean;
+  showSocial?: boolean;
+  showVersions?: boolean;
+  showLanguage?: boolean;
+  showMenuToggle?: boolean;
+}
+
 export interface N0ctNormalizedConfig {
   title: string;
   description?: string;
@@ -120,6 +147,8 @@ export interface N0ctConfig {
   title: string;
   /** Optional description used by Starlight metadata and search previews. */
   description?: string;
+  /** Full header layout and navigation controls. */
+  navbar?: N0ctNavbarConfig;
   sidebar?: {
     /** Use Starlight's default collapsible sidebar, the upstream topic list, or its dropdown component. */
     topicDisplay?: 'collapsible' | 'list' | 'dropdown';

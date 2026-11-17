@@ -31,10 +31,12 @@ export default defineConfig({
   external: [
     '@astrojs/starlight',
     '@astrojs/starlight/types',
+    '@tailwindcss/vite',
     'astro',
     'astro-icon',
     'astro-icon/components',
-  ],  
+    'starlight-codeblocks',
+  ],
 
   banner: {
     js: [

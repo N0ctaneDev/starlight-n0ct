@@ -1,0 +1,100 @@
+---
+import starlightConfig from 'virtual:starlight/user-config';
+import NavGroup from './NavGroup.astro';
+
+const runtime = (Astro.locals as any).n0ctane ?? {};
+const nav = runtime.navbar ?? {};
+const versioning = runtime.versioning;
+const baseUrl = import.meta.env.BASE_URL || '/';
+const base = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+const withBase = (href: string) => href.startsWith('/') && !href.startsWith('//') ? base + href : href;
+const isExternal = (href: string) => /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(href);
+
+const navLinks = (nav.links ?? []).map((item: any) => ({
+  ...item,
+  href: item.href ? withBase(item.href) : undefined,
+  external: item.external ?? (item.href ? isExternal(item.href) : false),
+  items: item.items?.map((child: any) => ({
+    ...child,
+    href: withBase(child.href),
+    external: child.external ?? isExternal(child.href),
+  })),
+}));
+const linksByPosition = {
+  left: navLinks.filter((item: any) => (item.position ?? 'left') === 'left'),
+  center: navLinks.filter((item: any) => item.position === 'center'),
+  right: navLinks.filter((item: any) => item.position === 'right'),
+};
+
+const showSearch = nav.showSearch !== false && (starlightConfig.pagefind !== false || starlightConfig.components.Search !== '@astrojs/starlight/components/Search.astro');
+const showSocial = nav.showSocial !== false && Boolean(starlightConfig.social?.length);
+const showVersions = nav.showVersions !== false && Boolean(versioning && versioning !== false && versioning.versions?.length);
+const showLanguage = nav.showLanguage === true;
+const path = Astro.url.pathname.startsWith(base + '/')
+  ? Astro.url.pathname.slice(base.length)
+  : Astro.url.pathname;
+const versionConfig = versioning && versioning !== false ? versioning : undefined;
+const versions = versionConfig?.versions ?? [];
+const activeVersion = versions.find(({ slug }: { slug: string }) =>
+  path === '/' + slug || path.startsWith('/' + slug + '/'),
+);
+const pathWithoutVersion = activeVersion ? path.slice(('/' + activeVersion.slug).length) || '/' : path;
+const versionChoices = [
+  {
+    label: versionConfig?.current?.label ?? 'Latest',
+    href: withBase(pathWithoutVersion),
+    selected: !activeVersion,
+  },
+  ...versions.map((version: { slug: string; label?: string }) => ({
+    label: version.label ?? version.slug,
+    href: withBase('/' + version.slug + (pathWithoutVersion === '/' ? '/' : pathWithoutVersion)),
+    selected: version.slug === activeVersion?.slug,
+  })),
+];
+---
+
+<div
+  class="noct-nav-inner"
+  data-noct-menu-placement={nav.placements?.menuToggle ?? 'right'}
+  data-noct-menu-enabled={nav.showMenuToggle !== false}
+>
+  <NavGroup position="left" nav={nav} links={linksByPosition.left} showSearch={showSearch} showSocial={showSocial} showVersions={showVersions} showLanguage={showLanguage} versionChoices={versionChoices} />
+  <NavGroup position="center" nav={nav} links={linksByPosition.center} showSearch={showSearch} showSocial={showSocial} showVersions={showVersions} showLanguage={showLanguage} versionChoices={versionChoices} />
+  <NavGroup position="right" nav={nav} links={linksByPosition.right} showSearch={showSearch} showSocial={showSocial} showVersions={showVersions} showLanguage={showLanguage} versionChoices={versionChoices} />
+</div>
+
+<script>
+  const moveNativeMenuToggle = () => {
+    const menuButton = document.querySelector<HTMLButtonElement>('.sl-menu-button');
+    const navInner = document.querySelector<HTMLElement>('.noct-nav-inner');
+    if (!menuButton || !navInner) return;
+
+    if (navInner.dataset.noctMenuEnabled === 'false') {
+      menuButton.hidden = true;
+      return;
+    }
+
+    menuButton.hidden = false;
+    const placement = navInner.dataset.noctMenuPlacement ?? 'right';
+    const group = document.querySelector<HTMLElement>('.noct-nav-group-' + placement);
+    if (group && menuButton.parentElement !== group) group.append(menuButton);
+  };
+
+  const headerWindow = window as Window & { __n0ctHeaderListeners?: boolean };
+  if (!headerWindow.__n0ctHeaderListeners) {
+    headerWindow.__n0ctHeaderListeners = true;
+    document.addEventListener('astro:page-load', moveNativeMenuToggle);
+    document.addEventListener('change', (event) => {
+      const target = event.target;
+      if (target instanceof HTMLSelectElement && target.matches('[data-noct-version-select]') && target.value) {
+        window.location.assign(target.value);
+      }
+    });
+  }
+
+  moveNativeMenuToggle();
+</script>
+
+<style is:global define:vars={{ navHeight: nav.height ?? '3.25rem' }}>
+  :root { --sl-nav-height: var(--navHeight); }
+</style>

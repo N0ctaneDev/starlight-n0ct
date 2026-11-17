@@ -8,6 +8,38 @@ const config = {
   title: '[lucide:terminal] N0ctane',
   description: 'A spacious, neon documentation theme for Astro Starlight.',
 
+  navbar: {
+    height: '3.25rem',
+    showBrand: true,
+    showSearch: true,
+    showTheme: true,
+    showSocial: true,
+    showVersions: true,
+    showLanguage: false,
+    showMenuToggle: true,
+    placements: {
+      brand: 'left',
+      search: 'center',
+      social: 'right',
+      versions: 'right',
+      theme: 'right',
+      language: 'right',
+      menuToggle: 'right',
+    },
+    links: [
+      { label: 'Getting started', href: '/getting-started/', position: 'left' },
+      { label: 'Components', href: '/components/', position: 'left' },
+      {
+        label: 'Community',
+        position: 'right',
+        items: [
+          { label: 'GitHub', href: 'https://github.com/n0ctanedev/starlight-n0ct', external: true },
+          { label: 'N0ctOS', href: 'https://n0ctanedev.github.io', external: true },
+        ],
+      },
+    ],
+  },
+
   sidebar: {
     // Use 'collapsible' (Starlight default), 'list' (topic list), or 'dropdown'.
     topicDisplay: 'dropdown',

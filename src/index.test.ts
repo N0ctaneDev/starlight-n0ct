@@ -3,6 +3,64 @@ import { normalizeN0ctConfig, topicToSidebar } from './config.js';
 import { n0ctane } from './index.js';
 
 describe('N0ctane configuration expansion', () => {
+  it('installs the configurable header and code-block plugin by default', () => {
+    const config = n0ctane({ title: 'Docs', integrations: { blog: false } });
+    expect(config.components?.Header).toContain('Header.astro');
+    expect(config.plugins?.some((plugin) => plugin.name === 'starlight-codeblocks')).toBe(true);
+  });
+
+  it('allows an advanced Starlight Header override to take precedence', () => {
+    const config = n0ctane({
+      title: 'Docs',
+      integrations: { blog: false },
+      starlight: { components: { Header: './src/components/MyHeader.astro' } },
+    });
+    expect(config.components?.Header).toBe('./src/components/MyHeader.astro');
+  });
+
+  it('omits code-block enhancements only when Expressive Code is explicitly disabled', () => {
+    const config = n0ctane({
+      title: 'Docs',
+      integrations: { blog: false },
+      starlight: { expressiveCode: false },
+    });
+    expect(config.expressiveCode).toBe(false);
+    expect(config.plugins?.some((plugin) => plugin.name === 'starlight-codeblocks')).toBe(false);
+  });
+
+  it('validates navbar dimensions, placements, and link destinations', () => {
+    expect(() => normalizeN0ctConfig({
+      title: 'Docs',
+      navbar: { height: '0' },
+    })).toThrow(/navbar.height/);
+    expect(() => normalizeN0ctConfig({
+      title: 'Docs',
+      navbar: { placements: { search: 'middle' as never } },
+    })).toThrow(/navbar.placements/);
+    expect(() => normalizeN0ctConfig({
+      title: 'Docs',
+      navbar: { links: [{ label: 'Unsafe', href: 'javascript:alert(1)' }] },
+    })).toThrow(/URL scheme/);
+    expect(() => normalizeN0ctConfig({
+      title: 'Docs',
+      navbar: { links: [{ label: 'Empty' }] },
+    })).toThrow(/needs an href or dropdown items/);
+  });
+
+  it('accepts valid navbar links and dropdown entries', () => {
+    expect(() => normalizeN0ctConfig({
+      title: 'Docs',
+      navbar: {
+        height: '3.5rem',
+        placements: { brand: 'left', search: 'center', menuToggle: 'right' },
+        links: [
+          { label: 'Guides', href: '/guides/', position: 'left' },
+          { label: 'Community', items: [{ label: 'GitHub', href: 'https://github.com/example', external: true }] },
+        ],
+      },
+    })).not.toThrow();
+  });
+
   it('leaves the Starlight default sidebar untouched when topics are omitted', () => {
     expect(normalizeN0ctConfig({ title: 'Docs' }).sidebar).toBeUndefined();
   });

@@ -1,0 +1,7 @@
+---
+export interface Props {
+  tone?: 'neutral' | 'pink' | 'cyan' | 'success' | 'warning' | 'danger';
+}
+const { tone = 'neutral' } = Astro.props;
+---
+<span class="noct-badge" data-tone={tone}><slot /></span>

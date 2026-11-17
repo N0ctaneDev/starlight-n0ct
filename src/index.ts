@@ -1,4 +1,5 @@
 import type { StarlightUserConfig } from '@astrojs/starlight/types';
+import codeblocks from 'starlight-codeblocks';
 import { fileURLToPath } from 'node:url';
 import { createN0ctIntegrations, createN0ctVersioning } from './integrations.js';
 import { normalizeN0ctConfig } from './config.js';
@@ -19,6 +20,10 @@ export type {
   N0ctSidebarTopicsPluginOptions,
   N0ctVersioningConfig,
   N0ctPluginOptions,
+  N0ctNavControl,
+  N0ctNavPosition,
+  N0ctNavbarLink,
+  N0ctNavbarConfig,
 } from './types.js';
 export { normalizeN0ctConfig, topicToSidebar } from './config.js';
 export { createN0ctIntegrations, createN0ctVersioning } from './integrations.js';
@@ -63,8 +68,10 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
   const hasBlogHeaderEnd = blogEnabled && blogNavigation === 'header-end';
 
   const defaultCss = fileURLToPath(new URL('./styles/theme.css', import.meta.url));
+  const referenceCss = fileURLToPath(new URL('./styles/reference.css', import.meta.url));
   const component = (name: string) => fileURLToPath(new URL(`./components/${name}.astro`, import.meta.url));
   const themeComponents = {
+    Header: component('Header'),
     // Blog and Versions both override ThemeSelect. The composed N0ctane
     // variants render their public components alongside the N0ctane toggle.
     ThemeSelect: component(
@@ -102,7 +109,7 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     ...(!usesSidebarTopicsPlugin
       ? { sidebar: advancedSidebar ?? (normalizedSidebar as StarlightUserConfig['sidebar']) }
       : {}),
-    customCss: [defaultCss, ...(advanced.customCss ?? [])],
+    customCss: [defaultCss, referenceCss, ...(advanced.customCss ?? [])],
     components: { ...themeComponents, ...(advanced.components ?? {}) },
     expressiveCode,
     plugins: [
@@ -113,6 +120,13 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
       ...createN0ctIntegrations(config.integrations),
       createN0ctanePlugin(config),
       ...(advancedPlugins ?? []),
+      ...(advanced.expressiveCode === false ? [] : [codeblocks({
+        notation: {},
+        lineStates: {},
+        wordDiff: {},
+        shellCopy: {},
+        codeTabs: { control: 'tabs' },
+      })]),
       // Run last so versioned sidebars wrap the final configured sidebar and
       // upstream component overrides are applied after the other built-ins.
       ...createN0ctVersioning(config.versioning),

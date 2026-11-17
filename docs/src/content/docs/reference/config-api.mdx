@@ -29,6 +29,7 @@ The installer generates this annotation automatically. In this repository's own 
 |---|---|---|
 | `title` | `string` | Required Starlight site title |
 | `description` | `string` | Site description |
+| `navbar` | `N0ctNavbarConfig` | Header controls, navigation links, and control placements |
 | `sidebar.topics` | `N0ctSidebarTopic[]` | Simplified sidebar declarations |
 | `sidebar.topicDisplay` | `'collapsible' | 'list' | 'dropdown'` | Starlight's default sidebar, upstream topic list, or topic dropdown |
 | `sidebar.topicOptions` | `{ exclude?, topics? }` | Upstream Sidebar Topics route exclusions and route-to-topic mappings |
@@ -39,6 +40,14 @@ The installer generates this annotation automatically. In this repository's own 
 | `icons` | `object` | `astro-icon` icon directory and collection settings |
 | `theme` | `object` | Width and accent customization |
 | `starlight` | `Partial<StarlightUserConfig>` | Advanced Starlight escape hatch |
+
+## Navbar configuration
+
+`N0ctNavbarConfig` includes `height`, `links`, `placements`, and visibility switches for the brand, search, theme, social links, versions, language picker, and native menu toggle.
+
+A placement is `'left' | 'center' | 'right'`. The available control keys are `brand`, `search`, `social`, `versions`, `theme`, `language`, and `menuToggle`.
+
+A navigation link has a `label`, optional `href`, `external`, and `position`, or a list of dropdown `items`. Each dropdown item has a `label`, `href`, and optional `external` flag. Internal root-relative paths respect Astro's `base` setting.
 
 ## Sidebar topic object
 

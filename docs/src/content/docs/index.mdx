@@ -15,6 +15,9 @@ topic: start
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
+import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
+import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
+import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
 
 <CardGrid stagger>
   <Card title="Designed for reading" icon="pencil">
@@ -28,11 +31,18 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
   </Card>
 </CardGrid>
 
+<Badge tone="pink">N0ctane theme</Badge> <Badge tone="cyan">Tailwind v4</Badge> <Badge tone="success">Expressive Code</Badge>
+
+<DocGrid columns={2}>
+  <DocCard title="Component gallery" eyebrow="Explore" description="Callouts, badges, cards, commands, file trees and editor tabs." href="/components/" />
+  <DocCard title="Theme configuration" eyebrow="Customize" description="Control the header layout, navigation placements and theme tokens." href="/guides/configuration/" />
+</DocGrid>
+
 ## The visual language
 
 N0ctane takes its palette from the N0ctOS identity: deep violet-black, electric purple, magenta and cyan. Dark mode leans purple; light mode leans blue.
 
-Glow is used as an interaction cue, not painted onto every surface. Text and code remain readable, and animation follows `prefers-reduced-motion`.
+Glow is used as an interaction cue, not painted onto every surface. Text and code remain readable, and animation follows `prefers-reduced-motion`. The light palette has its own neutral surfaces and contrast values rather than simply inverting the dark theme.
 
 ## Explore
 

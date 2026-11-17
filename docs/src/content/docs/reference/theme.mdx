@@ -1,46 +1,47 @@
 ---
 title: Theme reference
-description: Typography, color identity, layout and accessibility.
+description: Typography, palette, layout, code frames and accessibility.
 ---
 
 ## Typography
 
-N0ctane uses the font pairing selected from Ion:
+N0ctane keeps its existing font pairing:
 
 - **Space Grotesk Variable** for interface and body text.
 - **Space Mono** for code and monospaced content.
 
-The fonts are bundled as package dependencies, so users do not need to add separate CSS imports.
+The fonts are bundled as package dependencies. Tailwind's `font-sans` and `font-mono` utilities use this same pairing.
 
-## Logo palette
+## Palette
 
-The initial design tokens are sampled from the supplied N0ctOS logo:
+Dark and light modes have independently tuned surfaces and contrast values. The brand gradient remains pink → purple → blue → cyan in both modes.
 
-| Token | Hex |
-|---|---|
-| Void | `#0E0C1A` |
-| Neon pink | `#D95EEF` |
-| Violet | `#9E30ED` |
-| Purple | `#5A1BE4` |
-| Deep blue | `#1F1FDD` |
-| Electric blue | `#1C5EEF` |
-| Cyan | `#37D1F6` |
-| Ice white | `#E7E5EC` |
+| Token | Dark | Light |
+|---|---|---|
+| Pink 500 | `#F25CFF` | `#C92FCF` |
+| Cyan 500 | `#00E5FF` | `#00AFC2` |
+| Purple 500 | `#8C42FF` | `#7540CE` |
+| Blue 500 | `#2A85FF` | `#286DCE` |
+| Base background | `#0B0D17` | `#F8F7FC` |
+| Surface | `#131626` | `#FFFFFF` |
+| Elevated surface | `#1D2135` | `#F1EEF8` |
+| Border | `#282C42` | `#DED9E9` |
+| Primary text | `#E6EAF8` | `#191629` |
+| Secondary text | `#C1C8E3` | `#48445E` |
+| Muted text | `#7B88B8` | `#716B89` |
 
-Dark mode is purple-centric with magenta highlights. Light mode is blue-centric with violet secondary accents.
+Semantic colors are success `#06D6A0`, warning `#FFD166`, error `#FF4D6D`, and info `#FF9F1C` in dark mode. Light mode uses darker variants for readable contrast.
+
+The theme exposes matching Tailwind colors such as `bg-noct-bg-surface`, `text-noct-text-primary`, `text-noct-pink-500`, and `border-noct-cyan-500/40`.
 
 ## Layout
 
-The default content width is `55rem` and the sidebar width is `17rem`. Adjust them from `n0ct.config.mjs`:
+The reference layout starts with a `52rem` reading column, an `18rem` sidebar, and a `3.25rem` navbar. Use the existing `theme.contentWidth` and `theme.sidebarWidth` options to adjust the content and sidebar widths.
 
-```js
-theme: {
-  contentWidth: '58rem',
-  sidebarWidth: '18rem',
-  glow: 'balanced',
-},
-```
+## Code blocks
+
+Expressive Code keeps the current N0ctane dark/light syntax themes. Frames use a matching title bar and copy control. Shell-language fences add a terminal title strip; synchronized `:::code-tabs` persist the selected language; diff fences show deleted lines in red and inserted lines in green. The inline `[!code --]` and `[!code ++]` markers use the same deleted/inserted row styles.
 
 ## Motion and contrast
 
-Glow is reserved for selected navigation, interactive states and a few component accents. Transitions and the page-title entrance animation are reduced when the browser reports `prefers-reduced-motion: reduce`.
+Ambient background color is deliberately subtle. Glow is reserved for selected navigation and interactive states. Transitions respect `prefers-reduced-motion: reduce`.
