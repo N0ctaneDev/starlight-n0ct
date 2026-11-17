@@ -13,7 +13,7 @@ import path from 'node:path';
 import process from 'node:process';
 
 const KNOWN_UNFIXED_ADVISORIES = {
-  'GHSA-fc5q-39xc-vjpf': {
+  'GHSA-FC5Q-39XC-VJPF': {
     packageName: 'picomatch',
     reviewBy: '2026-12-17',
     reason:
@@ -142,7 +142,7 @@ function runAudit(target) {
   }
 
   const foundAdvisories = new Set();
-  const errors = [];
+  const errors = new Set();
   const affectedPackages = new Set();
 
   for (const packageName of packageNames) {
@@ -151,10 +151,10 @@ function runAudit(target) {
       foundAdvisories.add(id);
       affectedPackages.add(packageName);
     }
-    errors.push(...resolved.errors);
+    for (const error of resolved.errors) errors.add(error);
   }
 
-  if (errors.length > 0 || foundAdvisories.size === 0) {
+  if (errors.size > 0 || foundAdvisories.size === 0) {
     console.error(`[audit] ${target.label}: unapproved vulnerability findings`);
     for (const error of errors) console.error(`  - ${error}`);
     process.exitCode = 1;
