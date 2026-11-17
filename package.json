@@ -55,17 +55,17 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "docs:install": "npm --prefix docs install --no-audit --no-fund",
+    "docs:install": "npm --prefix docs ci --no-audit --no-fund",
     "docs:dev": "npm run build && npm run docs:install && npm --prefix docs run dev",
     "docs:build": "npm run build && npm run docs:install && npm run docs:build:site",
     "check": "npm run typecheck && npm test && npm run build",
     "check:all": "npm run check && npm run docs:install && npm run docs:build:site && npm run audit:full",
     "prepack": "npm run build",
-    "audit": "npm audit --audit-level=high",
+    "audit": "node ./scripts/audit-deps.mjs",
     "docs:build:site": "npm --prefix docs run build",
     "check:ci": "npm run check:all && npm pack --dry-run",
-    "security:check": "npm audit --audit-level=low && npm --prefix docs audit --audit-level=low",
-    "audit:full": "npm audit --audit-level=low && npm --prefix docs audit --audit-level=low"
+    "security:check": "node ./scripts/audit-deps.mjs",
+    "audit:full": "node ./scripts/audit-deps.mjs"
   },
   "dependencies": {
     "@astrojs/starlight-tailwind": "^5.0.0",
