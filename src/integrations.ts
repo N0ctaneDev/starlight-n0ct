@@ -29,8 +29,14 @@ const factories: Record<keyof NonNullable<N0ctConfig['integrations']>, PluginFac
   imageZoom: imageZoom as PluginFactory,
 };
 
+const defaultKeyboardTypes = [
+  { id: 'mac', label: 'macOS', detector: 'apple' },
+  { id: 'windows', label: 'Windows', detector: 'windows' },
+  { id: 'linux', label: 'Linux', detector: 'linux', default: true },
+];
+
 /** Build each bundled Starlight integration from the short N0ct config. */
-export function createN0ctIntegrations(config: N0ctConfig['integrations'] = {},): StarlightPlugin[] {
+export function createN0ctIntegrations(config: N0ctConfig['integrations'] = {}): StarlightPlugin[] {
   const dedicatedLlmsTxtEnabled = config.llmsTxt !== false;
   const llmActionsOptions = config.llmActions;
   if (dedicatedLlmsTxtEnabled && llmActionsOptions && llmActionsOptions.llmsTxt === true) {
@@ -44,6 +50,14 @@ export function createN0ctIntegrations(config: N0ctConfig['integrations'] = {},)
       const configured = config[name] as N0ctPluginOptions | undefined;
       if (configured === false) return [];
       const options = { ...(configured ?? {}) };
+
+      // starlight-kbd requires at least one keyboard type and exactly one
+      // default. Supply cross-platform presets when the user has not provided
+      // their own set; explicit `types` always take precedence.
+      if (name === 'kbd' && options.types === undefined) {
+        options.types = defaultKeyboardTypes.map((type) => ({ ...type }));
+      }
+
       // Prefer the dedicated llmsTxt integration when enabled. If it is disabled,
       // allow llmActions to own that feature unless the user explicitly opts out.
       if (name === 'llmActions' && options.llmsTxt === undefined) {
