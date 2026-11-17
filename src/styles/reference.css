@@ -98,6 +98,15 @@
   --noct-brand-gradient: linear-gradient(125deg, var(--noct-pink-500) 0%, var(--noct-purple-500) 38%, var(--noct-blue-500) 70%, var(--noct-cyan-500) 100%);
   --noct-brand-gradient-soft: linear-gradient(125deg, color-mix(in srgb, var(--noct-pink-500) 18%, transparent), color-mix(in srgb, var(--noct-purple-500) 12%, transparent) 45%, color-mix(in srgb, var(--noct-cyan-500) 11%, transparent));
   --noct-glow-strength: 24%;
+  --noct-space-1: .25rem;
+  --noct-space-2: .5rem;
+  --noct-space-3: .75rem;
+  --noct-space-4: 1rem;
+  --noct-space-5: 1.5rem;
+  --noct-space-6: 2rem;
+  --sl-nav-pad-x: 1rem;
+  --sl-nav-pad-y: .5rem;
+  --sl-nav-gap: .75rem;
   --noct-file-selected-bg: linear-gradient(105deg, #FFF8FD 0%, #E5F8FF 55%, #F4EDFF 100%);
   --noct-file-selected-text: #101722;
 
@@ -107,6 +116,7 @@
   --sl-content-width: 52rem;
   --sl-sidebar-width: 18rem;
   --sl-nav-height: 3.25rem;
+  --sl-text-h1: 2.65rem;
 
   --sl-color-white: var(--noct-text-primary);
   --sl-color-gray-1: var(--noct-text-secondary);
@@ -129,6 +139,7 @@
   --sl-color-hairline-light: var(--noct-border);
   --sl-color-text: var(--noct-text-secondary);
   --sl-color-text-invert: var(--noct-void);
+  --sl-text-h1: 2.45rem;
 }
 
 :root[data-theme='light'] {
@@ -890,6 +901,30 @@ starlight-toc a:hover, .right-sidebar a:hover { color: var(--noct-pink-300); }
 .expressive-code .ec-line.mark .code { background: color-mix(in srgb, var(--noct-cyan-500) 10%, transparent); }
 .expressive-code .ec-line.ins .gutter::before { color: var(--noct-success); }
 .expressive-code .ec-line.del .gutter::before { color: var(--noct-error); }
+
+/* The line-states plugin's ++/-- comment directives use scb-state-* classes. */
+.expressive-code .ec-line.scb-state-ins,
+.expressive-code .ec-line.scb-state-ins .code,
+.expressive-code .ec-line.scb-state-ins .gutter {
+  background-color: color-mix(in srgb, var(--noct-success) 19%, transparent) !important;
+}
+.expressive-code .ec-line.scb-state-del,
+.expressive-code .ec-line.scb-state-del .code,
+.expressive-code .ec-line.scb-state-del .gutter {
+  background-color: color-mix(in srgb, var(--noct-error) 19%, transparent) !important;
+}
+.expressive-code .ec-line.scb-state-ins .code { box-shadow: inset 3px 0 0 var(--noct-success); }
+.expressive-code .ec-line.scb-state-del .code { box-shadow: inset 3px 0 0 var(--noct-error); }
+.expressive-code .ec-line.scb-state-mark .code {
+  background-color: color-mix(in srgb, var(--noct-cyan-500) 12%, transparent) !important;
+}
+.expressive-code .ec-line.scb-state-ins .code .scb-worddiff-ins {
+  background: color-mix(in srgb, var(--noct-success) 30%, transparent);
+}
+.expressive-code .ec-line.scb-state-del .code .scb-worddiff-del {
+  background: color-mix(in srgb, var(--noct-error) 30%, transparent);
+  text-decoration-color: currentColor;
+}
 
 /* Inline code, Starlight asides and links. */
 .sl-markdown-content :not(pre) > code {
