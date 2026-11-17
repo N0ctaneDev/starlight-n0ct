@@ -47,6 +47,9 @@
       ],
       "starlight-sidebar-topics": [
         "./src/type-shims/starlight-sidebar-topics.d.ts"
+      ],
+      "starlight-versions": [
+        "./src/type-shims/starlight-versions.d.ts"
       ]
     }
   },
