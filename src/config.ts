@@ -132,6 +132,31 @@ export function normalizeN0ctConfig(input: N0ctConfig): N0ctNormalizedConfig {
     normalizeSafeHref(item.link, `footer icon link "${item.icon}"`);
   }
 
+  const navbar = input.navbar;
+  if (navbar?.height !== undefined && !/^(\\d+(?:\\.\\d+)?)(px|rem|em|vw|vh)$/.test(navbar.height)) {
+    throw new Error('N0ctane navbar.height must be a positive CSS length in px, rem, em, vw, or vh.');
+  }
+  const positions = ['left', 'center', 'right'];
+  for (const [control, position] of Object.entries(navbar?.placements ?? {})) {
+    if (!['brand', 'search', 'social', 'versions', 'theme', 'language', 'menuToggle'].includes(control) || !positions.includes(position)) {
+      throw new Error(`N0ctane navbar.placements.${control} must use a supported control and left, center, or right.`);
+    }
+  }
+  for (const item of navbar?.links ?? []) {
+    if (!item.label.trim()) throw new Error('N0ctane navbar link labels must not be empty.');
+    if (item.position !== undefined && !positions.includes(item.position)) {
+      throw new Error(`N0ctane navbar link "${item.label}" has an invalid position.`);
+    }
+    if (item.href) normalizeSafeHref(item.href, `navbar link "${item.label}"`);
+    if ((!item.href || !item.href.trim()) && !item.items?.length) {
+      throw new Error(`N0ctane navbar link "${item.label}" needs an href or dropdown items.`);
+    }
+    for (const child of item.items ?? []) {
+      if (!child.label.trim()) throw new Error(`N0ctane navbar dropdown "${item.label}" contains an empty label.`);
+      normalizeSafeHref(child.href, `navbar dropdown link "${child.label}"`);
+    }
+  }
+
   const sidebar: N0ctNormalizedSidebarItem[] | undefined = hasSidebar
     ? [
         ...(input.sidebar?.topics ?? []).map(topicToSidebar),
