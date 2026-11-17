@@ -84,6 +84,12 @@ const versionChoices = [
   if (!headerWindow.__n0ctHeaderListeners) {
     headerWindow.__n0ctHeaderListeners = true;
     document.addEventListener('astro:page-load', moveNativeMenuToggle);
+    document.addEventListener('change', (event) => {
+      const target = event.target;
+      if (target instanceof HTMLSelectElement && target.matches('[data-noct-version-select]') && target.value) {
+        window.location.assign(target.value);
+      }
+    });
   }
 
   moveNativeMenuToggle();
