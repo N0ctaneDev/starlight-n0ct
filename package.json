@@ -5,7 +5,7 @@
   "type": "module",
   "license": "MIT",
   "author": "N0ctane",
-  "homepage": "https://github.com/n0ctanedev/starlight-n0ct#readme",
+  "homepage": "https://n0ctanedev.github.io/starlight-n0ct",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/n0ctanedev/starlight-n0ct.git"
@@ -106,7 +106,8 @@
     "vitest": "^4.1.12"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "engines": {
     "node": ">=22.22.0"
