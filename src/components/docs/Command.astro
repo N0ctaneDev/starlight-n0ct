@@ -1,0 +1,36 @@
+---
+export interface Props {
+  command: string;
+  label?: string;
+}
+const { command, label = 'Copy' } = Astro.props;
+---
+<div class="noct-command" data-noct-command>
+  <pre><code>{command}</code></pre>
+  <button class="noct-command-copy" type="button" data-copy-command data-default-label={label} aria-label="Copy command">{label}</button>
+</div>
+<script>
+  const commandWindow = window as Window & { __n0ctCommandCopyBound?: boolean };
+  if (!commandWindow.__n0ctCommandCopyBound) {
+    commandWindow.__n0ctCommandCopyBound = true;
+    document.addEventListener('click', async (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const button = target.closest<HTMLButtonElement>('[data-copy-command]');
+      if (!button) return;
+      const value = button.closest('[data-noct-command]')?.querySelector('code')?.textContent ?? '';
+      if (!value) return;
+      try {
+        await navigator.clipboard.writeText(value);
+        button.dataset.copied = 'true';
+        button.textContent = 'Copied';
+      } catch {
+        button.textContent = 'Copy failed';
+      }
+      window.setTimeout(() => {
+        button.dataset.copied = 'false';
+        button.textContent = button.dataset.defaultLabel ?? 'Copy';
+      }, 1400);
+    });
+  }
+</script>
