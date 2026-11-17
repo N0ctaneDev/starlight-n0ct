@@ -133,8 +133,8 @@ export function normalizeN0ctConfig(input: N0ctConfig): N0ctNormalizedConfig {
   }
 
   const navbar = input.navbar;
-  if (navbar?.height !== undefined && !/^(\\d+(?:\\.\\d+)?)(px|rem|em|vw|vh)$/.test(navbar.height)) {
-    throw new Error('N0ctane navbar.height must be a positive CSS length in px, rem, em, vw, or vh.');
+  const navbarHeight = navbar?.height === undefined ? undefined : /^(\d+(?:\.\d+)?)(px|rem|em|vw|vh)$/.exec(navbar.height);
+  if (navbar?.height !== undefined && (!navbarHeight || Number(navbarHeight[1]) <= 0)) {    throw new Error('N0ctane navbar.height must be a positive CSS length in px, rem, em, vw, or vh.');
   }
   const positions = ['left', 'center', 'right'];
   for (const [control, position] of Object.entries(navbar?.placements ?? {})) {
