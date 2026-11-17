@@ -1,4 +1,5 @@
 import icon from 'astro-icon';
+import tailwindcss from '@tailwindcss/vite';
 import type { StarlightPlugin } from '@astrojs/starlight/types';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -55,6 +56,8 @@ export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
         const runtimeSettings = {
           footer: config.footer ?? {},
           sidebar: { topicDisplay: config.sidebar?.topicDisplay ?? 'collapsible' },
+          navbar: config.navbar ?? {},
+          versioning: config.versioning ?? false,
         };
         const settingsLiteral = JSON.stringify(runtimeSettings).replace(/</g, '\\u003c');
         const middlewarePath = join(runtimeDir, 'route-middleware.mjs');
@@ -70,11 +73,22 @@ export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
         // Remark plugins belong to Astro's Markdown config, not Starlight's
         // narrower `markdown` options. Register through an Astro integration.
         addIntegration(createRemarkCodeFilenamesIntegration());
+        // Tailwind v4 is installed as an Astro integration so consumers do not
+        // have to repeat the Vite plugin setup in their own astro.config.mjs.
+        addIntegration({
+          name: 'starlight-n0ct-tailwind',
+          hooks: {
+            'astro:config:setup': ({ updateConfig }) => {
+              updateConfig({ vite: { plugins: [tailwindcss()] } });
+            },
+          },
+        });
 
         const existingCss = [...(starlightConfig.customCss ?? [])];
         const themeCssPath = fileURLToPath(new URL('./styles/theme.css', import.meta.url));
-        const themeCssIndex = existingCss.indexOf(themeCssPath);
-        // Keep generated tokens after N0ctane's defaults but before user CSS, so
+        const referenceCssPath = fileURLToPath(new URL('./styles/reference.css', import.meta.url));
+        const themeCssIndex = Math.max(existingCss.indexOf(themeCssPath), existingCss.indexOf(referenceCssPath));
+        // Keep generated tokens after both theme stylesheets but before user CSS, so
         // project-level customCss can intentionally override theme tokens.
         const insertAt = themeCssIndex >= 0 ? themeCssIndex + 1 : existingCss.length;
         existingCss.splice(insertAt, 0, tokenPath);
