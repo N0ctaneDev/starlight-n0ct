@@ -1,10 +1,11 @@
 ---
-interface Props { type?: 'note' | 'tip' | 'warning' | 'danger' | 'info'; title?: string }
-const { type = 'info', title } = Astro.props;
+interface Props { type?: 'note' | 'tip' | 'warning' | 'danger' | 'info'; tone?: 'note' | 'tip' | 'warning' | 'danger' | 'info'; title?: string }
+const { type, tone, title } = Astro.props;
+const resolvedTone = tone ?? type ?? 'info';
 const names = { note: 'Note', tip: 'Tip', warning: 'Warning', danger: 'Danger', info: 'Info' };
 ---
-<aside class={`n0ct-callout n0ct-callout--${type}`} role={type === 'danger' || type === 'warning' ? 'alert' : 'note'}>
-  <div class="n0ct-callout__title">{title ?? names[type]}</div>
+<aside class={`n0ct-callout n0ct-callout--${resolvedTone}`} data-tone={resolvedTone} role={resolvedTone === 'danger' || resolvedTone === 'warning' ? 'alert' : 'note'}>
+  <div class="n0ct-callout__title">{title ?? names[resolvedTone]}</div>
   <div class="n0ct-callout__body"><slot /></div>
 </aside>
 <style>
