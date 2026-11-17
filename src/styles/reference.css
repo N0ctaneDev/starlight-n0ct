@@ -536,7 +536,7 @@ starlight-toc a:hover, .right-sidebar a:hover { color: var(--noct-pink-300); }
 .noct-shimmer:hover { background-position: 100% 0; }
 .noct-glow-hover { transition: box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease; }
 .noct-glow-hover:hover {
-  border-color: color-mix(in srgb, var(--noct-pink-500) 44%, var(--noct-border);
+  border-color: color-mix(in srgb, var(--noct-pink-500) 44%, var(--noct-border));
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--noct-pink-500) 12%, transparent), 0 10px 28px color-mix(in srgb, var(--noct-purple-500) 10%, transparent);
   transform: translateY(-1px);
 }
@@ -650,6 +650,7 @@ starlight-toc a:hover, .right-sidebar a:hover { color: var(--noct-pink-300); }
 
 .n0ct-callout {
   --noct-callout-accent: var(--noct-cyan-500);
+  --callout: var(--noct-cyan-500);
   margin-block: .8rem;
   padding: .58rem .72rem;
   border: 1px solid var(--noct-border);
@@ -660,11 +661,11 @@ starlight-toc a:hover, .right-sidebar a:hover { color: var(--noct-pink-300); }
   font-size: .88rem;
   line-height: 1.55;
 }
-.n0ct-callout--tip { --noct-callout-accent: var(--noct-success); }
-.n0ct-callout--warning { --noct-callout-accent: var(--noct-warning); }
-.n0ct-callout--danger { --noct-callout-accent: var(--noct-error); }
-.n0ct-callout--info { --noct-callout-accent: var(--noct-info); }
-.n0ct-callout__title { display: flex; align-items: center; gap: .4rem; margin: 0 0 .22rem; color: var(--noct-text-primary); font-size: .86rem; font-weight: 680; }
+.n0ct-callout--tip { --noct-callout-accent: var(--noct-success); --callout: var(--noct-success); }
+.n0ct-callout--warning { --noct-callout-accent: var(--noct-warning); --callout: var(--noct-warning); }
+.n0ct-callout--danger { --noct-callout-accent: var(--noct-error); --callout: var(--noct-error); }
+.n0ct-callout--info { --noct-callout-accent: var(--noct-info); --callout: var(--noct-info); }
+.n0ct-callout__title { display: flex; align-items: center; gap: .4rem; margin: 0 0 .22rem; color: var(--callout); font-size: .86rem; font-weight: 680; }
 .n0ct-callout__body > :first-child { margin-top: 0; }
 .n0ct-callout__body > :last-child { margin-bottom: 0; }
 .n0ct-callout__body p { margin-block: .25rem; }
