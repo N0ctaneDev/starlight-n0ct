@@ -59,7 +59,7 @@
     "docs:dev": "npm run build && npm run docs:install && npm --prefix docs run dev",
     "docs:build": "npm run build && npm run docs:install && npm run docs:build:site",
     "check": "npm run typecheck && npm test && npm run build",
-    "check:all": "npm run check && npm run docs:install && npm run audit:full && npm run docs:build:site",
+    "check:all": "npm run check && npm run docs:install && npm run docs:build:site && npm run audit:full",
     "prepack": "npm run build",
     "audit": "npm audit --audit-level=high",
     "docs:build:site": "npm --prefix docs run build",
