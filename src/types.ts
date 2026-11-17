@@ -1,5 +1,4 @@
 import type { StarlightUserConfig } from '@astrojs/starlight/types';
-import type { StarlightVersionsUserConfig } from 'starlight-versions';
 
 export type N0ctBadge = string | {
   text: string;
@@ -40,6 +39,28 @@ export type N0ctNativeSidebarItem =
     };
 
 export type N0ctPluginOptions = false | Record<string, unknown>;
+
+/** Options accepted by the upstream `starlight-versions` plugin. */
+export interface N0ctVersioningConfig {
+  /** Options for the current (unarchived) documentation version. */
+  current?: {
+    /** How links to this version are redirected. Defaults to `same-page`. */
+    redirect?: 'root' | 'same-page';
+    /** Label shown for the current version. Defaults to `Latest`. */
+    label?: string;
+  };
+  /** Source-file glob patterns to exclude from versioning. */
+  exclude?: string[];
+  /** Archived documentation versions. At least one version is required. */
+  versions: Array<{
+    /** URL segment used to identify this version. */
+    slug: string;
+    /** Optional label shown in the version selector. */
+    label?: string;
+    /** How links to this version are redirected. Defaults to `same-page`. */
+    redirect?: 'root' | 'same-page';
+  }>;
+}
 
 /** Options forwarded to starlight-sidebar-topics when using list/dropdown mode. */
 export interface N0ctSidebarTopicsPluginOptions {
@@ -113,7 +134,7 @@ export interface N0ctConfig {
    * Archived versions are generated from the current docs on first dev/build;
    * register `docsVersionsLoader()` in the content config as well.
    */
-  versioning?: false | StarlightVersionsUserConfig;
+  versioning?: false | N0ctVersioningConfig;
   /** Built-in integrations. Set an entry to `false` to disable it, or `{}` to enable defaults. */
   integrations?: {
     /** Prefixes root-relative Markdown and frontmatter links with Astro's configured `base`. */
@@ -172,6 +193,3 @@ export interface N0ctConfig {
 }
 
 export interface N0ctaneOptions extends N0ctConfig {}
-
-/** Configuration accepted by the upstream starlight-versions plugin. */
-export type N0ctVersioningConfig = StarlightVersionsUserConfig;
