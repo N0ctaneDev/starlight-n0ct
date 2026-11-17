@@ -6,3 +6,6 @@ docs/.astro/
 coverage/
 .env*
 .DS_Store
+
+# preserve example ENV files
+!.env.example

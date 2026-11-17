@@ -3,4 +3,6 @@ dist/
 .astro/
 .env
 .env.*
+
+# preserve example ENV files
 !.env.example

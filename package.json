@@ -1,6 +1,6 @@
 {
   "name": "@n0ctanedev/starlight-n0ct",
-  "version": "0.1.4",
+  "version": "0.0.1",
   "description": "A spacious neon theme and integration bundle for Astro Starlight.",
   "type": "module",
   "license": "MIT",
@@ -8,7 +8,7 @@
   "homepage": "https://github.com/n0ctanedev/starlight-n0ct#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/n0ctanedev/starlight-n0ct.git"
+    "url": "git+https://github.com/n0ctanedev/starlight-n0ct.git"
   },
   "bugs": {
     "url": "https://github.com/n0ctanedev/starlight-n0ct/issues"
@@ -106,8 +106,7 @@
     "vitest": "^4.1.12"
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "engines": {
     "node": ">=22.22.0"
@@ -119,6 +118,7 @@
     "esbuild": "^0.28.2"
   },
   "bin": {
-    "n0ct": "./bin/n0ct.mjs"
+    "n0ct": "bin/n0ct.mjs",
+    "starlight-n0ct": "bin/n0ct.mjs"
   }
 }
