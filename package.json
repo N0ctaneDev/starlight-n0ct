@@ -20,7 +20,6 @@
     "documentation",
     "n0ctos",
     "neon",
-    "theme",
     "starter-template",
     "project-scaffolder",
     "installer"
@@ -69,13 +68,16 @@
     "audit:full": "npm audit --audit-level=low && npm --prefix docs audit --audit-level=low"
   },
   "dependencies": {
+    "@astrojs/starlight-tailwind": "^5.0.0",
     "@fontsource-variable/space-grotesk": "^5.2.6",
     "@fontsource/space-mono": "^5.2.6",
     "@iconify-json/lucide": "^1.2.155",
+    "@tailwindcss/vite": "^4.3.5",
     "astro-icon": "^1.2.0",
     "starlight-announcement": "^2.0.0",
     "starlight-base-path": "^0.2.1",
     "starlight-blog": "^0.30.2",
+    "starlight-codeblocks": "^1.4.1",
     "starlight-image-zoom": "^0.16.2",
     "starlight-kbd": "^0.4.0",
     "starlight-links-validator": "^0.27.0",
@@ -85,7 +87,8 @@
     "starlight-sidebar-swipe": "^0.4.1",
     "starlight-sidebar-topics": "^0.9.0",
     "starlight-sidebar-topics-dropdown": "^0.7.0",
-    "starlight-versions": "^0.10.2"
+    "starlight-versions": "^0.10.2",
+    "tailwindcss": "^4.3.5"
   },
   "peerDependencies": {
     "@astrojs/starlight": ">=0.42.0 <1.0.0",
