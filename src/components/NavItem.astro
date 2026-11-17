@@ -1,0 +1,23 @@
+---
+import type { N0ctNavbarLink } from '../types.js';
+
+interface Props { item: N0ctNavbarLink }
+const { item } = Astro.props;
+---
+
+{item.items?.length ? (
+  <details class="noct-nav-dropdown">
+    <summary>{item.label}<span class="noct-chevron" aria-hidden="true"></span></summary>
+    <div class="noct-nav-dropdown-menu">
+      {item.items.map((child) => (
+        <a href={child.href} target={child.external ? '_blank' : undefined} rel={child.external ? 'noreferrer noopener' : undefined}>
+          {child.label}
+        </a>
+      ))}
+    </div>
+  </details>
+) : item.href ? (
+  <a class="noct-nav-link" href={item.href} target={item.external ? '_blank' : undefined} rel={item.external ? 'noreferrer noopener' : undefined}>
+    {item.label}
+  </a>
+) : null}
