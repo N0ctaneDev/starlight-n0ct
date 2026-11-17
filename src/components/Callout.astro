@@ -10,30 +10,34 @@ const names = { note: 'Note', tip: 'Tip', warning: 'Warning', danger: 'Danger', 
 </aside>
 <style>
   .n0ct-callout {
-    --callout: var(--sl-color-accent);
-    margin-block: 1rem;
-    padding: .72rem .9rem;
-    border: 1px solid color-mix(in srgb, var(--callout) 36%, var(--sl-color-hairline));
+    --callout: var(--noct-cyan-500);
+    margin-block: .8rem;
+    padding: .58rem .72rem;
+    border: 1px solid var(--noct-border);
     border-inline-start: 3px solid var(--callout);
-    border-radius: .75rem;
+    border-radius: var(--noct-radius-md);
     background:
-      linear-gradient(115deg, color-mix(in srgb, var(--n0ct-pink) 8%, transparent), transparent 48%),
-      linear-gradient(300deg, color-mix(in srgb, var(--n0ct-cyan) 7%, transparent), transparent 58%),
-      var(--sl-color-bg-sidebar);
-    box-shadow: var(--n0ct-shadow-soft);
+      linear-gradient(125deg, color-mix(in srgb, var(--callout) 8%, transparent), transparent 62%),
+      var(--noct-bg-surface);
+    box-shadow: var(--noct-shadow-soft);
+    font-size: .88rem;
+    line-height: 1.55;
   }
-
-  .n0ct-callout--tip { --callout: #28a879; }
-  .n0ct-callout--warning { --callout: #c28a24; }
-  .n0ct-callout--danger { --callout: #db526c; }
-  .n0ct-callout--info { --callout: var(--n0ct-cyan); }
-
+  .n0ct-callout--note { --callout: var(--noct-text-muted); }
+  .n0ct-callout--tip { --callout: var(--noct-success); }
+  .n0ct-callout--warning { --callout: var(--noct-warning); }
+  .n0ct-callout--danger { --callout: var(--noct-error); }
+  .n0ct-callout--info { --callout: var(--noct-info); }
   .n0ct-callout__title {
-    margin-block-end: .25rem;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    margin: 0 0 .22rem;
     color: var(--callout);
-    font-weight: 700;
+    font-size: .86rem;
+    font-weight: 680;
   }
-
   .n0ct-callout__body > :first-child { margin-top: 0; }
   .n0ct-callout__body > :last-child { margin-bottom: 0; }
+  .n0ct-callout__body p { margin-block: .25rem; }
 </style>
