@@ -55,7 +55,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "docs:install": "npm --prefix docs ci --no-audit --no-fund",
+    "docs:install": "npm --prefix docs install --no-audit --no-fund",
     "docs:dev": "npm run build && npm run docs:install && npm --prefix docs run dev",
     "docs:build": "npm run build && npm run docs:install && npm run docs:build:site",
     "check": "npm run typecheck && npm test && npm run build",
