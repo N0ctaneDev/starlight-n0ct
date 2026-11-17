@@ -1,0 +1,28 @@
+---
+title: Getting started
+description: Start the local development server and publish your first page.
+topic: guides
+---
+
+Your documentation project is scaffolded and its dependencies are installed.
+
+## Start the development server
+
+```sh
+npm run dev
+```
+
+Open the local URL printed by Astro. Edit the pages in `src/content/docs/`; the browser refreshes as you save.
+
+## Build the production site
+
+```sh
+npm run build
+npm run preview
+```
+
+Astro writes the static site to `dist/`. Deploy that directory to your static hosting provider.
+
+## Add a page
+
+Create a Markdown or MDX file under `src/content/docs/`, then add it to a topic directory such as `guides/` or `reference/`.

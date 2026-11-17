@@ -1,0 +1,121 @@
+{
+  "name": "@n0ctanedev/starlight-n0ct",
+  "version": "0.1.4",
+  "description": "A spacious neon theme and integration bundle for Astro Starlight.",
+  "type": "module",
+  "license": "MIT",
+  "author": "N0ctane",
+  "homepage": "https://github.com/n0ctanedev/starlight-n0ct#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/n0ctanedev/starlight-n0ct.git"
+  },
+  "bugs": {
+    "url": "https://github.com/n0ctanedev/starlight-n0ct/issues"
+  },
+  "keywords": [
+    "astro",
+    "starlight",
+    "starlight-theme",
+    "documentation",
+    "n0ctos",
+    "neon",
+    "theme",
+    "starter-template",
+    "project-scaffolder",
+    "installer"
+  ],
+  "sideEffects": [
+    "dist/styles/theme.css"
+  ],
+  "files": [
+    "dist/**",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "PREPUBLISH.md",
+    "bin/**",
+    "templates/**"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./components/*": "./dist/components/*",
+    "./styles.css": "./dist/styles/theme.css",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "clean": "node ./scripts/clean.mjs",
+    "build": "npm run clean && tsup && node ./scripts/copy-assets.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "docs:install": "npm --prefix docs install --no-audit --no-fund",
+    "docs:dev": "npm run build && npm run docs:install && npm --prefix docs run dev",
+    "docs:build": "npm run build && npm run docs:install && npm run docs:build:site",
+    "check": "npm run typecheck && npm test && npm run build",
+    "check:all": "npm run check && npm run docs:install && npm run audit:full && npm run docs:build:site",
+    "prepack": "npm run build",
+    "audit": "npm audit --audit-level=high",
+    "docs:build:site": "npm --prefix docs run build",
+    "check:ci": "npm run check:all && npm pack --dry-run",
+    "security:check": "npm audit --audit-level=low && npm --prefix docs audit --audit-level=low",
+    "audit:full": "npm audit --audit-level=low && npm --prefix docs audit --audit-level=low"
+  },
+  "dependencies": {
+    "@fontsource-variable/space-grotesk": "^5.2.6",
+    "@fontsource/space-mono": "^5.2.6",
+    "@iconify-json/lucide": "^1.2.155",
+    "astro-icon": "^1.2.0",
+    "starlight-announcement": "^2.0.0",
+    "starlight-base-path": "^0.2.1",
+    "starlight-blog": "^0.30.2",
+    "starlight-image-zoom": "^0.16.2",
+    "starlight-kbd": "^0.4.0",
+    "starlight-links-validator": "^0.27.0",
+    "starlight-llm-actions": "^0.13.0",
+    "starlight-llms-txt": "^0.12.0",
+    "starlight-scroll-to-top": "^2.0.0",
+    "starlight-sidebar-swipe": "^0.4.1",
+    "starlight-sidebar-topics": "^0.9.0",
+    "starlight-sidebar-topics-dropdown": "^0.7.0",
+    "starlight-versions": "^0.10.2"
+  },
+  "peerDependencies": {
+    "@astrojs/starlight": ">=0.42.0 <1.0.0",
+    "@iconify-json/lucide": "^1.2.155",
+    "astro": "^7.2.10"
+  },
+  "devDependencies": {
+    "@astrojs/starlight": "^0.43.1",
+    "@iconify-json/lucide": "^1.2.155",
+    "@types/node": "^22.19.0",
+    "astro": "^7.4.12",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.0",
+    "vite": "^8.3.6",
+    "vitest": "^4.1.12"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "allowScripts": {
+    "esbuild": true
+  },
+  "overrides": {
+    "esbuild": "^0.28.2"
+  },
+  "bin": {
+    "n0ct": "./bin/n0ct.mjs"
+  }
+}

@@ -1,0 +1,27 @@
+---
+title: Welcome
+description: Your new documentation site is ready.
+template: splash
+hero:
+  title: Your docs, **your way**.
+  tagline: A gradient-rich, developer-focused documentation site built with N0ctane and Astro Starlight.
+  actions:
+    - text: Get started
+      link: /getting-started/
+      icon: right-arrow
+    - text: Configuration
+      link: /guides/configuration/
+      variant: minimal
+topic: guides
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid stagger>
+  <Card title="Guides" icon="open-book">
+    Learn how to configure, customize, and publish this documentation site.
+  </Card>
+  <Card title="Reference" icon="puzzle">
+    Explore the integrations and the N0ctane configuration surface.
+  </Card>
+</CardGrid>

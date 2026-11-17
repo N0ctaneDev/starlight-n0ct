@@ -1,0 +1,62 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "declaration": true,
+    "declarationMap": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "verbatimModuleSyntax": true,
+    "outDir": "dist",
+    "types": [
+      "node"
+    ],
+    "paths": {
+      "starlight-announcement": [
+        "./src/type-shims/starlight-announcement.d.ts"
+      ],
+      "starlight-base-path": [
+        "./src/type-shims/starlight-base-path.d.ts"
+      ],
+      "starlight-blog": [
+        "./src/type-shims/starlight-blog.d.ts"
+      ],
+      "starlight-image-zoom": [
+        "./src/type-shims/starlight-image-zoom.d.ts"
+      ],
+      "starlight-kbd": [
+        "./src/type-shims/starlight-kbd.d.ts"
+      ],
+      "starlight-links-validator": [
+        "./src/type-shims/starlight-links-validator.d.ts"
+      ],
+      "starlight-llm-actions": [
+        "./src/type-shims/starlight-llm-actions.d.ts"
+      ],
+      "starlight-llms-txt": [
+        "./src/type-shims/starlight-llms-txt.d.ts"
+      ],
+      "starlight-scroll-to-top": [
+        "./src/type-shims/starlight-scroll-to-top.d.ts"
+      ],
+      "starlight-sidebar-swipe": [
+        "./src/type-shims/starlight-sidebar-swipe.d.ts"
+      ],
+      "starlight-sidebar-topics": [
+        "./src/type-shims/starlight-sidebar-topics.d.ts"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "docs"
+  ]
+}

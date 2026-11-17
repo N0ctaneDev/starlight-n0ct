@@ -1,0 +1,49 @@
+name: Publish to npm
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: npm dist-tag
+        required: true
+        default: latest
+        type: string
+      dry_run:
+        description: Build and package without publishing
+        type: boolean
+        required: true
+        default: true
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - name: Use current npm with trusted publishing support
+        run: npm install --global npm@latest
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Validate package and documentation
+        run: npm run check:all
+      - name: Inspect package contents
+        run: npm pack --dry-run
+      - name: Publish package
+        if: ${{ !inputs.dry_run }}
+        env:
+          NPM_TAG: ${{ inputs.tag }}
+        run: npm publish --provenance --access public --tag "$NPM_TAG"
+      - name: Dry run complete
+        if: ${{ inputs.dry_run }}
+        run: echo "Dry run completed. Review the package contents before publishing."

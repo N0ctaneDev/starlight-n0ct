@@ -1,0 +1,195 @@
+---
+title: Configuration
+description: The concise N0ctane configuration API.
+---
+
+N0ctane keeps `n0ct.config.mjs` focused on the decisions most documentation sites make. It then converts those settings into Starlight's native configuration.
+
+## Minimal configuration
+
+```js
+export default {
+  title: 'N0ctOS',
+  description: 'Documentation for N0ctOS',
+  sidebar: {
+    topics: ['reference', 'installation', { label: 'Guides', link: '/guides' }],
+  },
+};
+```
+
+A string topic creates a title-cased group and an autogenerate entry using that directory. Starlight sidebar groups do not support a separate `link` property; the directory's `index.mdx` page appears among the generated entries.
+
+## Sidebar topics
+
+Object topics support these fields:
+
+| Property | Description |
+|---|---|
+| `label` | Visible group label |
+| `icon` | Optional local or Iconify icon name for native collapsible groups |
+| `dropdownIcon` | Optional built-in Starlight icon name for Sidebar Topics list/dropdown entries |
+| `id` | Optional stable topic identifier |
+| `link` | Internal page path (standalone link when `autogenerate: false`; directory hint for generated groups) |
+| `directory` | Content directory used for autogeneration |
+| `autogenerate` | `false`, `true`, or `{ directory }` |
+| `items` | Manually authored native Starlight entries |
+| `collapsed` | Whether the group starts collapsed |
+| `badge` | Optional badge text or `{ text, variant }` |
+
+```js
+sidebar: {
+  topics: [
+    'reference',
+    { label: 'Guides', icon: 'lucide:book-open', dropdownIcon: 'open-book', link: '/guides' },
+    {
+      label: 'Manual links',
+      autogenerate: false,
+      items: [
+        { label: 'Overview', link: '/manual/' },
+        { label: 'Migration', link: '/manual/migration/' },
+      ],
+    },
+  ],
+  extra: [{ label: 'External site', link: 'https://example.com' }],
+},
+```
+
+When no `directory` is supplied, N0ctane derives it from an internal `link`. Generated groups are expanded into Starlight's native `{ label, items: [{ autogenerate }] }` shape; Starlight does not support a `link` property on a group. For a standalone docs page, set `autogenerate: false` and N0ctane converts the path to a native `slug` entry. External URLs with `autogenerate: false` become native link entries. If `items` is supplied and `autogenerate` is omitted, automatic generation is off. Set `autogenerate: true` to combine manual and generated entries.
+
+## Icons
+
+Lucide is a required Iconify collection and must be available directly to the consuming Astro project. The installer adds it automatically; existing projects should install it explicitly. Additional Iconify collections can be installed by your site and included here:
+
+```js
+icons: {
+  iconDir: './src/icons',
+  include: { lucide: ['*'] },
+},
+```
+
+Use `icon: 'lucide:book-open'` in a sidebar topic or `[lucide:book-open] Guides` in a native Starlight sidebar label. Local icons use their SVG filename without the extension. The site title also supports this syntax: `title: '[lucide:terminal] N0ctOS'`.
+
+## Footer
+
+```js
+footer: {
+  text: 'Built with N0ctOS',
+  links: [{ label: 'GitHub', link: 'https://github.com/example/project', newTab: true }],
+  icons: [{ icon: 'lucide:github', link: 'https://github.com/example/project', label: 'GitHub', newTab: true }],
+},
+```
+
+Footer icons use the same local/Iconify naming as sidebar icons.
+
+## Advanced Starlight options
+
+Use `starlight` when a native option does not need a N0ctane shorthand:
+
+```js
+starlight: {
+  editLink: { baseUrl: 'https://github.com/example/project/edit/main/' },
+  lastUpdated: true,
+  tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 4 },
+},
+```
+
+Advanced settings are merged after N0ctane defaults. You can deliberately override `components`, `customCss`, `sidebar` or `plugins`; doing so means you own that override.
+
+
+## Root topic presentation
+
+Choose how the configured root-level topics appear in the sidebar:
+
+```js n0ct.config.mjs
+sidebar: {
+  topicDisplay: 'collapsible', // default
+  topics: [
+    { label: 'Guides', id: 'guides', link: '/guides', directory: 'guides' },
+    { label: 'Reference', id: 'reference', link: '/reference', directory: 'reference' },
+  ],
+},
+```
+
+There are three root-topic presentations:
+
+- `collapsible` (default) uses Starlight's default `Sidebar` component and native collapsible groups. N0ctane does not override the component or activate `starlight-sidebar-topics`.
+- `list` uses the upstream `starlight-sidebar-topics` topic list above the selected topic's navigation.
+- `dropdown` uses `starlight-sidebar-topics-dropdown` to render the root topics as a selector above the selected topic's navigation.
+
+For `list` and `dropdown`, every root topic needs a destination: a `link`, a `directory`, or at least one manual sidebar item with a destination. Use `dropdownIcon` (for example, `open-book`) for the upstream Starlight icon set. The regular `icon` property remains the local/Iconify shorthand for native collapsible groups.
+
+The upstream plugin's route options are forwarded through `sidebar.topicOptions`:
+
+```js n0ct.config.mjs
+sidebar: {
+  topicDisplay: 'dropdown',
+  topics: [
+    { label: 'Guides', id: 'guides', link: '/guides', directory: 'guides' },
+    { label: 'Reference', id: 'reference', link: '/reference', directory: 'reference' },
+  ],
+  topicOptions: {
+    exclude: ['/api/**', '/search'],
+    topics: { reference: ['/generated-api/**'] },
+  },
+},
+```
+
+N0ctane automatically excludes the active Blog prefix (default `/blog`) from topic routing, preserving the Blog plugin's generated sidebar. Topic routing runs before Blog's route middleware, allowing Blog to add its mobile navigation link on normal docs pages. For other route-generating plugins, use `topicOptions.exclude` for pages with their own sidebar, or `topicOptions.topics` to associate generated paths with a configured topic. N0ctane also composes Blog's exported `ThemeSelect` and `SiteTitle` components with its own theme toggle/site title when Blog navigation is set to `header-end` or `header-start`, so the Blog link is not lost to the theme's component overrides.
+
+`list` and `dropdown` delegate the top-level Starlight sidebar to `starlight-sidebar-topics`. Do not also set `starlight.sidebar` or `starlight.components.Sidebar` in these modes; switch to `collapsible` when you need to supply a native Starlight sidebar or custom Sidebar component. `sidebar.extra` is appended to each topic's navigation in plugin-backed modes.
+
+## Content schemas for list/dropdown topics
+
+The plugin adds a `topic` frontmatter field for pages that are not already associated through a topic directory. The starter merges its schema into Starlight's docs schema. Existing projects using either plugin-backed mode should install the schema package directly:
+
+```sh
+npm install starlight-sidebar-topics
+```
+
+If your site also enables Blog and uses its `authors`, `tags`, `excerpt`, or other Blog frontmatter fields, install `starlight-blog` directly and merge both schemas:
+
+```ts src/content.config.ts
+import { defineCollection } from 'astro:content';
+import { docsLoader, i18nLoader } from '@astrojs/starlight/loaders';
+import { docsSchema, i18nSchema } from '@astrojs/starlight/schema';
+import { blogSchema } from 'starlight-blog/schema';
+import { topicSchema } from 'starlight-sidebar-topics/schema';
+
+export const collections = {
+  docs: defineCollection({
+    loader: docsLoader(),
+    schema: docsSchema({
+      extend: (context) => blogSchema(context).merge(topicSchema),
+    }),
+  }),
+  i18n: defineCollection({ loader: i18nLoader(), schema: i18nSchema() }),
+};
+```
+
+When Blog is not enabled, use `extend: topicSchema` instead. Assign unlisted pages with the topic's stable `id` in frontmatter, for example `topic: guides`. The schema extension is not needed when using the native `collapsible` presentation unless you separately use the `topic` field.
+
+## Code block titles and syntax colors
+
+A filename immediately after the fence language becomes the code block's title tab:
+
+```js n0ct.config.mjs
+export default {
+  title: 'Project Docs',
+};
+```
+
+You can keep regular Expressive Code options such as `title="astro.config.mjs"`, line highlighting, and wrapping. N0ctane applies a custom magenta–violet–cyan syntax palette in both color modes; bash, sh, zsh, and shell-session fences use a terminal-style frame.
+
+
+## Unlisted pages in list/dropdown modes
+
+The Sidebar Topics integration normally associates pages through each topic's configured `items`. For a page that should use a topic's sidebar but should not appear in that topic's navigation list, assign a stable `id` to the topic and use that ID in the page frontmatter:
+
+```yaml
+---
+title: Support
+topic: guides
+---
+```
+
+The generated starter merges `topicSchema` from `starlight-sidebar-topics/schema` into Starlight's docs schema. Existing projects using either list or dropdown mode should merge that schema too.

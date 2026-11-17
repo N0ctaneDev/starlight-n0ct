@@ -1,0 +1,95 @@
+---
+topic: start
+title: Getting started
+description: Install N0ctane and use it in a Starlight project.
+---
+
+import { Steps } from '@astrojs/starlight/components';
+import { FileTree } from '@astrojs/starlight/components';
+
+## Requirements
+
+- Node.js 22.22 or newer is required.
+- Astro 7.2.10 or newer within the 7.x line.
+- Starlight 0.42.10 or 0.43.x.
+
+## Install
+
+For a new project, the easiest route is the [interactive installer](/guides/installer/).
+
+For an existing project, install N0ctane and Lucide directly:
+
+```sh
+npm install @n0ctanedev/starlight-n0ct @iconify-json/lucide
+```
+
+## Create `n0ct.config.mjs`
+
+```js n0ct.config.mjs
+export default {
+  title: 'Project Docs',
+  description: 'Documentation for my project',
+  sidebar: {
+    topics: ['guides', 'reference'],
+  },
+  integrations: {
+    announcement: false,
+    blog: false,
+  },
+};
+```
+
+## Connect N0ctane to Starlight
+
+```js
+import { defineConfig } from 'astro/config';
+import starlight from '@astrojs/starlight';
+import n0ctConfig from './n0ct.config.mjs';
+import { n0ctane } from '@n0ctanedev/starlight-n0ct';
+
+export default defineConfig({
+  integrations: [
+    starlight({
+      ...n0ctane(n0ctConfig),
+    }),
+  ],
+});
+```
+
+The theme function returns native Starlight configuration. Keep Astro-level settings such as `site`, `base`, `output` and adapters in `defineConfig()`.
+
+## Create your content
+
+Create the content directories referenced by the sidebar configuration inside `src/content/docs/`:
+
+<FileTree>
+- src/content/docs/
+  - guides/
+    - index.mdx
+  - reference/
+    - index.mdx
+</FileTree>
+
+## Run and build
+
+<Steps>
+  1. Install the dependencies:
+
+     ```sh
+     npm install
+     ```
+
+  2. Start the development server:
+
+     ```sh
+     npm run dev
+     ```
+
+  3. Build the production site:
+
+     ```sh
+     npm run build
+     ```
+</Steps>
+
+N0ctane does not replace Astro or Starlight. It provides a design system, configuration expansion, component overrides and a curated set of Starlight plugins.

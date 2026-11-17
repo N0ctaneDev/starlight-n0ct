@@ -1,0 +1,54 @@
+---
+title: Versioning
+description: Configure upstream Starlight Versions through N0ctane.
+---
+
+N0ctane uses the upstream [`starlight-versions`](https://github.com/HiDeoo/starlight-versions) plugin for archiving, version-aware URLs, sidebars, notices, search, and the version selector. N0ctane forwards the native plugin options without inventing a second version-routing system.
+
+## Configuration
+
+```js n0ct.config.mjs
+versioning: {
+  versions: [
+    { slug: '1.0', label: 'v1.0', redirect: 'same-page' },
+  ],
+  current: {
+    label: 'Latest',
+    redirect: 'same-page',
+  },
+  exclude: ['blog/**', 'internal/**'],
+},
+```
+
+The `versions` array is required when versioning is enabled. Each archived version supports:
+
+- `slug` — URL directory and version identifier, such as `1.0`.
+- `label` — optional UI label; defaults to the slug.
+- `redirect` — `same-page` (default) or `root` when switching versions.
+
+`current` accepts `label` (default `Latest`) and `redirect` (default `same-page`). `exclude` is an array of source-file glob patterns relative to `src/content/docs/`; excluded pages always use the current content.
+
+Set `versioning: false` or omit it to disable versioning.
+
+## Content collection setup
+
+The project's `src/content.config.ts` must register the plugin's versions collection loader:
+
+```ts src/content.config.ts
+import { docsVersionsLoader } from 'starlight-versions/loader';
+
+export const collections = {
+  // Keep your existing docs and i18n collections.
+  versions: defineCollection({ loader: docsVersionsLoader() }),
+};
+```
+
+The N0ctane starter and demo already include this collection.
+
+## Creating an archive
+
+When a configured version slug has no matching directory under `src/content/docs/`, the plugin archives the current documentation into that directory on the next `astro dev` or `astro build`. You can then continue editing the current docs while the archived copy remains available.
+
+Create one new version at a time: add one version entry, run the dev server or build so the plugin creates the archive, then add the next version entry. This avoids the plugin's “Only one new version can be configured at a time” error.
+
+The demo keeps `versioning: false` because its historical sample folders have been removed. The starter also defaults to disabled; the installer can optionally configure one initial archive.

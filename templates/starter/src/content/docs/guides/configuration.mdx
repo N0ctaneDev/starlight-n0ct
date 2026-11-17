@@ -1,0 +1,87 @@
+---
+title: Configure your site
+description: Customize the sidebar, base path, integrations, and theme.
+---
+
+Edit `n0ct.config.mjs` to configure N0ctane.
+
+## Sidebar topics
+
+The default presentation uses native collapsible groups:
+
+```js n0ct.config.mjs
+sidebar: {
+  topicDisplay: 'collapsible',
+  topics: [
+    { label: 'Guides', link: '/guides/', directory: 'guides' },
+    { label: 'Reference', link: '/reference/', directory: 'reference' },
+  ],
+},
+```
+
+To render the upstream topic list above the selected topic's sidebar, use `list` instead:
+
+```js n0ct.config.mjs
+sidebar: {
+  topicDisplay: 'list',
+  topics: [
+    { label: 'Guides', id: 'guides', link: '/guides/', directory: 'guides' },
+    { label: 'Reference', id: 'reference', link: '/reference/', directory: 'reference' },
+  ],
+},
+```
+
+To turn the root-level topics into a dropdown selector above the sidebar, use:
+
+```js n0ct.config.mjs
+sidebar: {
+  topicDisplay: 'dropdown',
+  topics: [
+    { label: 'Guides', link: '/guides/', directory: 'guides' },
+    { label: 'Reference', link: '/reference/', directory: 'reference' },
+  ],
+},
+```
+
+Every root topic becomes an entry in the selector. Keep a root `link` or `directory` on each topic. Both plugin-backed modes use `starlight-sidebar-topics`; dropdown additionally uses `starlight-sidebar-topics-dropdown`. Do not set `starlight.sidebar` in these modes. Use `sidebar.topicOptions.exclude` for generated routes that keep their own sidebar; the configured Blog prefix is excluded automatically.
+
+## Base path
+
+Set `BASE_PATH` in `.env` when deploying below a subpath, for example `/docs` or `/project-name`. The starter's `astro.config.mjs` reads that value and the `basePath` integration rewrites supported root-relative content links.
+
+```sh .env
+SITE_URL=https://example.com
+BASE_PATH=/docs
+```
+
+Use `/` for a site hosted at the domain root.
+
+## Integrations
+
+The installer lets you select optional integrations. You can also edit the `integrations` object manually. Set an integration to `false` to disable it.
+
+## Icons
+
+Lucide is installed as a direct project dependency by the installer. Use it in labels with the `lucide:` prefix:
+
+```js n0ct.config.mjs
+title: '[lucide:terminal] My Documentation',
+```
+
+## Documentation versioning
+
+N0ctane forwards the upstream `starlight-versions` options through `versioning`. The starter already registers the `versions` content collection. Versioning is disabled by default so no archive is created until you opt in.
+
+```js n0ct.config.mjs
+versioning: {
+  versions: [{ slug: '1.0', label: 'v1.0', redirect: 'same-page' }],
+  current: { label: 'Latest', redirect: 'same-page' },
+  exclude: ['blog/**', 'internal/**'],
+},
+```
+
+`versions` entries accept `slug`, `label`, and `redirect` (`same-page` or `root`). `current` accepts `label` and `redirect`. `exclude` accepts source-file glob patterns relative to `src/content/docs/`. Add one archived version at a time: start the dev server or run a build so the plugin creates that snapshot before configuring another. See the [Starlight Versions configuration reference](https://starlight-versions.vercel.app/configuration/) for details.
+
+## Blog
+
+The starter enables Starlight Blog and includes example posts under `src/content/docs/blog/`. Update or remove those posts when you add your own.

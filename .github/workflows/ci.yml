@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Typecheck, tests, package and demo build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Use current npm install-script policy
+        run: npm install --global npm@latest
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Verify package and demo
+        run: npm run check:all
+      - name: Verify npm package contents
+        run: npm pack --dry-run

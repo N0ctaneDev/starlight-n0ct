@@ -1,0 +1,19 @@
+---
+import BlogThemeSelect from 'starlight-blog/components/ThemeSelect.astro';
+import VersionSelect from 'starlight-versions/components/VersionSelect.astro';
+import ThemeSelect from './ThemeSelect.astro';
+---
+
+<div class="n0ct-blog-versioned-theme-select">
+  <BlogThemeSelect />
+  <VersionSelect />
+  <ThemeSelect />
+</div>
+
+<style>
+  .n0ct-blog-versioned-theme-select {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+</style>

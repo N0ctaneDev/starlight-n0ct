@@ -1,0 +1,47 @@
+---
+title: Changelog
+description: N0ctane theme releases.
+topic: start
+---
+
+## 0.1.4 — Release validation hardening
+
+- Normalize version matching across trailing-slash and base-path deployment variants.
+- Make the full root and demo dependency audit a required CI and publishing check.
+
+## 0.1.3 — Security and release hardening
+
+- Force patched esbuild 0.28.x and add production dependency audit to the release checks.
+- Clarify npm 11 install-script approval for consuming projects.
+- Update Lucide icon collection dependency.
+- Preserve project custom CSS precedence over generated theme tokens.
+- Trim sidebar/version labels and reject duplicate historical version labels.
+- Reject unsafe footer/sidebar URL schemes and malformed path inputs.
+
+## 0.1.2 — Starlight compatibility and sidebar fixes
+
+- Corrected shorthand groups to use the supported Starlight sidebar schema.
+- Added Starlight sidebar restore-point markers for expanded group persistence.
+- Preserved native logo support alongside the icon-aware site title.
+- Added duplicate historical-version path and label validation.
+- Kept the theme switcher independent of Starlight's removed picker update API.
+
+## 0.1.1 — Configuration and compatibility fixes
+
+- Scope and repository identity set to `@n0ctanedev/starlight-n0ct` and `n0ctanedev/starlight-n0ct`.
+- TypeScript now uses bundler resolution and local Starlight plugin declaration shims, avoiding accidental checks of raw dependency TypeScript sources.
+- Fixed Expressive Code theme typing and strict sidebar test types.
+- Restored native Starlight sidebar state persistence and mobile-only menu footer behavior.
+- Added validation for unsafe sidebar/version paths and invalid theme tokens.
+- Prevented duplicate `llms.txt` generation across bundled integrations.
+- Corrected the demo's Getting started sidebar entry.
+
+## 0.1.0 — Initial release candidate
+
+- Logo-derived purple/blue palette with Space Grotesk and Space Mono.
+- Cycling Auto/Light/Dark theme icon.
+- Icon-aware sidebar and configurable footer.
+- Native Starlight Steps, FileTree and Asides styling.
+- Ten configurable Starlight plugin integrations, plus native Starlight Versions support.
+- Simple `n0ct.config.mjs` expansion and sidebar version selector.
+- Demo docs, CI, GitHub Pages and npm publishing workflows.

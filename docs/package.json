@@ -1,0 +1,30 @@
+{
+  "name": "starlight-n0ct-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --host",
+    "build": "astro build",
+    "preview": "astro preview --host"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.43.1",
+    "@iconify-json/lucide": "^1.2.155",
+    "@n0ctanedev/starlight-n0ct": "file:..",
+    "astro": "^7.4.12",
+    "astro-icon": "^1.2.0",
+    "starlight-blog": "^0.30.2",
+    "starlight-sidebar-topics": "^0.9.0",
+    "starlight-versions": "^0.10.2"
+  },
+  "allowScripts": {
+    "esbuild": true
+  },
+  "version": "0.0.0",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "overrides": {
+    "esbuild": "^0.28.2"
+  }
+}

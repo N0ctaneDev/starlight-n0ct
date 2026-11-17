@@ -1,0 +1,100 @@
+---
+title: Config API
+description: Public properties exposed by n0ct.config.mjs.
+---
+
+## Editor IntelliSense for `n0ct.config.mjs`
+
+N0ctane exports the `N0ctConfig` TypeScript interface. Add a JSDoc `@satisfies` annotation to your JavaScript config to enable property suggestions, hover documentation, and type diagnostics without renaming the file to TypeScript:
+
+```js
+// @ts-check
+
+/** @satisfies {import('@n0ctanedev/starlight-n0ct').N0ctConfig} */
+const config = {
+  title: 'My Documentation',
+  sidebar: {
+    topicDisplay: 'dropdown',
+  },
+};
+
+export default config;
+```
+
+The installer generates this annotation automatically. In this repository's own root config, the annotation references `./src/types.js` so editor support works before the package has been built. In an installed project, use the public package import shown above.
+
+## Root properties
+
+| Property | Type | Description |
+|---|---|---|
+| `title` | `string` | Required Starlight site title |
+| `description` | `string` | Site description |
+| `sidebar.topics` | `N0ctSidebarTopic[]` | Simplified sidebar declarations |
+| `sidebar.topicDisplay` | `'collapsible' | 'list' | 'dropdown'` | Starlight's default sidebar, upstream topic list, or topic dropdown |
+| `sidebar.topicOptions` | `{ exclude?, topics? }` | Upstream Sidebar Topics route exclusions and route-to-topic mappings |
+| `sidebar.extra` | `N0ctNativeSidebarItem[]` | Additional native Starlight entries |
+| `versioning` | `false | StarlightVersionsUserConfig` | Native `starlight-versions` options; omit or set false to disable |
+| `integrations` | `object` | Plugin options or `false` to disable |
+| `footer` | `object` | Footer text, links and icons |
+| `icons` | `object` | `astro-icon` icon directory and collection settings |
+| `theme` | `object` | Width and accent customization |
+| `starlight` | `Partial<StarlightUserConfig>` | Advanced Starlight escape hatch |
+
+## Sidebar topic object
+
+```ts
+interface N0ctSidebarTopic {
+  label: string;
+  icon?: string;
+  dropdownIcon?: string;
+  id?: string;
+  link?: string;
+  directory?: string;
+  autogenerate?: boolean | { directory?: string };
+  items?: unknown[];
+  collapsed?: boolean;
+  badge?: string | { text: string; variant?: string };
+}
+```
+
+A string is shorthand for a title-cased group and an autogenerate entry. Object topics autogenerate from `directory` or the path in `link` by default. When `autogenerate: false` and only `link` is supplied, internal links become Starlight `slug` entries and external links become native `link` entries. Starlight groups do not have a `link` property, so generated group topics use the path only to infer their autogeneration directory. Unsafe paths and script URLs are rejected during configuration. For `list` and `dropdown`, each topic also needs a root destination, and the upstream plugin owns the generated sidebar; do not set `starlight.sidebar` in those modes.
+
+## Versioning
+
+N0ctane passes the native [`starlight-versions`](https://starlight-versions.vercel.app/configuration/) configuration through unchanged. Supported properties are:
+
+```ts
+interface VersioningConfig {
+  versions: Array<{
+    slug: string;
+    label?: string;
+    redirect?: 'same-page' | 'root';
+  }>;
+  current?: {
+    label?: string;
+    redirect?: 'same-page' | 'root';
+  };
+  exclude?: string[];
+}
+```
+
+The project's content configuration must also register `docsVersionsLoader()` from `starlight-versions/loader` in a `versions` collection. The starter includes this setup. When a configured archived version does not exist yet, the plugin copies the current docs into its version directory during `astro dev` or `astro build`. Add new versions one at a time.
+
+## Theme tokens
+
+```js
+theme: {
+  accent: '#8B5CF6',
+  darkAccent: '#C05AF0',
+  lightAccent: '#1769D8',
+  contentWidth: '58rem',
+  sidebarWidth: '18rem',
+  glow: 'balanced',
+},
+```
+
+Width overrides accept CSS lengths in `px`, `rem`, `em`, `vw`, `vh` or `%`. Accent overrides must be hex colors. `glow` is reserved for the theme's visual intensity setting; the baseline remains balanced.
+
+## Native escape hatch
+
+`starlight` is merged after the simplified settings. Use it for integrations, component overrides or any Starlight option not directly represented in N0ctane. Advanced `sidebar`, `components`, `customCss` and `plugins` intentionally override theme defaults. The `sidebar` escape hatch and `starlight.components.Sidebar` override are incompatible with `topicDisplay: 'list'` or `'dropdown'`: Sidebar Topics owns the route-specific sidebar, and a custom component would hide its selector. Use `collapsible` when you need a native custom sidebar.

@@ -1,0 +1,83 @@
+/**
+ * N0ctane's shared magenta–violet–cyan syntax palette.
+ *
+ * The dark and light themes share semantic hues; only foreground/background
+ * contrast changes between modes.
+ */
+export const n0ctaneDarkCodeTheme = {
+  name: 'N0ctane Night',
+  type: 'dark',
+  colors: {
+    'editor.background': '#0B111C',
+    'editor.foreground': '#DCE6F2',
+    'editorCursor.foreground': '#F178CA',
+    'editor.selectionBackground': '#29445B',
+    'editor.lineHighlightBackground': '#121E2C',
+    'editorLineNumber.foreground': '#60748B',
+    'editorLineNumber.activeForeground': '#C4D2E3',
+    'editorIndentGuide.background': '#263547',
+    'editorIndentGuide.activeBackground': '#49647D',
+    'terminal.background': '#0B111C',
+    'terminal.foreground': '#DCE6F2',
+    'terminal.ansiBlack': '#1C2634',
+    'terminal.ansiRed': '#F07887',
+    'terminal.ansiGreen': '#9ED9A8',
+    'terminal.ansiYellow': '#EBC77C',
+    'terminal.ansiBlue': '#83B8F5',
+    'terminal.ansiMagenta': '#E58ACB',
+    'terminal.ansiCyan': '#6DD6E8',
+    'terminal.ansiWhite': '#DCE6F2',
+  },
+  tokenColors: [
+    { scope: ['comment', 'punctuation.definition.comment'], settings: { foreground: '#8293A8', fontStyle: 'italic' } },
+    { scope: ['keyword', 'storage', 'storage.type', 'storage.modifier'], settings: { foreground: '#F28CCB' } },
+    { scope: ['string', 'string.quoted', 'markup.inline.raw'], settings: { foreground: '#A8DFAF' } },
+    { scope: ['constant.numeric', 'constant.language', 'support.constant'], settings: { foreground: '#F4C77E' } },
+    { scope: ['entity.name.function', 'support.function'], settings: { foreground: '#83D8FF' } },
+    { scope: ['entity.name.type', 'support.type', 'entity.name.class'], settings: { foreground: '#75DED0' } },
+    { scope: ['variable', 'variable.other', 'meta.definition.variable'], settings: { foreground: '#DCE6F2' } },
+    { scope: ['entity.name.tag', 'entity.name.section'], settings: { foreground: '#75D4EA' } },
+    { scope: ['entity.other.attribute-name'], settings: { foreground: '#E5A6D5' } },
+    { scope: ['punctuation', 'meta.brace'], settings: { foreground: '#A5B4C7' } },
+    { scope: ['invalid', 'invalid.illegal'], settings: { foreground: '#FFF4F5', background: '#7C263A' } },
+  ],
+} as const;
+
+export const n0ctaneLightCodeTheme = {
+  name: 'N0ctane Day',
+  type: 'light',
+  colors: {
+    'editor.background': '#F8FAFD',
+    'editor.foreground': '#202B3A',
+    'editorCursor.foreground': '#B6298B',
+    'editor.selectionBackground': '#D8EAF4',
+    'editor.lineHighlightBackground': '#EFF4F8',
+    'editorLineNumber.foreground': '#8492A3',
+    'editorLineNumber.activeForeground': '#3D4A5B',
+    'editorIndentGuide.background': '#E0E7EE',
+    'editorIndentGuide.activeBackground': '#B7C8D8',
+    'terminal.background': '#F8FAFD',
+    'terminal.foreground': '#202B3A',
+    'terminal.ansiBlack': '#344052',
+    'terminal.ansiRed': '#B93852',
+    'terminal.ansiGreen': '#347E4A',
+    'terminal.ansiYellow': '#94620D',
+    'terminal.ansiBlue': '#2867B1',
+    'terminal.ansiMagenta': '#AD348C',
+    'terminal.ansiCyan': '#087E91',
+    'terminal.ansiWhite': '#F8FAFD',
+  },
+  tokenColors: [
+    { scope: ['comment', 'punctuation.definition.comment'], settings: { foreground: '#778496', fontStyle: 'italic' } },
+    { scope: ['keyword', 'storage', 'storage.type', 'storage.modifier'], settings: { foreground: '#AD348C' } },
+    { scope: ['string', 'string.quoted', 'markup.inline.raw'], settings: { foreground: '#287A45' } },
+    { scope: ['constant.numeric', 'constant.language', 'support.constant'], settings: { foreground: '#915B08' } },
+    { scope: ['entity.name.function', 'support.function'], settings: { foreground: '#1B6E9C' } },
+    { scope: ['entity.name.type', 'support.type', 'entity.name.class'], settings: { foreground: '#087F78' } },
+    { scope: ['variable', 'variable.other', 'meta.definition.variable'], settings: { foreground: '#202B3A' } },
+    { scope: ['entity.name.tag', 'entity.name.section'], settings: { foreground: '#147F91' } },
+    { scope: ['entity.other.attribute-name'], settings: { foreground: '#A53B86' } },
+    { scope: ['punctuation', 'meta.brace'], settings: { foreground: '#596A7D' } },
+    { scope: ['invalid', 'invalid.illegal'], settings: { foreground: '#FFFFFF', background: '#B93852' } },
+  ],
+} as const;

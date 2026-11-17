@@ -1,0 +1,88 @@
+---
+---
+<button class="n0ct-theme-toggle" type="button" data-mode="auto" aria-label="Color theme: Auto. Activate to switch to Light." title="Color theme: Auto">
+  <svg class="n0ct-theme-toggle__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g class="icon-auto" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M8 10l2.5 3 2-2 3.5 4"/>
+    </g>
+    <g class="icon-light" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+      <circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>
+    </g>
+    <path class="icon-dark" d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span class="n0ct-sr-only" data-theme-announcement>Theme: Auto</span>
+</button>
+<script>
+  type ThemeMode = 'auto' | 'light' | 'dark';
+  const modes: ThemeMode[] = ['auto', 'light', 'dark'];
+  const themeKey = 'starlight-theme';
+  const media = window.matchMedia('(prefers-color-scheme: dark)');
+
+  function getSavedMode(): ThemeMode {
+    try {
+      const saved = localStorage.getItem(themeKey);
+      return saved === 'light' || saved === 'dark' ? saved : 'auto';
+    } catch {
+      return 'auto';
+    }
+  }
+
+  function setTheme(mode: ThemeMode) {
+    try {
+      // Match Starlight's own storage contract: an empty string represents Auto.
+      localStorage.setItem(themeKey, mode === 'auto' ? '' : mode);
+    } catch {
+      // The page still works when browser storage is unavailable.
+    }
+
+    const activeTheme = mode === 'auto' ? (media.matches ? 'dark' : 'light') : mode;
+    document.documentElement.dataset.theme = activeTheme;
+
+    document.querySelectorAll<HTMLButtonElement>('.n0ct-theme-toggle').forEach((button) => {
+      button.dataset.mode = mode;
+      const next = modes[(modes.indexOf(mode) + 1) % modes.length];
+      const displayMode = (value: ThemeMode) => value[0].toUpperCase() + value.slice(1);
+      const label = `Color theme: ${displayMode(mode)}. Activate to switch to ${displayMode(next)}.`;
+      button.setAttribute('aria-label', label);
+      button.title = label;
+      const announcement = button.querySelector<HTMLElement>('[data-theme-announcement]');
+      if (announcement) announcement.textContent = `Theme: ${displayMode(mode)}`;
+    });
+  }
+
+  // Event delegation supports both the desktop header and mobile menu footer,
+  // including Astro client-side page transitions.
+  const themeWindow = window as typeof window & { __n0ctThemeToggleBound?: boolean };
+  if (!themeWindow.__n0ctThemeToggleBound) {
+    themeWindow.__n0ctThemeToggleBound = true;
+    document.addEventListener('click', (event) => {
+      const button = event.target instanceof Element
+        ? event.target.closest<HTMLButtonElement>('.n0ct-theme-toggle')
+        : null;
+      if (!button) return;
+      const current = getSavedMode();
+      setTheme(modes[(modes.indexOf(current) + 1) % modes.length]);
+    });
+    media.addEventListener('change', () => {
+      if (getSavedMode() === 'auto') setTheme('auto');
+    });
+    document.addEventListener('astro:page-load', () => setTheme(getSavedMode()));
+  }
+
+  setTheme(getSavedMode());
+</script>
+<style>
+  .n0ct-theme-toggle {
+    display:grid; place-items:center; width:2.35rem; height:2.35rem;
+    border:1px solid var(--sl-color-hairline); border-radius:.72rem;
+    color:var(--sl-color-text); background:var(--sl-color-bg-nav);
+    cursor:pointer; transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+  }
+  .n0ct-theme-toggle:hover { border-color:var(--sl-color-accent); box-shadow:0 0 .9rem color-mix(in srgb,var(--sl-color-accent) var(--n0ct-glow-strength, 24%),transparent); }
+  .n0ct-theme-toggle:focus-visible { outline:2px solid var(--sl-color-accent); outline-offset:3px; }
+  .n0ct-theme-toggle:active { transform:scale(.94); }
+  .n0ct-theme-toggle__icon { width:1.12rem; height:1.12rem; }
+  .n0ct-theme-toggle .icon-auto,.n0ct-theme-toggle .icon-light,.n0ct-theme-toggle .icon-dark { display:none; }
+  .n0ct-theme-toggle[data-mode="auto"] .icon-auto,.n0ct-theme-toggle[data-mode="light"] .icon-light,.n0ct-theme-toggle[data-mode="dark"] .icon-dark { display:initial; }
+  .n0ct-sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+</style>

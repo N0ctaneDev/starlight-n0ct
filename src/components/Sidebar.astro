@@ -1,0 +1,20 @@
+---
+import DefaultSidebar from '@astrojs/starlight/components/Sidebar.astro';
+import TopicsDropdown from 'starlight-sidebar-topics-dropdown/TopicsDropdown.astro';
+---
+<div class="n0ct-sidebar-topic-switcher">
+  <TopicsDropdown />
+</div>
+
+<DefaultSidebar><slot /></DefaultSidebar>
+
+<style is:global>
+  .n0ct-sidebar-topic-switcher {
+    margin: 0 0.5rem 0.55rem;
+  }
+
+  .n0ct-sidebar-topic-switcher .starlight-sidebar-topics-dropdown-dropdown {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+</style>

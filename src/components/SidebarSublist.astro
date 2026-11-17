@@ -1,0 +1,170 @@
+---
+import { Icon } from 'astro-icon/components';
+import SidebarRestorePoint from '@astrojs/starlight/components/SidebarRestorePoint.astro';
+interface Entry { type: 'link' | 'group'; label: string; href?: string; isCurrent?: boolean; attrs?: Record<string, unknown>; badge?: { text: string; variant?: string; class?: string }; entries?: Entry[]; collapsed?: boolean }
+interface Props { sublist: Entry[]; nestedCount?: number }
+const { sublist, nestedCount = 0 } = Astro.props;
+const splitIcon = (label: string) => {
+  const match = label.match(/^\[([^\]]+)\]\s*/);
+  return { icon: match?.[1], text: match ? label.slice(match[0].length) : label };
+};
+const hasCurrent = (entry: Entry): boolean => entry.type === 'link' ? Boolean(entry.isCurrent) : Boolean(entry.entries?.some(hasCurrent));
+---
+<ul class:list={['n0ct-sidebar-list', nestedCount > 0 && 'n0ct-sidebar-list--nested']}>
+  {sublist.map((entry) => {
+    const parsed = splitIcon(entry.label);
+    if (entry.type === 'group') {
+      const active = hasCurrent(entry);
+      return (
+        <li class:list={['n0ct-sidebar-group', active && 'is-active']}>
+          <details open={active || !entry.collapsed}>
+            <summary>
+              {parsed.icon && <Icon name={parsed.icon} class="n0ct-sidebar-icon" />}
+              <span class="n0ct-sidebar-label">{parsed.text}</span>
+              {entry.badge && <span class:list={['n0ct-sidebar-badge', `n0ct-badge--${entry.badge.variant ?? 'default'}`, entry.badge.class]}>{entry.badge.text}</span>}
+              <svg class="n0ct-sidebar-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
+            </summary>
+            <SidebarRestorePoint />
+            <Astro.self sublist={entry.entries ?? []} nestedCount={nestedCount + 1} />
+          </details>
+        </li>
+      );
+    }
+    return (
+      <li class:list={['n0ct-sidebar-link', entry.isCurrent && 'is-current']}>
+        <a href={entry.href} aria-current={entry.isCurrent ? 'page' : undefined} {...entry.attrs}>
+          {parsed.icon && <Icon name={parsed.icon} class="n0ct-sidebar-icon" />}
+          <span class="n0ct-sidebar-label">{parsed.text}</span>
+          {entry.badge && <span class:list={['n0ct-sidebar-badge', `n0ct-badge--${entry.badge.variant ?? 'default'}`, entry.badge.class]}>{entry.badge.text}</span>}
+        </a>
+      </li>
+    );
+  })}
+</ul>
+<style is:global>
+  .n0ct-sidebar-list {
+    display: grid;
+    gap: .12rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .n0ct-sidebar-list--nested {
+    margin: .15rem 0 .21rem .45rem;
+    padding-inline-start: .42rem;
+    border-inline-start: 1px solid var(--sl-color-hairline);
+  }
+
+  .n0ct-sidebar-group > details > summary,
+  .n0ct-sidebar-link > a {
+    display: flex;
+    align-items: center;
+    gap: .33rem;
+    min-height: 1.23rem;
+    padding: .23rem .37rem;
+    border-radius: .42rem;
+    color: var(--sl-color-gray-2);
+    text-decoration: none;
+    font-size: .85rem;
+    line-height: 1.2;
+    cursor: pointer;
+  }
+
+  .n0ct-sidebar-group > details > summary {
+    color: var(--sl-color-text);
+    font-weight: 650;
+    list-style: none;
+  }
+
+  .n0ct-sidebar-group > details > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .n0ct-sidebar-link > a:hover,
+  .n0ct-sidebar-group > details > summary:hover {
+    color: var(--sl-color-text);
+    background: color-mix(in srgb, var(--n0ct-pink) 9%, transparent);
+  }
+
+  .n0ct-sidebar-link.is-current > a {
+    color: var(--sl-color-text);
+    background:
+      linear-gradient(105deg,
+        color-mix(in srgb, var(--n0ct-pink) 19%, transparent),
+        color-mix(in srgb, var(--n0ct-violet) 10%, transparent) 52%,
+        color-mix(in srgb, var(--n0ct-cyan) 13%, transparent));
+    box-shadow:
+      inset 2px 0 var(--n0ct-pink),
+      0 4px 16px color-mix(in srgb, var(--n0ct-violet) 10%, transparent);
+  }
+
+  .n0ct-sidebar-icon {
+    flex: none;
+    width: .94rem;
+    height: .94rem;
+    color: var(--sl-color-accent);
+  }
+
+  .n0ct-sidebar-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .n0ct-sidebar-chevron {
+    flex: none;
+    width: .78rem;
+    margin-inline-start: auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    transition: transform .18s ease;
+  }
+
+  .n0ct-sidebar-group details[open] > summary .n0ct-sidebar-chevron {
+    transform: rotate(180deg);
+  }
+
+  .n0ct-sidebar-badge {
+    margin-inline-start: auto;
+    padding: .08rem .35rem;
+    border-radius: .35rem;
+    background: var(--sl-color-gray-6);
+    color: var(--sl-color-gray-2);
+    font-size: .62rem;
+    font-weight: 700;
+  }
+
+  .n0ct-badge--success {
+    color: #22a06b;
+    background: color-mix(in srgb, #22a06b 12%, transparent);
+  }
+
+  .n0ct-badge--danger {
+    color: #e05268;
+    background: color-mix(in srgb, #e05268 12%, transparent);
+  }
+
+  .n0ct-badge--tip {
+    color: #a855f7;
+    background: color-mix(in srgb, #a855f7 12%, transparent);
+  }
+
+  .n0ct-badge--caution {
+    color: #c58a22;
+    background: color-mix(in srgb, #c58a22 12%, transparent);
+  }
+
+  .n0ct-sidebar-group > details > summary:focus-visible,
+  .n0ct-sidebar-link > a:focus-visible {
+    outline: 2px solid var(--sl-color-accent);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .n0ct-sidebar-chevron {
+      transition: none;
+    }
+  }
+</style>

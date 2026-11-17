@@ -1,0 +1,38 @@
+---
+interface Props { type?: 'note' | 'tip' | 'warning' | 'danger' | 'info'; title?: string }
+const { type = 'info', title } = Astro.props;
+const names = { note: 'Note', tip: 'Tip', warning: 'Warning', danger: 'Danger', info: 'Info' };
+---
+<aside class={`n0ct-callout n0ct-callout--${type}`} role={type === 'danger' || type === 'warning' ? 'alert' : 'note'}>
+  <div class="n0ct-callout__title">{title ?? names[type]}</div>
+  <div class="n0ct-callout__body"><slot /></div>
+</aside>
+<style>
+  .n0ct-callout {
+    --callout: var(--sl-color-accent);
+    margin-block: 1rem;
+    padding: .72rem .9rem;
+    border: 1px solid color-mix(in srgb, var(--callout) 36%, var(--sl-color-hairline));
+    border-inline-start: 3px solid var(--callout);
+    border-radius: .75rem;
+    background:
+      linear-gradient(115deg, color-mix(in srgb, var(--n0ct-pink) 8%, transparent), transparent 48%),
+      linear-gradient(300deg, color-mix(in srgb, var(--n0ct-cyan) 7%, transparent), transparent 58%),
+      var(--sl-color-bg-sidebar);
+    box-shadow: var(--n0ct-shadow-soft);
+  }
+
+  .n0ct-callout--tip { --callout: #28a879; }
+  .n0ct-callout--warning { --callout: #c28a24; }
+  .n0ct-callout--danger { --callout: #db526c; }
+  .n0ct-callout--info { --callout: var(--n0ct-cyan); }
+
+  .n0ct-callout__title {
+    margin-block-end: .25rem;
+    color: var(--callout);
+    font-weight: 700;
+  }
+
+  .n0ct-callout__body > :first-child { margin-top: 0; }
+  .n0ct-callout__body > :last-child { margin-bottom: 0; }
+</style>

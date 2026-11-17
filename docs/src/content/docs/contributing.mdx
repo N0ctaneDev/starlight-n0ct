@@ -1,0 +1,37 @@
+---
+title: Contributing
+description: Set up the repository, validate changes and submit a pull request.
+topic: start
+---
+
+## Clone and install
+
+```sh
+git clone https://github.com/n0ctanedev/starlight-n0ct.git
+cd starlight-n0ct
+npm install
+```
+
+## Validate the package
+
+```sh
+npm run typecheck
+npm test
+npm run build
+```
+
+## Build the demo
+
+```sh
+npm run docs:build
+```
+
+The demo site uses a local `file:..` dependency so package changes can be tested before publishing.
+
+## Pull requests
+
+Open a PR against `main`. CI validates the package and builds the demo documentation. For visual changes, include screenshots from both color modes and check the interface with reduced motion enabled.
+
+## Releases
+
+The `Publish to npm` workflow supports a dry run and manual release. npm trusted publishing must be configured for the repository and workflow before publishing.

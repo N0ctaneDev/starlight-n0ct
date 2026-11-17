@@ -1,0 +1,46 @@
+---
+title: Theme reference
+description: Typography, color identity, layout and accessibility.
+---
+
+## Typography
+
+N0ctane uses the font pairing selected from Ion:
+
+- **Space Grotesk Variable** for interface and body text.
+- **Space Mono** for code and monospaced content.
+
+The fonts are bundled as package dependencies, so users do not need to add separate CSS imports.
+
+## Logo palette
+
+The initial design tokens are sampled from the supplied N0ctOS logo:
+
+| Token | Hex |
+|---|---|
+| Void | `#0E0C1A` |
+| Neon pink | `#D95EEF` |
+| Violet | `#9E30ED` |
+| Purple | `#5A1BE4` |
+| Deep blue | `#1F1FDD` |
+| Electric blue | `#1C5EEF` |
+| Cyan | `#37D1F6` |
+| Ice white | `#E7E5EC` |
+
+Dark mode is purple-centric with magenta highlights. Light mode is blue-centric with violet secondary accents.
+
+## Layout
+
+The default content width is `55rem` and the sidebar width is `17rem`. Adjust them from `n0ct.config.mjs`:
+
+```js
+theme: {
+  contentWidth: '58rem',
+  sidebarWidth: '18rem',
+  glow: 'balanced',
+},
+```
+
+## Motion and contrast
+
+Glow is reserved for selected navigation, interactive states and a few component accents. Transitions and the page-title entrance animation are reduced when the browser reports `prefers-reduced-motion: reduce`.

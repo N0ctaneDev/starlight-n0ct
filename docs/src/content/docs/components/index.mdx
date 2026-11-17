@@ -1,0 +1,97 @@
+---
+title: Components
+description: N0ctane styles native Starlight components and adds a custom Callout.
+---
+
+import { Steps, FileTree } from '@astrojs/starlight/components';
+import Callout from '@n0ctanedev/starlight-n0ct/components/Callout.astro';
+
+N0ctane deliberately styles Starlight's native components instead of shipping duplicates. This keeps MDX imports and content semantics familiar.
+
+## Steps
+
+Use Starlight's built-in `Steps` component. N0ctane wraps the numbered list in a single panel and styles the number markers and connecting line with the theme's gradient palette.
+
+```mdx
+import { Steps } from '@astrojs/starlight/components';
+
+<Steps>
+  1. Install dependencies.
+  2. Start the development server.
+  3. Build the production site.
+</Steps>
+```
+
+<Steps>
+  1. Install dependencies:
+
+     ```sh
+     npm install
+     ```
+
+  2. Start the development server:
+
+     ```sh
+     npm run dev
+     ```
+
+  3. Build the production site:
+
+     ```sh
+     npm run build
+     ```
+</Steps>
+
+## File tree
+
+Use Starlight's built-in `FileTree` component. It supports nested folders, open/closed directories and bolding the currently highlighted file.
+
+```mdx
+import { FileTree } from '@astrojs/starlight/components';
+
+<FileTree>
+- src/
+  - components/
+    - **Sidebar.astro**
+  - styles/
+    - global.css
+- astro.config.mjs
+- package.json
+</FileTree>
+```
+
+<FileTree>
+- src/
+  - components/
+    - Header.astro
+    - **Sidebar.astro**
+  - content/
+    - docs/
+  - styles/
+    - global.css
+- astro.config.mjs
+- n0ct.config.mjs
+- package.json
+</FileTree>
+
+## Callouts
+
+Standard Starlight asides (`:::tip`, `:::note`, `:::caution`, `:::danger`) receive matching N0ctane styling. For custom content with a specific label, import the optional Callout:
+
+```mdx
+import Callout from '@n0ctanedev/starlight-n0ct/components/Callout.astro';
+
+<Callout type="tip" title="Pro tip">
+  Start with defaults, then customize the parts you need.
+</Callout>
+```
+
+<Callout type="tip" title="Pro tip">
+  Start with defaults, then customize the parts you need.
+</Callout>
+
+Supported types: `note`, `tip`, `warning`, `danger`, `info`.
+
+## Code blocks
+
+Starlight uses Expressive Code for code frames and Shiki for syntax highlighting. N0ctane configures a dark/light theme pair (`tokyo-night` and `github-light`) and styles the frame to match the rest of the UI. Your site theme switch changes the code theme as well.

@@ -1,0 +1,44 @@
+---
+title: Integrations
+description: Configure the ten integrations bundled with N0ctane.
+---
+
+All ten plugins are installed as package dependencies and enabled by default. Set a plugin's key to `false` to disable it or pass an object of native upstream options.
+
+```js
+integrations: {
+  basePath: {},
+  announcement: false,
+  kbd: {},
+  llmsTxt: {},
+  scrollToTop: { smoothScroll: true },
+  llmActions: {},
+  sidebarSwipe: {},
+  linksValidator: {},
+  blog: false,
+  imageZoom: {},
+},
+```
+
+| N0ct key | Package | Role |
+|---|---|---|
+| `basePath` | `starlight-base-path` | Base path support for root-relative content links |
+| `announcement` | `starlight-announcement` | Announcement banners |
+| `kbd` | `starlight-kbd` | Keyboard shortcut notation |
+| `llmsTxt` | `starlight-llms-txt` | LLM-friendly documentation index |
+| `scrollToTop` | `starlight-scroll-to-top` | Scroll-to-top button |
+| `llmActions` | `starlight-llm-actions` | Copy/view Markdown and open pages in LLM tools |
+| `sidebarSwipe` | `starlight-sidebar-swipe` | Mobile swipe navigation |
+| `linksValidator` | `starlight-links-validator` | Build-time internal link validation |
+| `blog` | `starlight-blog` | Blog posts, tags, RSS and author metadata |
+| `imageZoom` | `starlight-image-zoom` | Accessible image zoom |
+
+## LLM index ownership
+
+The dedicated `llmsTxt` integration is enabled by default. `starlight-llm-actions` also supports site-level indexes. To switch ownership to LLM Actions, set `llmsTxt: false`; N0ctane will then enable `llmActions.llmsTxt` by default. Do not enable both generators together: N0ctane rejects that configuration because both plugins would claim the same output routes. You can explicitly set `llmActions: { llmsTxt: false }` to disable its index output.
+
+## Options are forwarded
+
+N0ctane passes each options object directly to the upstream plugin factory. It intentionally does not invent or rename upstream option names. See the [Announcement](https://github.com/frostybee/starlight-announcement), [Keyboard](https://github.com/HiDeoo/starlight-kbd), [LLMs.txt](https://github.com/delucis/starlight-llms-txt), [Scroll to top](https://github.com/frostybee/starlight-scroll-to-top), [LLM Actions](https://holdenhewett.github.io/starlight-llm-actions/), [Sidebar swipe](https://github.com/trueberryless-org/starlight-sidebar-swipe), [Links validator](https://github.com/HiDeoo/starlight-links-validator), [Blog](https://github.com/HiDeoo/starlight-blog) and [Image zoom](https://github.com/HiDeoo/starlight-image-zoom) documentation for their current options.
+
+Because plugins can add routes or require specific content conventions, review the upstream guide for each feature you enable. For example, the blog plugin requires its documented collection/content setup.

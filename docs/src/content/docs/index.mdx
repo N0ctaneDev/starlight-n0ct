@@ -1,0 +1,43 @@
+---
+title: N0ctane
+description: Spacious documentation with a neon edge.
+template: splash
+hero:
+  tagline: A N0ctOS-inspired theme for Astro Starlight.
+  actions:
+    - text: Get started
+      link: /getting-started/
+      icon: right-arrow
+    - text: Configuration
+      link: /guides/configuration/
+      variant: minimal
+topic: start
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid stagger>
+  <Card title="Designed for reading" icon="pencil">
+    Space Grotesk typography, a spacious content column and restrained neon accents.
+  </Card>
+  <Card title="One small config" icon="setting">
+    Describe your docs structure in `n0ct.config.mjs`; N0ctane expands it into native Starlight configuration.
+  </Card>
+  <Card title="Useful integrations" icon="puzzle">
+    Ten opt-out integrations configured from a single object.
+  </Card>
+</CardGrid>
+
+## The visual language
+
+N0ctane takes its palette from the N0ctOS identity: deep violet-black, electric purple, magenta and cyan. Dark mode leans purple; light mode leans blue.
+
+Glow is used as an interaction cue, not painted onto every surface. Text and code remain readable, and animation follows `prefers-reduced-motion`.
+
+## Explore
+
+- [Install N0ctane](/getting-started/)
+- [Configure the theme](/guides/configuration/)
+- [Enable and configure integrations](/guides/integrations/)
+- [Use the built-in components](/components/)
+- [Configuration API](/reference/config-api/)
