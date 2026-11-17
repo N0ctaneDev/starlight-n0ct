@@ -193,3 +193,48 @@ topic: guides
 ```
 
 The generated starter merges `topicSchema` from `starlight-sidebar-topics/schema` into Starlight's docs schema. Existing projects using either list or dropdown mode should merge that schema too.
+
+## Header and navigation
+
+The `navbar` option customizes the full-width Starlight header. Place built-in controls and custom navigation links independently in the left, center, or right group.
+
+```js n0ct.config.mjs
+navbar: {
+  height: '3.25rem',
+  showBrand: true,
+  showSearch: true,
+  showTheme: true,
+  showSocial: true,
+  showVersions: true,
+  showLanguage: false,
+  showMenuToggle: true,
+  placements: {
+    brand: 'left',
+    search: 'center',
+    social: 'right',
+    versions: 'right',
+    theme: 'right',
+    language: 'right',
+    menuToggle: 'right',
+  },
+  links: [
+    { label: 'Guides', href: '/guides/', position: 'left' },
+    {
+      label: 'Community',
+      position: 'right',
+      items: [
+        { label: 'GitHub', href: 'https://github.com/example/project', external: true },
+        { label: 'Website', href: 'https://example.com', external: true },
+      ],
+    },
+  ],
+},
+```
+
+Supported controls are `brand`, `search`, `social`, `versions`, `theme`, `language`, and `menuToggle`. The native mobile menu remains Starlight's own accessible popover control. Set `showMenuToggle: false` to hide it.
+
+A top-level navigation link accepts `label`, `href`, `external`, and `position`. Use `items` instead of `href` for a dropdown. Root-relative destinations are prefixed with Astro's configured `base`. External links open in a new tab when `external: true`.
+
+## Tailwind CSS
+
+Tailwind CSS v4 is activated by N0ctane. The package registers the Vite plugin and exposes its palette as Tailwind theme tokens. You can use classes such as `bg-noct-bg-surface`, `text-noct-text-primary`, and `border-noct-cyan-500/40` in Astro and MDX content; no extra Tailwind plugin wiring is needed in `astro.config.mjs`.
