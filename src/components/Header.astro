@@ -33,14 +33,15 @@ const showLanguage = nav.showLanguage === true;
 const path = Astro.url.pathname.startsWith(base + '/')
   ? Astro.url.pathname.slice(base.length)
   : Astro.url.pathname;
-const versions = versioning && versioning !== false ? versioning.versions ?? [] : [];
+const versionConfig = versioning && versioning !== false ? versioning : undefined;
+const versions = versionConfig?.versions ?? [];
 const activeVersion = versions.find(({ slug }: { slug: string }) =>
   path === '/' + slug || path.startsWith('/' + slug + '/'),
 );
 const pathWithoutVersion = activeVersion ? path.slice(('/' + activeVersion.slug).length) || '/' : path;
 const versionChoices = [
   {
-    label: versioning?.current?.label ?? 'Latest',
+    label: versionConfig?.current?.label ?? 'Latest',
     href: withBase(pathWithoutVersion),
     selected: !activeVersion,
   },
