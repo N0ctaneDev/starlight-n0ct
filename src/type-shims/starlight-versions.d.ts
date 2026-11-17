@@ -3,23 +3,21 @@
  * and does not ship declaration files. Keep the versioning config type here so
  * our typecheck does not compile the dependency's internal source tree.
  */
-declare module 'starlight-versions' {
-  import type { StarlightPlugin } from '@astrojs/starlight/types';
+import type { StarlightPlugin } from '@astrojs/starlight/types';
 
-  export interface StarlightVersionsUserConfig {
-    current?: {
-      redirect?: 'root' | 'same-page';
-      label?: string;
-    };
-    exclude?: string[];
-    versions: Array<{
-      redirect?: 'root' | 'same-page';
-      label?: string;
-      slug: string;
-    }>;
-  }
-
-  const starlightVersions: (config: StarlightVersionsUserConfig) => StarlightPlugin;
-
-  export default starlightVersions;
+export interface StarlightVersionsUserConfig {
+  current?: {
+    redirect?: 'root' | 'same-page';
+    label?: string;
+  };
+  exclude?: string[];
+  versions: Array<{
+    redirect?: 'root' | 'same-page';
+    label?: string;
+    slug: string;
+  }>;
 }
+
+declare const starlightVersions: (config: StarlightVersionsUserConfig) => StarlightPlugin;
+
+export default starlightVersions;
