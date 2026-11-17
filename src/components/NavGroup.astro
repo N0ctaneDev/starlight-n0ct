@@ -1,0 +1,63 @@
+---
+import Search from 'virtual:starlight/components/Search';
+import SocialIcons from 'virtual:starlight/components/SocialIcons';
+import ThemeSelect from 'virtual:starlight/components/ThemeSelect';
+import SiteTitle from 'virtual:starlight/components/SiteTitle';
+import LanguageSelect from 'virtual:starlight/components/LanguageSelect';
+import NavItem from './NavItem.astro';
+import type { N0ctNavbarConfig, N0ctNavControl, N0ctNavPosition, N0ctNavbarLink } from '../types.js';
+
+interface Props {
+  position: N0ctNavPosition;
+  nav: N0ctNavbarConfig;
+  links: N0ctNavbarLink[];
+  showSearch: boolean;
+  showSocial: boolean;
+  showVersions: boolean;
+  showLanguage: boolean;
+  versionChoices: Array<{ label: string; href: string; selected: boolean }>;
+}
+
+const { position, nav, links, showSearch, showSocial, showVersions, showLanguage, versionChoices } = Astro.props;
+const defaults: Record<N0ctNavControl, N0ctNavPosition> = {
+  brand: 'left',
+  search: 'center',
+  social: 'right',
+  versions: 'right',
+  theme: 'right',
+  language: 'right',
+  menuToggle: 'right',
+};
+const isHere = (control: N0ctNavControl) => (nav.placements?.[control] ?? defaults[control]) === position;
+---
+
+<div class:list={['noct-nav-group', 'noct-nav-group-' + position, { 'noct-nav-actions': position === 'right' }]} data-noct-nav-group={position}>
+  {isHere('brand') && nav.showBrand !== false && (
+    <div class="noct-nav-brand"><SiteTitle /></div>
+  )}
+
+  {links.length > 0 && (
+    <nav class={'noct-nav-links noct-nav-links-' + position} aria-label={position + ' navigation'}>
+      {links.map((item) => <NavItem item={item} />)}
+    </nav>
+  )}
+
+  {isHere('search') && showSearch && <div class="noct-nav-search print:hidden"><Search /></div>}
+
+  {isHere('social') && showSocial && <div class="noct-nav-social print:hidden"><SocialIcons /></div>}
+
+  {isHere('versions') && showVersions && (
+    <label class="noct-version-control print:hidden">
+      <span class="sr-only">Documentation version</span>
+      <select aria-label="Documentation version" data-noct-version-select>
+        {versionChoices.map((version) => <option value={version.href} selected={version.selected}>{version.label}</option>)}
+      </select>
+    </label>
+  )}
+
+  {isHere('theme') && nav.showTheme !== false && (
+    <div class="noct-native-theme-select"><ThemeSelect /></div>
+  )}
+
+  {isHere('language') && showLanguage && <div class="noct-language-select print:hidden"><LanguageSelect /></div>}
+</div>
