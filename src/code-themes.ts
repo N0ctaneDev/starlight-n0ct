@@ -47,14 +47,19 @@ function palette(mode: Mode, config?: N0ctThemeMode): Palette {
   const semantic = config?.semantic ?? {};
   const overrides = config?.overrides ?? {};
   const dark = mode === 'dark';
+  const primary = overrides.brand?.primary ?? p.primary ?? defaultsForMode.primary;
+  const accent = overrides.brand?.accent ?? p.accent ?? defaultsForMode.accent;
+  const surface = overrides.code?.background ?? overrides.surfaces?.code ?? overrides.surfaces?.surface ?? p.surface ?? defaultsForMode.surface;
+  const background = overrides.surfaces?.base ?? p.background ?? mixHex(surface, dark ? '#070812' : '#F8F7FC', dark ? .28 : .04);
+  const text = overrides.code?.foreground ?? overrides.text?.primary ?? p.text ?? defaultsForMode.text;
   return {
-    primary: overrides.brand?.primary ?? p.primary ?? defaultsForMode.primary,
-    secondary: overrides.brand?.secondary ?? p.secondary ?? defaultsForMode.secondary,
-    accent: overrides.brand?.accent ?? p.accent ?? defaultsForMode.accent,
-    surface: overrides.surfaces?.code ?? overrides.surfaces?.surface ?? p.surface ?? defaultsForMode.surface,
-    background: overrides.surfaces?.base ?? p.background ?? defaultsForMode.background,
-    text: overrides.code?.foreground ?? overrides.text?.primary ?? p.text ?? defaultsForMode.text,
-    muted: overrides.text?.muted ?? mixHex(p.text ?? defaultsForMode.text, p.background ?? defaultsForMode.background, dark ? .42 : .48),
+    primary,
+    secondary: overrides.brand?.secondary ?? p.secondary ?? mixHex(primary, accent, .5),
+    accent,
+    surface,
+    background,
+    text,
+    muted: overrides.text?.muted ?? mixHex(text, background, dark ? .42 : .48),
     success: semantic.success?.foreground ?? defaultsForMode.success,
     warning: semantic.warning?.foreground ?? defaultsForMode.warning,
     danger: semantic.danger?.foreground ?? defaultsForMode.danger,

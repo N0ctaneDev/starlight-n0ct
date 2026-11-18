@@ -8,7 +8,7 @@ export interface N0ctResolvedTheme {
   light: N0ctResolvedThemeMode;
 }
 
-const DEFAULTS: Record<'dark' | 'light', Pick<N0ctThemePalette, 'primary' | 'accent' | 'surface' | 'text'>> = {
+const DEFAULTS: Record<'dark' | 'light', Required<Pick<N0ctThemePalette, 'primary' | 'accent' | 'surface' | 'text'>>> = {
   dark: {
     primary: '#8C42FF',
     accent: '#2A85FF',
