@@ -8,7 +8,6 @@ import type { N0ctConfig } from './types.js';
 import { generateN0ctThemeCss, validateN0ctThemeColors } from './theme-colors.js';
 import { createRemarkCodeFilenamesIntegration } from './remark-code-filenames.js';
 
-const isHex = (value: string) => /^#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/i.test(value);
 const safeLength = (value: string) => {
   const match = /^(\d+(?:\.\d+)?)(px|rem|em|vw|vh|%)$/.exec(value);
   return Boolean(match && Number(match[1]) > 0);
@@ -50,7 +49,6 @@ export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
         const runtimeSettings = {
           footer: config.footer ?? {},
           sidebar: { topicDisplay: config.sidebar?.topicDisplay ?? 'collapsible' },
-          navbar: config.navbar ?? {},
           versioning: config.versioning ?? false,
         };
         const settingsLiteral = JSON.stringify(runtimeSettings).replace(/</g, '\\u003c');
@@ -80,9 +78,8 @@ export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
 
         const existingCss = [...(starlightConfig.customCss ?? [])];
         const themeCssPath = fileURLToPath(new URL('./styles/theme.css', import.meta.url));
-        const referenceCssPath = fileURLToPath(new URL('./styles/reference.css', import.meta.url));
-        const themeCssIndex = Math.max(existingCss.indexOf(themeCssPath), existingCss.indexOf(referenceCssPath));
-        // Keep generated tokens after both theme stylesheets but before user CSS, so
+        const themeCssIndex = existingCss.indexOf(themeCssPath);
+        // Keep generated tokens after the base theme stylesheet but before user CSS, so
         // project-level customCss can intentionally override theme tokens.
         const insertAt = themeCssIndex >= 0 ? themeCssIndex + 1 : existingCss.length;
         existingCss.splice(insertAt, 0, tokenPath);

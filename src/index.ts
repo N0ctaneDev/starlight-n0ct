@@ -78,8 +78,7 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
         ? (config.versioning ? 'BlogVersionedThemeSelect' : 'BlogThemeSelect')
         : (config.versioning ? 'VersionedThemeSelect' : 'ThemeSelect'),
     ),
-    // Blog's header-start navigation overrides SiteTitle; compose it with
-    // N0ctane's title rather than dropping the upstream Blog link.
+    // Keep the snapshot's native Starlight header composition; customize only its title and theme control.
     SiteTitle: component(hasBlogHeaderStart ? 'BlogSiteTitle' : 'SiteTitle'),
     Footer: component('Footer'),
     Sidebar: component('Sidebar'),
