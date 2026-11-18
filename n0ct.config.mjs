@@ -26,14 +26,14 @@ const config = {
     announcement: {
       announcements: [{ id: 'n0ctane-v020-preview', content: 'N0ctane v0.2.0 preview — explore the theme, code blocks, blog, and versioned docs.' }],
     },
-    kbd: {},
+    kbd: { globalPicker: false },
     llmsTxt: {},
     scrollToTop: { smoothScroll: true },
     llmActions: {},
     sidebarSwipe: {},
     linksValidator: {},
     blog: {
-      navigation: 'header-end',
+      navigation: 'none',
       metrics: { readingTime: true, words: 'rounded' },
       authors: {
         team: {
