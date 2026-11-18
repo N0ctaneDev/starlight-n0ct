@@ -334,7 +334,7 @@
 /* Expressive Code styleOverrides own the single outer frame border. */
 .expressive-code .frame {
   border-radius: var(--n0ct-radius-md) !important;
-  box-shadow: var(--n0ct-shadow-soft);
+  box-shadow: none !important;
 }
 
 .expressive-code .frame .header,
