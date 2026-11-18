@@ -117,8 +117,8 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
   const primary = normalizeHex(overrides.brand?.primary ?? palette.primary, 'theme.colors.' + mode + '.overrides.brand.primary');
   const accent = normalizeHex(overrides.brand?.accent ?? palette.accent, 'theme.colors.' + mode + '.overrides.brand.accent');
   const secondary = normalizeHex(overrides.brand?.secondary ?? (supplied.secondary ?? mixHex(primary, accent, 0.5)), 'theme.colors.' + mode + '.overrides.brand.secondary');
-  const highlight = normalizeHex(overrides.brand?.highlight ?? (supplied.highlight ?? mixHex(accent, palette.surface, dark ? 0.78 : 0.88)), 'theme.colors.' + mode + '.overrides.brand.highlight');
-  const highlightText = normalizeHex(overrides.brand?.highlightText ?? (supplied.highlightText ?? contrastText(highlight)), 'theme.colors.' + mode + '.overrides.brand.highlightText');
+  const highlight = normalizeHex(overrides.highlight?.background ?? overrides.brand?.highlight ?? (supplied.highlight ?? mixHex(accent, palette.surface, dark ? 0.78 : 0.88)), 'theme.colors.' + mode + '.overrides.highlight.background');
+  const highlightText = normalizeHex(overrides.highlight?.text ?? overrides.brand?.highlightText ?? (supplied.highlightText ?? contrastText(highlight)), 'theme.colors.' + mode + '.overrides.highlight.text');
 
   const vars: Record<string, string> = {};
   for (const [family, seed] of Object.entries({ primary, secondary, accent })) {
@@ -131,16 +131,17 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
     declare(vars, family, 'var(--n0ct-' + family + '-500)');
   }
 
-  const base = palette.background;
+  const base = normalizeHex(overrides.surfaces?.base ?? palette.background, 'theme.colors.' + mode + '.overrides.surfaces.base');
+  const surface = normalizeHex(overrides.surfaces?.surface ?? palette.surface, 'theme.colors.' + mode + '.overrides.surfaces.surface');
   const baseVoid = dark ? mix(base, '#000000', 0.34) : '#FFFFFF';
-  const elevated = dark ? mix(palette.surface, '#FFFFFF', 0.075) : mix(palette.surface, '#111827', 0.035);
-  const sunken = dark ? mix(base, '#000000', 0.12) : mix(base, palette.surface, 0.46);
+  const elevated = dark ? mix(surface, '#FFFFFF', 0.075) : mix(surface, '#111827', 0.035);
+  const sunken = dark ? mix(base, '#000000', 0.12) : mix(base, surface, 0.46);
   const overlay = dark ? mix(elevated, base, 0.22) : mix(elevated, '#FFFFFF', 0.38);
-  const navigation = dark ? mix(palette.surface, base, 0.3) : mix(palette.surface, base, 0.22);
-  const sidebar = dark ? mix(palette.surface, base, 0.38) : mix(palette.surface, base, 0.32);
-  const code = dark ? mix(base, palette.surface, 0.22) : mix(base, palette.surface, 0.44);
+  const navigation = dark ? mix(surface, base, 0.3) : mix(surface, base, 0.22);
+  const sidebar = dark ? mix(surface, base, 0.38) : mix(palette.surface, base, 0.32);
+  const code = dark ? mix(base, surface, 0.22) : mix(base, palette.surface, 0.44);
   const surfaceRoles: Record<string, string> = {
-    'base-void': baseVoid, base, surface: palette.surface, 'surface-elevated': elevated,
+    'base-void': baseVoid, base, surface: surface, 'surface-elevated': elevated,
     'surface-sunken': sunken, 'surface-overlay': overlay, 'surface-navigation': navigation,
     'surface-sidebar': sidebar, 'surface-code': code,
   };
@@ -151,7 +152,7 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
     'text-secondary': mix(palette.text, base, dark ? 0.12 : 0.10),
     'text-muted': mix(palette.text, base, dark ? 0.29 : 0.30),
     'text-subtle': mix(palette.text, base, dark ? 0.46 : 0.48),
-    'text-inverse': contrastText(palette.surface),
+    'text-inverse': contrastText(surface),
     'text-accent': dark ? mix(accent, '#FFFFFF', 0.18) : accent,
     'text-highlight': highlightText,
     'text-on-accent': contrastText(accent),
@@ -166,21 +167,21 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
   };
   for (const [key, value] of Object.entries(borderRoles)) declare(vars, key, value);
 
-  declare(vars, 'interactive-hover', mix(accent, palette.surface, dark ? 0.88 : 0.92));
-  declare(vars, 'interactive-active', mix(accent, palette.surface, dark ? 0.78 : 0.84));
-  declare(vars, 'interactive-selected', mix(primary, palette.surface, dark ? 0.84 : 0.90));
+  declare(vars, 'interactive-hover', mix(accent, surface, dark ? 0.88 : 0.92));
+  declare(vars, 'interactive-active', mix(accent, surface, dark ? 0.78 : 0.84));
+  declare(vars, 'interactive-selected', mix(primary, surface, dark ? 0.84 : 0.90));
 
   declare(vars, 'highlight', highlight);
   declare(vars, 'highlight-text', highlightText);
-  declare(vars, 'highlight-border', mix(highlight, palette.surface, 0.48));
-  declare(vars, 'selection-background', mix(accent, palette.surface, dark ? 0.38 : 0.82));
+  declare(vars, 'highlight-border', mix(highlight, surface, 0.48));
+  declare(vars, 'selection-background', mix(accent, surface, dark ? 0.38 : 0.82));
   declare(vars, 'selection-text', dark ? '#FFFFFF' : '#101827');
 
   for (const semantic of ['success', 'warning', 'danger', 'info'] as const) {
     const config = input?.semantic?.[semantic] ?? {};
     const foreground = config.foreground ?? SEMANTIC_DEFAULTS[mode][semantic];
-    const background = config.background ?? mix(foreground, palette.surface, dark ? 0.86 : 0.90);
-    const border = config.border ?? mix(foreground, palette.surface, 0.56);
+    const background = config.background ?? mix(foreground, surface, dark ? 0.86 : 0.90);
+    const border = config.border ?? mix(foreground, surface, 0.56);
     declare(vars, semantic, foreground);
     declare(vars, semantic + '-text', config.text ?? foreground);
     declare(vars, semantic + '-bg', background);
@@ -227,7 +228,7 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
 
   const tabs = codeOverrides.tabs ?? {};
   declare(vars, 'code-tabs-bg', tabs.background ?? elevated);
-  declare(vars, 'code-tabs-active-bg', tabs.activeBackground ?? palette.surface);
+  declare(vars, 'code-tabs-active-bg', tabs.activeBackground ?? surface);
   declare(vars, 'code-tabs-text', tabs.foreground ?? vars['--n0ct-text-muted']!);
   declare(vars, 'code-tabs-active-text', tabs.activeForeground ?? vars['--n0ct-text-primary']!);
   declare(vars, 'code-tabs-border', tabs.border ?? vars['--n0ct-border']!);
