@@ -51,6 +51,10 @@ export function createN0ctIntegrations(config: N0ctConfig['integrations'] = {}):
       if (configured === false) return [];
       const options = { ...(configured ?? {}) };
 
+      // N0ctane owns ThemeSelect and conditionally renders KbdPicker itself.
+      // Disable the plugin's automatic ThemeSelect replacement to avoid a conflict.
+      if (name === 'kbd') options.globalPicker = false;
+
       // starlight-kbd requires at least one keyboard type and exactly one
       // default. Supply cross-platform presets when the user has not provided
       // their own set; explicit `types` always take precedence.

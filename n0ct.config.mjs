@@ -26,8 +26,8 @@ const config = {
     announcement: {
       announcements: [{ id: 'n0ctane-v020-preview', content: 'N0ctane v0.2.0 preview — explore the theme, code blocks, blog, and versioned docs.' }],
     },
-    // ThemeSelect renders the upstream KbdPicker alongside N0ctane's theme toggle.
-    kbd: { globalPicker: false },
+    // The keyboard layout selector appears in the header only when explicitly enabled.
+    kbd: { globalPicker: true },
     llmsTxt: {},
     scrollToTop: { smoothScroll: true },
     llmActions: {},
@@ -101,7 +101,6 @@ const config = {
     },
   },
   starlight: {
-    components: { ThemeSelect: './src/components/ThemeSelect.astro' },
     lastUpdated: true,
     editLink: { baseUrl: 'https://github.com/n0ctanedev/starlight-n0ct/edit/main/docs/' },
   },
