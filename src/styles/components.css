@@ -318,6 +318,12 @@
   box-shadow: none !important;
 }
 
+/* The tab list and terminal title bar draw their own bottom separator. */
+.expressive-code .frame .header:has(.scb-tabs-list),
+.expressive-code .frame.is-terminal .header {
+  border-block-end-color: transparent !important;
+}
+
 .expressive-code .frame .header .title {
   color: var(--n0ct-text-secondary) !important;
 }
