@@ -3,7 +3,7 @@
 A spacious, neon-accented theme and integration bundle for [Astro Starlight](https://starlight.astro.build/), based on the N0ctOS visual identity.
 
 - Space Grotesk Variable and Space Mono.
-- A consistent pink–violet–cyan brand gradient across dark and light modes.
+- Role-based dark and light palettes, with purple-dark and blue-light defaults.
 - A single icon button cycles **Auto → Light → Dark**.
 - Ion-inspired icon syntax for sidebar labels and footer icons, powered by `astro-icon`.
 - Ion-inspired spacing, recursive sidebar navigation and footer links.
@@ -121,7 +121,7 @@ Use `autogenerate: false` for a manually authored group or `autogenerate: true` 
 
 Set `sidebar.topicDisplay` to one of three presentations:
 
-- `collapsible` (default): uses Starlight's default `Sidebar` component and native collapsible groups. N0ctane does not override this component or enable Sidebar Topics.
+- `collapsible` (default): uses the snapshot's recursive sidebar structure with native collapsible groups.
 - `list`: uses the upstream `starlight-sidebar-topics` topic list above the selected topic's sidebar.
 - `dropdown`: uses `starlight-sidebar-topics-dropdown` to render each root topic as a selector above the selected topic's sidebar.
 
@@ -185,7 +185,7 @@ A bare filename after the fence language becomes a title tab. Shell-language fen
 export default { title: 'My Docs' };
 ```
 
-N0ctane supplies its own magenta–violet–cyan syntax palette for both dark and light code themes. Regular Expressive Code metadata such as `title=`, line highlighting, and wrapping remains available.
+N0ctane derives syntax colors from your semantic dark/light palette. Regular Expressive Code metadata such as `title=`, line highlighting, and wrapping remains available.
 
 ## Icons
 

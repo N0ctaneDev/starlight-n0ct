@@ -1,47 +1,85 @@
 ---
 title: Theme reference
-description: Typography, palette, layout, code frames and accessibility.
+description: Semantic color roles, typography, layout and code styling.
 ---
 
 ## Typography
 
-N0ctane keeps its existing font pairing:
+The theme uses **Space Grotesk Variable** for interface and body text and **Space Mono** for code.
 
-- **Space Grotesk Variable** for interface and body text.
-- **Space Mono** for code and monospaced content.
+## Color system
 
-The fonts are bundled as package dependencies. Tailwind's `font-sans` and `font-mono` utilities use this same pairing.
+The theme is role-based rather than hue-named. It derives complete shade ramps from three brand seeds and maps them to surfaces, text, borders, interaction states, highlights and semantic statuses.
 
-## Palette
+| Role | Purpose |
+|---|---|
+| primary | Main brand identity and monochrome gradient |
+| secondary | Supporting brand color |
+| accent | Links, focus, active controls and interactive highlights |
+| base | Main page background |
+| surface | Cards, panels and content surfaces |
+| text.primary | Main readable text |
+| text.secondary | Body text |
+| text.muted | Supporting and metadata text |
+| highlight | Selected or emphasized content |
+| success, warning, danger, info | Semantic status colors |
 
-Dark and light modes have independently tuned surfaces and contrast values. The brand gradient remains pink → purple → blue → cyan in both modes.
+Dark and light modes are configured independently. Defaults are purple-dark and blue-light, with blue/purple accents. Each mode accepts four core palette colors (primary, accent, surface, text) plus optional secondary, highlight, highlightText, and background.
 
-| Token | Dark | Light |
-|---|---|---|
-| Pink 500 | `#F25CFF` | `#C92FCF` |
-| Cyan 500 | `#00E5FF` | `#00AFC2` |
-| Purple 500 | `#8C42FF` | `#7540CE` |
-| Blue 500 | `#2A85FF` | `#286DCE` |
-| Base background | `#0B0D17` | `#F8F7FC` |
-| Surface | `#131626` | `#FFFFFF` |
-| Elevated surface | `#1D2135` | `#F1EEF8` |
-| Border | `#282C42` | `#DED9E9` |
-| Primary text | `#E6EAF8` | `#191629` |
-| Secondary text | `#C1C8E3` | `#48445E` |
-| Muted text | `#7B88B8` | `#716B89` |
+## Configuration
 
-Semantic colors are success `#06D6A0`, warning `#FFD166`, error `#FF4D6D`, and info `#FF9F1C` in dark mode. Light mode uses darker variants for readable contrast.
+~~~js
+theme: {
+  colors: {
+    dark: {
+      palette: {
+        primary: '#7650C8',
+        accent: '#3478D4',
+        surface: '#151525',
+        text: '#E9EAF5',
+      },
+    },
+    light: {
+      palette: {
+        primary: '#286DCE',
+        accent: '#7540CE',
+        surface: '#FFFFFF',
+        text: '#191629',
+      },
+    },
+  },
+}
+~~~
 
-The theme exposes matching Tailwind colors such as `bg-noct-bg-surface`, `text-noct-text-primary`, `text-noct-pink-500`, and `border-noct-cyan-500/40`.
+Semantic statuses can be overridden independently in each mode:
+
+~~~js
+theme: {
+  colors: {
+    dark: {
+      semantic: {
+        success: { foreground: '#48C99A' },
+        warning: { foreground: '#E8B95B' },
+        danger: { foreground: '#EC7189' },
+        info: { foreground: '#70BCEB' },
+      },
+    },
+  },
+}
+~~~
+
+For granular control, use overrides under either mode to adjust brand roles, surfaces, text, borders, interaction states, highlights and code-block details. Unset values are derived from the palette.
+
+The generated shade ramps are available as Tailwind classes such as bg-n0ct-primary-500, text-n0ct-text-primary, and border-n0ct-border.
 
 ## Layout
 
-The reference layout starts with a `52rem` reading column, an `18rem` sidebar, and a `3.25rem` navbar. Use the existing `theme.contentWidth` and `theme.sidebarWidth` options to adjust the content and sidebar widths.
+The defaults use a 55rem reading width, a 17rem sidebar and a 3.25rem native Starlight header. Override theme.contentWidth and theme.sidebarWidth to change the layout.
 
 ## Code blocks
 
-Expressive Code keeps the current N0ctane dark/light syntax themes. Frames use a matching title bar and copy control. Shell-language fences add a terminal title strip; synchronized `:::code-tabs` persist the selected language; diff fences show deleted lines in red and inserted lines in green. The inline `[!code --]` and `[!code ++]` markers use the same deleted/inserted row styles.
+Standard fenced Markdown code blocks are supported, with :::code-tabs for tabbed variants. The theme does not provide a custom Code component. Code frames use one restrained border, no decorative macOS dots, and a consistently placed copy control. Diff additions and deletions use separate semantic green/red states.
 
-## Motion and contrast
+## Background and accessibility
 
-Ambient background color is deliberately subtle. Glow is reserved for selected navigation and interactive states. Transitions respect `prefers-reduced-motion: reduce`.
+The ambient gradient is fixed to the viewport rather than scrolling with the document. Glow strength is configurable as subtle, balanced, or strong. Focus states remain visible and animations respect prefers-reduced-motion.
