@@ -251,7 +251,7 @@ The dedicated `llmsTxt` plugin owns site-level indexes by default. To use the LL
 
 ## Documentation versioning
 
-N0ctane delegates documentation versioning to the upstream [`starlight-versions`](https://starlight-versions.vercel.app/) plugin. Configure its native options in `n0ct.config.mjs`:
+N0ctane delegates documentation versioning to the upstream [`starlight-versions`](https://starlight-versions.vercel.app/) plugin. Its upstream `VersionSelect` component is rendered at the top of the recursive sidebar; the native Starlight header keeps only the theme toggle and site title. Configure its native options in `n0ct.config.mjs`:
 
 ```js
 versioning: {
