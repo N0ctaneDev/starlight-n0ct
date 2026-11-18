@@ -123,6 +123,10 @@ describe('semantic theme palettes', () => {
     expect(lightKeyword?.settings.foreground).toBe('#92247E');
     expect(String(dark.colors['editor.background'])).toMatch(/^#[\da-f]{6}$/i);
     expect(String(light.colors['editor.background'])).toMatch(/^#[\da-f]{6}$/i);
+    expect(dark.colors['terminal.ansiBlue']).toBe(resolveN0ctThemeColors().dark.variables['--n0ct-highlight']);
+    expect(dark.colors['terminal.ansiCyan']).toBe(resolveN0ctThemeColors().dark.variables['--n0ct-accent-500']);
+    expect(light.colors['terminal.ansiBlue']).toBe(resolveN0ctThemeColors().light.variables['--n0ct-highlight']);
+    expect(light.colors['terminal.ansiCyan']).toBe(resolveN0ctThemeColors().light.variables['--n0ct-accent-500']);
   });
 
   it('warns when the configured text contrast is below WCAG AA guidance', () => {
