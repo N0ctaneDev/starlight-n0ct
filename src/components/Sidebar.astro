@@ -11,7 +11,7 @@ const settings = (Astro.locals as any).n0ctane ?? {};
 <SidebarPersister>
   <div class="n0ct-sidebar">
     {settings.versioning && <VersionSelect />}
-    {settings.sidebarTopicDisplay === 'dropdown' && (
+    {settings.sidebar?.topicDisplay === 'dropdown' && (
       <div class="n0ct-sidebar-topic-switcher">
         <TopicsDropdown />
       </div>
