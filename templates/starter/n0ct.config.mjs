@@ -58,8 +58,14 @@ const config = {
     contentWidth: '55rem',
     sidebarWidth: '17rem',
     colors: {
-      dark: { palette: { primary: '#F25CFF', secondary: '#8C42FF', accent: '#00E5FF', surface: '#131626', text: '#E6EAF8', highlight: '#2A85FF', highlightText: '#080A15', background: '#0B0D17' } },
-      light: { palette: { primary: '#C92FCF', secondary: '#7540CE', accent: '#00AFC2', surface: '#FFFFFF', text: '#191629', highlight: '#286DCE', highlightText: '#FFFFFF', background: '#F8F7FC' } },
+      dark: {
+        palette: { primary: '#F25CFF', secondary: '#8C42FF', accent: '#00E5FF', surface: '#131626', text: '#E6EAF8', highlight: '#2A85FF', highlightText: '#080A15', background: '#0B0D17' },
+        codePalette: { background: '#0D1020', foreground: '#E6EAF8', keyword: '#FF8DD6', string: '#9FE6B8' },
+      },
+      light: {
+        palette: { primary: '#B72DBF', secondary: '#7540CE', accent: '#00AFC2', surface: '#FFFFFF', text: '#211D32', highlight: '#286DCE', highlightText: '#FFFFFF', background: '#F6F5FB' },
+        codePalette: { background: '#F3F1F8', foreground: '#29253D', keyword: '#92247E', string: '#08764D' },
+      },
     },
   },
 };

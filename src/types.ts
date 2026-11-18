@@ -200,9 +200,29 @@ export interface N0ctThemeOverrides {
   code?: N0ctThemeCodeOverrides;
 }
 
+/** Independent syntax colors for Expressive Code in each appearance mode. */
+export interface N0ctThemeCodePalette {
+  /** Code canvas and base source foreground. */
+  background?: string;
+  foreground?: string;
+  comment?: string;
+  keyword?: string;
+  string?: string;
+  number?: string;
+  function?: string;
+  type?: string;
+  variable?: string;
+  tag?: string;
+  attribute?: string;
+  punctuation?: string;
+  invalid?: string;
+}
+
 export interface N0ctThemeMode {
   /** Four core colors plus up to four optional refinement colors. */
   palette?: N0ctThemePalette;
+  /** Optional per-mode syntax palette, separate from the documentation UI palette. */
+  codePalette?: N0ctThemeCodePalette;
   /** Semantic colors are independently configurable in each mode. */
   semantic?: Partial<Record<N0ctThemeSemantic, N0ctThemeSemanticColors>>;
   /** Optional role overrides. Unset roles are derived from the palette. */

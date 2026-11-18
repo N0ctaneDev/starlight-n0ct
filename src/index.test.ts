@@ -17,6 +17,11 @@ describe('N0ctane configuration expansion', () => {
     expect(config.components?.Header).toBe('./src/components/MyHeader.astro');
   });
 
+  it('disables the built-in Expressive Code copy button by default', () => {
+    const config = n0ctane({ title: 'Docs', integrations: { blog: false } });
+    expect(config.expressiveCode).toMatchObject({ frames: { showCopyToClipboardButton: false } });
+  });
+
   it('omits code-block enhancements only when Expressive Code is explicitly disabled', () => {
     const config = n0ctane({
       title: 'Docs',

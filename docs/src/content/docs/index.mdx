@@ -1,15 +1,15 @@
 ---
 title: N0ctane
-description: Spacious documentation with a neon edge.
+description: A readable, role-based Starlight theme with a neon edge.
 template: splash
 hero:
-  tagline: A N0ctOS-inspired theme for Astro Starlight.
+  tagline: A modern design system and configuration layer for Astro Starlight.
   actions:
     - text: Get started
       link: /getting-started/
       icon: right-arrow
-    - text: Configuration
-      link: /guides/configuration/
+    - text: Explore the showcase
+      link: /showcase/
       variant: minimal
 topic: start
 ---
@@ -18,36 +18,41 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
 import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
 import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
+import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
 
-<CardGrid stagger>
-  <Card title="Designed for reading" icon="pencil">
-    Space Grotesk typography, a spacious content column and restrained neon accents.
+<Badge tone="pink">N0ctane v0.2.0</Badge> <Badge tone="cyan">Astro Starlight</Badge> <Badge tone="success">Dark + light themes</Badge>
+
+<CardGrid>
+  <Card title="Readable by design" icon="pencil">
+    Carefully tuned text, surfaces, borders, and code syntax colors in both light and dark modes.
   </Card>
-  <Card title="One small config" icon="setting">
-    Describe your docs structure in `n0ct.config.mjs`; N0ctane expands it into native Starlight configuration.
+  <Card title="One config file" icon="setting">
+    Describe your sidebar, colors, integrations, and version history in n0ct.config.mjs.
   </Card>
-  <Card title="Useful integrations" icon="puzzle">
-    Ten opt-out integrations configured from a single object.
+  <Card title="Integrations included" icon="puzzle">
+    Blog, versioning, keyboard hints, image zoom, LLM actions, search indexes, and more.
   </Card>
 </CardGrid>
 
-<Badge tone="pink">N0ctane theme</Badge> <Badge tone="cyan">Tailwind v4</Badge> <Badge tone="success">Expressive Code</Badge>
+<Callout tone="tip" title="Try the live examples">
+  The [Showcase](/showcase/) page exercises the components and integrations included in this demo. The [Blog](/blog/) and version selector are enabled too.
+</Callout>
 
 <DocGrid columns={2}>
-  <DocCard title="Component gallery" eyebrow="Explore" description="Callouts, badges, cards, commands, file trees and editor tabs." href="/components/" />
-  <DocCard title="Theme configuration" eyebrow="Customize" description="Control the header layout, navigation placements and theme tokens." href="/guides/configuration/" />
+  <DocCard title="Getting started" eyebrow="Start here" description="Install N0ctane and connect it to an Astro Starlight project." href="/getting-started/" />
+  <DocCard title="Theme configuration" eyebrow="Customize" description="Configure semantic palettes, code colors, layout, and visual intensity." href="/guides/configuration/" />
+  <DocCard title="Component gallery" eyebrow="Explore" description="See the custom documentation components and native Starlight elements." href="/components/" />
+  <DocCard title="Theme reference" eyebrow="Reference" description="Inspect the token system and independent light and dark code palettes." href="/reference/theme/" />
 </DocGrid>
 
-## The visual language
+## Built around the N0ctane palette
 
-N0ctane takes its palette from the N0ctOS identity: deep violet-black, electric purple, magenta and cyan. Dark mode leans purple; light mode leans blue.
+N0ctane maps its identity into semantic roles: primary, secondary, accent, highlight, surfaces, text, borders, and status colors. Both appearance modes are tuned independently instead of simply inverting one palette.
 
-Glow is used as an interaction cue, not painted onto every surface. Text and code remain readable, and animation follows `prefers-reduced-motion`. The light palette has its own neutral surfaces and contrast values rather than simply inverting the dark theme.
+## Explore the project
 
-## Explore
-
-- [Install N0ctane](/getting-started/)
-- [Configure the theme](/guides/configuration/)
-- [Enable and configure integrations](/guides/integrations/)
-- [Use the built-in components](/components/)
-- [Configuration API](/reference/config-api/)
+- [Showcase the theme](/showcase/)
+- [Read the blog](/blog/)
+- [Configure integrations](/guides/integrations/)
+- [Set up versioning](/guides/versioning/)
+- [Browse the configuration API](/reference/config-api/)
