@@ -95,10 +95,22 @@
   --color-n0ct-info-border: var(--n0ct-info-border);
   --color-n0ct-code-background: var(--n0ct-code-background);
   --color-n0ct-code-foreground: var(--n0ct-code-foreground);
+  --color-n0ct-code-cursor: var(--n0ct-code-cursor);
+  --color-n0ct-code-selection-background: var(--n0ct-code-selection-background);
+  --color-n0ct-code-line-highlight: var(--n0ct-code-line-highlight);
+  --color-n0ct-code-line-number: var(--n0ct-code-line-number);
+  --color-n0ct-code-line-number-active: var(--n0ct-code-line-number-active);
   --color-n0ct-code-diff-added-bg: var(--n0ct-code-diff-added-bg);
   --color-n0ct-code-diff-added-text: var(--n0ct-code-diff-added-text);
+  --color-n0ct-code-diff-added-border: var(--n0ct-code-diff-added-border);
   --color-n0ct-code-diff-removed-bg: var(--n0ct-code-diff-removed-bg);
   --color-n0ct-code-diff-removed-text: var(--n0ct-code-diff-removed-text);
+  --color-n0ct-code-diff-removed-border: var(--n0ct-code-diff-removed-border);
+  --color-n0ct-code-tabs-bg: var(--n0ct-code-tabs-bg);
+  --color-n0ct-code-tabs-active-bg: var(--n0ct-code-tabs-active-bg);
+  --color-n0ct-code-tabs-text: var(--n0ct-code-tabs-text);
+  --color-n0ct-code-tabs-active-text: var(--n0ct-code-tabs-active-text);
+  --color-n0ct-code-tabs-border: var(--n0ct-code-tabs-border);
 }
 
 :root {

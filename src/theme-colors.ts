@@ -217,7 +217,7 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
   declare(vars, 'code-foreground', codeOverrides.foreground ?? vars['--n0ct-text-primary']!);
   declare(vars, 'code-cursor', codeOverrides.cursor ?? vars['--n0ct-text-accent']!);
   declare(vars, 'code-selection-background', codeOverrides.selectionBackground ?? vars['--n0ct-selection-background']!);
-  declare(vars, 'code-line-highlight', codeOverrides.lineHighlight ?? mix(code, textPrimary, 0.08));
+  declare(vars, 'code-line-highlight', codeOverrides.lineHighlight ?? mix(vars['--n0ct-code-background'] ?? vars['--n0ct-surface-code']!, accent, dark ? 0.12 : 0.06));
   declare(vars, 'code-line-number', codeOverrides.lineNumber ?? vars['--n0ct-text-subtle']!);
   declare(vars, 'code-line-number-active', codeOverrides.lineNumberActive ?? vars['--n0ct-text-secondary']!);
   declare(vars, 'code-diff-added-bg', codeOverrides.diffAdded?.background ?? vars['--n0ct-success-bg']!);
