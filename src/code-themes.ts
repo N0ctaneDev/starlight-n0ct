@@ -72,8 +72,8 @@ function createTheme(mode: Mode, colors: Palette, config?: N0ctThemeMode) {
   const code = config?.overrides?.code ?? {};
   const codeBackground = colors.surface;
   const codeForeground = colors.text;
-  const selection = code.selectionBackground ?? mixHex(colors.accent, codeBackground, dark ? .48 : .82);
-  const lineHighlight = code.lineHighlight ?? mixHex(colors.accent, codeBackground, dark ? .88 : .94);
+  const selection = code.selectionBackground ?? mixHex(colors.accent, codeBackground, dark ? .38 : .82);
+  const lineHighlight = code.lineHighlight ?? mixHex(codeBackground, colors.accent, dark ? .12 : .06);
   const colorsMap = {
     'editor.background': code.background ?? codeBackground,
     'editor.foreground': code.foreground ?? codeForeground,
