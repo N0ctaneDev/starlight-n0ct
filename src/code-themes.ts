@@ -59,7 +59,7 @@ function palette(mode: Mode, config?: N0ctThemeMode): Palette {
     surface,
     background,
     text,
-    muted: overrides.text?.muted ?? mixHex(text, background, dark ? .42 : .48),
+    muted: overrides.text?.muted ?? mixHex(text, background, dark ? .29 : .30),
     success: semantic.success?.foreground ?? defaultsForMode.success,
     warning: semantic.warning?.foreground ?? defaultsForMode.warning,
     danger: semantic.danger?.foreground ?? defaultsForMode.danger,
