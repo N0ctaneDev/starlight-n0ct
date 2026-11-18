@@ -83,7 +83,7 @@ export function remarkCodeFilenames() {
  */
 export function mdastCodeFilenames() {
   return {
-    name: SÄTTERI_PLUGIN_NAME,
+    name: SATTERI_PLUGIN_NAME,
     before(
       tree: MdastNode,
       ctx: { setProperty(node: MdastNode, key: string, value: unknown): void },
@@ -113,7 +113,7 @@ export function createRemarkCodeFilenamesIntegration(): AstroIntegration {
             typeof plugin === 'object'
             && plugin !== null
             && 'name' in plugin
-            && plugin.name === SÄTTERI_PLUGIN_NAME
+            && plugin.name === SATTERI_PLUGIN_NAME
           ))) {
             plugins.push(mdastCodeFilenames());
           }
