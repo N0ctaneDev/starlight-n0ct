@@ -66,8 +66,8 @@ export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
 
         addRouteMiddleware({ entrypoint: middlewarePath, order: 'pre' });
 
-        // Remark plugins belong to Astro's Markdown config, not Starlight's
-        // narrower `markdown` options. Register through an Astro integration.
+        // Register filename normalization on the configured processor: native
+        // Sätteri mdast hooks by default, or Remark for an explicit Unified setup.
         addIntegration(createRemarkCodeFilenamesIntegration());
         // Tailwind v4 is installed as an Astro integration so consumers do not
         // have to repeat the Vite plugin setup in their own astro.config.mjs.

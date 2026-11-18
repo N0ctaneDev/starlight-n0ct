@@ -6,10 +6,18 @@ type MdastNode = {
   children?: MdastNode[];
 };
 
+type MarkdownProcessor = {
+  name?: string;
+  options?: {
+    mdastPlugins?: unknown[];
+    remarkPlugins?: unknown[];
+  };
+};
+
+const SATTERI_PLUGIN_NAME = 'starlight-n0ct:code-filenames';
+
 /**
- * Convert the shorthand ` ```js n0ct.config.mjs ` metadata into the
- * Expressive Code `title="n0ct.config.mjs"` syntax.
- *
+ * Convert shorthand filename metadata into Expressive Code title syntax.
  * Existing Expressive Code metadata (title=, wrap, line markers, etc.) is
  * preserved unchanged.
  */
@@ -41,44 +49,87 @@ export function normalizeCodeFenceMeta(meta: string | null | undefined): string 
   if (!looksLikeFilename) return trimmed;
 
   const remainder = trimmed.slice(match[0].length).trim();
-  return `title=${JSON.stringify(filename)}${remainder ? ` ${remainder}` : ''}`;
+  return 'title=' + JSON.stringify(filename) + (remainder ? ' ' + remainder : '');
 }
 
-/** Remark plugin that adds Expressive Code titles for bare filename metadata. */
+function transformCodeFilenames(
+  tree: MdastNode,
+  setMeta: (node: MdastNode, meta: string) => void,
+) {
+  const visit = (node: MdastNode) => {
+    if (node.type === 'code' && node.meta) {
+      const normalized = normalizeCodeFenceMeta(node.meta);
+      if (normalized && normalized !== node.meta) setMeta(node, normalized);
+    }
+
+    for (const child of node.children ?? []) visit(child);
+  };
+
+  visit(tree);
+}
+
+/** Remark plugin for sites that explicitly configure Astro's Unified processor. */
 export function remarkCodeFilenames() {
-  return (tree: MdastNode) => {
-    const visit = (node: MdastNode) => {
-      if (node.type === 'code' && node.meta) {
-        node.meta = normalizeCodeFenceMeta(node.meta) ?? node.meta;
-      }
+  return (tree: MdastNode) => transformCodeFilenames(tree, (node, meta) => {
+    node.meta = meta;
+  });
+}
 
-      for (const child of node.children ?? []) visit(child);
-    };
-
-    visit(tree);
+/**
+ * Native Sätteri plugin for Astro 7's default Markdown processor.
+ * Sätteri AST nodes are immutable: use its visitor context to update metadata.
+ * Keeping this in mdastPlugins also avoids activating Astro's deprecated
+ * markdown.remarkPlugins compatibility path, which can replace Sätteri.
+ */
+export function mdastCodeFilenames() {
+  return {
+    name: SATTERI_PLUGIN_NAME,
+    before(
+      tree: MdastNode,
+      ctx: { setProperty(node: MdastNode, key: string, value: unknown): void },
+    ) {
+      transformCodeFilenames(tree, (node, meta) => ctx.setProperty(node, 'meta', meta));
+    },
   };
 }
 
 /**
- * Register the filename-metadata transformer with Astro's Markdown pipeline.
- * Starlight's own `markdown` option intentionally only accepts Starlight
- * processing settings (headingLinks and processedDirs), so remark plugins
- * must be registered through an Astro integration instead.
+ * Register filename metadata normalization on the active Markdown processor.
+ * Sätteri is Astro 7's default and is also the processor Starlight configures
+ * its own directive handlers on. Only explicitly configured Unified sites
+ * should receive a Remark plugin.
  */
 export function createRemarkCodeFilenamesIntegration(): AstroIntegration {
   return {
     name: 'starlight-n0ct-code-filenames',
     hooks: {
-      'astro:config:setup': ({ config, updateConfig }) => {
-        const existingPlugins = config.markdown.remarkPlugins ?? [];
+      'astro:config:setup': ({ config, logger }) => {
+        const processor = config.markdown.processor as unknown as MarkdownProcessor | undefined;
+        const options = processor?.options;
 
-        if (existingPlugins.includes(remarkCodeFilenames)) return;
+        if (processor?.name === 'satteri' && options) {
+          const plugins = options.mdastPlugins ?? (options.mdastPlugins = []);
+          if (!plugins.some((plugin) => (
+            typeof plugin === 'object'
+            && plugin !== null
+            && 'name' in plugin
+            && plugin.name === SATTERI_PLUGIN_NAME
+          ))) {
+            plugins.push(mdastCodeFilenames());
+          }
+          return;
+        }
 
-        updateConfig({
-          markdown: {
-            remarkPlugins: [remarkCodeFilenames, ...existingPlugins],
-          },
-        });
+        if (processor?.name === 'unified' && options) {
+          const plugins = options.remarkPlugins ?? (options.remarkPlugins = []);
+          if (!plugins.includes(remarkCodeFilenames)) plugins.unshift(remarkCodeFilenames);
+          return;
+        }
+
+        logger.warn(
+          'The configured Markdown processor ("' + (processor?.name ?? 'unknown') +
+          '") does not expose a Sätteri or Unified plugin list. N0ctane filename shorthand will not be normalized.',
+        );
       },
     },
   };

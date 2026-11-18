@@ -176,6 +176,14 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     components: { ...themeComponents, ...(advanced.components ?? {}) },
     expressiveCode,
     plugins: [
+      // Register before plugins that might configure or replace Expressive Code.
+      ...(advanced.expressiveCode === false ? [] : [codeblocks({
+        notation: {},
+        lineStates: {},
+        wordDiff: {},
+        shellCopy: {},
+        codeTabs: { control: 'tabs' },
+      })]),
       // Establish N0ctane's topic sidebar before versioning snapshots it.
       ...createN0ctSidebarTopics(config.sidebar, config.integrations),
       createN0ctanePlugin(config),
@@ -186,13 +194,6 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
       ...createN0ctVersioning(config.versioning),
       ...createN0ctIntegrations(config.integrations),
       ...(advancedPlugins ?? []),
-      ...(advanced.expressiveCode === false ? [] : [codeblocks({
-        notation: {},
-        lineStates: {},
-        wordDiff: {},
-        shellCopy: {},
-        codeTabs: { control: 'tabs' },
-      })]),
     ],
   };
 }
