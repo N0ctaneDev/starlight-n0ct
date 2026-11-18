@@ -25,3 +25,30 @@ const settings = (Astro.locals as any).n0ctane ?? {};
 <div class="md:sl-hidden">
   <MobileMenuFooter />
 </div>
+
+<script>
+  const mobileMenuMedia = window.matchMedia('(max-width: 49.999rem)');
+  let n0ctSidebarPanel: HTMLElement | null = null;
+
+  function syncN0ctMobileMenuState() {
+    const isOpen = Boolean(
+      n0ctSidebarPanel &&
+      mobileMenuMedia.matches &&
+      n0ctSidebarPanel.matches(':popover-open')
+    );
+    document.documentElement.toggleAttribute('data-n0ct-mobile-menu-open', isOpen);
+  }
+
+  function bindN0ctSidebarPanel() {
+    const panel = document.getElementById('starlight__sidebar');
+    if (panel && panel !== n0ctSidebarPanel) {
+      n0ctSidebarPanel = panel;
+      panel.addEventListener('toggle', syncN0ctMobileMenuState);
+    }
+    syncN0ctMobileMenuState();
+  }
+
+  mobileMenuMedia.addEventListener('change', syncN0ctMobileMenuState);
+  document.addEventListener('astro:page-load', bindN0ctSidebarPanel);
+  bindN0ctSidebarPanel();
+</script>
