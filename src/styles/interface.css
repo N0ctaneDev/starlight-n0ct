@@ -236,27 +236,11 @@ starlight-toc a:hover, .right-sidebar a:hover { color: var(--n0ct-text-accent); 
 }
 .sl-markdown-content :is(h1, h2, h3, h4) {
   color: var(--n0ct-text-primary);
-  letter-spacing: -.035em;
-}
-.sl-markdown-content h1 {
-  color: transparent;
-  background: var(--n0ct-gradient-monochrome);
-  -webkit-background-clip: text;
-  background-clip: text;
+  letter-spacing: -.025em;
 }
 .sl-markdown-content h2 {
-  position: relative;
   padding-block-end: .45rem;
   border-block-end: 1px solid var(--n0ct-border);
-}
-.sl-markdown-content h2::after {
-  position: absolute;
-  inset-inline-start: 0;
-  inset-block-end: -1px;
-  width: 3.5rem;
-  height: 2px;
-  background: var(--n0ct-gradient-brand);
-  content: '';
 }
 .sl-markdown-content p { line-height: 1.72; }
 .sl-markdown-content a:not([class]) {
