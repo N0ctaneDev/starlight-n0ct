@@ -8,26 +8,18 @@ export interface N0ctResolvedTheme {
   light: N0ctResolvedThemeMode;
 }
 
-const DEFAULTS: Record<'dark' | 'light', Required<N0ctThemePalette>> = {
+const DEFAULTS: Record<'dark' | 'light', Pick<N0ctThemePalette, 'primary' | 'accent' | 'surface' | 'text'>> = {
   dark: {
     primary: '#8C42FF',
     accent: '#2A85FF',
     surface: '#131626',
     text: '#E6EAF8',
-    secondary: '#6653BD',
-    highlight: '#26375D',
-    highlightText: '#F7F8FF',
-    background: '#0B0D17',
   },
   light: {
     primary: '#286DCE',
     accent: '#7540CE',
     surface: '#FFFFFF',
     text: '#191629',
-    secondary: '#4B79C8',
-    highlight: '#DDE8FB',
-    highlightText: '#19243A',
-    background: '#F8F7FC',
   },
 };
 
@@ -80,6 +72,14 @@ function contrast(a: string, b: string): number {
 function contrastText(background: string): string {
   return contrast('#FFFFFF', background) >= contrast('#10111A', background) ? '#FFFFFF' : '#10111A';
 }
+function mixHex(first: string, second: string, amountSecond: number): string {
+  const a = rgb(first);
+  const b = rgb(second);
+  return '#' + a.map((channel, index) =>
+    Math.round((channel * (1 - amountSecond) + b[index]! * amountSecond) * 255)
+      .toString(16).padStart(2, '0'),
+  ).join('').toUpperCase();
+}
 function mix(a: string, b: string, amount: number): string {
   const percentB = Math.round(amount * 100);
   return 'color-mix(in oklch, ' + a + ' ' + (100 - percentB) + '%, ' + b + ' ' + percentB + '%)';
@@ -98,17 +98,27 @@ function checkObject(value: unknown, path: string): void {
 
 function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolvedThemeMode {
   const dark = mode === 'dark';
-  const palette = { ...DEFAULTS[mode], ...(input?.palette ?? {}) };
+  const supplied = input?.palette ?? {};
   const overrides = input?.overrides ?? {};
-  checkObject(palette, 'theme.colors.' + mode + '.palette');
+  const surface = normalizeHex(supplied.surface ?? DEFAULTS[mode].surface, 'theme.colors.' + mode + '.palette.surface');
+  const palette: Required<N0ctThemePalette> = {
+    primary: normalizeHex(supplied.primary ?? DEFAULTS[mode].primary, 'theme.colors.' + mode + '.palette.primary'),
+    accent: normalizeHex(supplied.accent ?? DEFAULTS[mode].accent, 'theme.colors.' + mode + '.palette.accent'),
+    surface,
+    text: normalizeHex(supplied.text ?? DEFAULTS[mode].text, 'theme.colors.' + mode + '.palette.text'),
+    secondary: normalizeHex(supplied.secondary ?? mixHex(supplied.primary ?? DEFAULTS[mode].primary, supplied.accent ?? DEFAULTS[mode].accent, 0.5), 'theme.colors.' + mode + '.palette.secondary'),
+    highlight: normalizeHex(supplied.highlight ?? mixHex(supplied.accent ?? DEFAULTS[mode].accent, surface, dark ? 0.78 : 0.88), 'theme.colors.' + mode + '.palette.highlight'),
+    highlightText: normalizeHex(supplied.highlightText ?? contrastText(supplied.highlight ?? mixHex(supplied.accent ?? DEFAULTS[mode].accent, surface, dark ? 0.78 : 0.88)), 'theme.colors.' + mode + '.palette.highlightText'),
+    background: normalizeHex(supplied.background ?? mixHex(surface, dark ? '#070812' : '#F8F7FC', dark ? 0.28 : 0.04), 'theme.colors.' + mode + '.palette.background'),
+  };
   checkObject(input?.semantic, 'theme.colors.' + mode + '.semantic');
   checkObject(overrides, 'theme.colors.' + mode + '.overrides');
 
-  const primary = overrides.brand?.primary ?? palette.primary;
-  const accent = overrides.brand?.accent ?? palette.accent;
-  const secondary = overrides.brand?.secondary ?? palette.secondary;
-  const highlight = overrides.brand?.highlight ?? palette.highlight;
-  const highlightText = overrides.brand?.highlightText ?? palette.highlightText;
+  const primary = normalizeHex(overrides.brand?.primary ?? palette.primary, 'theme.colors.' + mode + '.overrides.brand.primary');
+  const accent = normalizeHex(overrides.brand?.accent ?? palette.accent, 'theme.colors.' + mode + '.overrides.brand.accent');
+  const secondary = normalizeHex(overrides.brand?.secondary ?? (supplied.secondary ?? mixHex(primary, accent, 0.5)), 'theme.colors.' + mode + '.overrides.brand.secondary');
+  const highlight = normalizeHex(overrides.brand?.highlight ?? (supplied.highlight ?? mixHex(accent, palette.surface, dark ? 0.78 : 0.88)), 'theme.colors.' + mode + '.overrides.brand.highlight');
+  const highlightText = normalizeHex(overrides.brand?.highlightText ?? (supplied.highlightText ?? contrastText(highlight)), 'theme.colors.' + mode + '.overrides.brand.highlightText');
 
   const vars: Record<string, string> = {};
   for (const [family, seed] of Object.entries({ primary, secondary, accent })) {
@@ -121,7 +131,7 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
     declare(vars, family, 'var(--n0ct-' + family + '-500)');
   }
 
-  const base = palette.background ?? (dark ? mix(palette.surface, '#070812', 0.28) : mix(palette.surface, '#FFFFFF', 0.04));
+  const base = palette.background;
   const baseVoid = dark ? mix(base, '#000000', 0.34) : '#FFFFFF';
   const elevated = dark ? mix(palette.surface, '#FFFFFF', 0.075) : mix(palette.surface, '#111827', 0.035);
   const sunken = dark ? mix(base, '#000000', 0.12) : mix(base, palette.surface, 0.46);
@@ -276,14 +286,12 @@ export function generateN0ctThemeCss(input?: N0ctThemeColors): string {
 export function validateN0ctThemeColors(input?: N0ctThemeColors): string[] {
   const warnings: string[] = [];
   for (const mode of ['dark', 'light'] as const) {
-    const palette = { ...DEFAULTS[mode], ...(input?.[mode]?.palette ?? {}) };
-    const background = palette.background ?? (mode === 'dark' ? '#0B0D17' : '#F8F7FC');
-    const ratio = contrast(normalizeHex(palette.text, 'theme.colors.' + mode + '.palette.text'), normalizeHex(background, 'theme.colors.' + mode + '.palette.background'));
+    const variables = resolveMode(mode, input?.[mode]).variables;
+    const ratio = contrast(variables['--n0ct-text-primary']!, variables['--n0ct-base']!);
     if (ratio < 4.5) {
       warnings.push('N0ctane theme.colors.' + mode + '.palette.text has a contrast ratio of ' + ratio.toFixed(2) + ':1 against its page background; 4.5:1 is recommended for body text.');
     }
-    const hi = palette.highlightText;
-    if (contrast(normalizeHex(hi, 'theme.colors.' + mode + '.palette.highlightText'), normalizeHex(palette.highlight, 'theme.colors.' + mode + '.palette.highlight')) < 4.5) {
+    if (contrast(variables['--n0ct-highlight-text']!, variables['--n0ct-highlight']!) < 4.5) {
       warnings.push('N0ctane theme.colors.' + mode + '.palette.highlightText may not have sufficient contrast against palette.highlight.');
     }
   }
