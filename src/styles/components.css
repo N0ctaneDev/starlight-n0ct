@@ -234,7 +234,7 @@
   border: 1px solid var(--n0ct-highlight-border);
   border-radius: var(--n0ct-radius-xs);
   color: var(--n0ct-highlight-text) !important;
-  background: var(--n0ct-gradient-brand) !important;
+  background: var(--n0ct-highlight) !important;
   box-shadow: none;
   text-shadow: none;
 }
