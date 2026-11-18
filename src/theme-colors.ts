@@ -1,6 +1,7 @@
 import type {
   N0ctThemeCodePalette,
   N0ctThemeColors,
+  N0ctThemeConfig,
   N0ctThemeMode,
   N0ctThemePalette,
 } from './types.js';
@@ -546,4 +547,106 @@ export function validateN0ctThemeColors(input?: N0ctThemeColors): string[] {
     }
   }
   return warnings;
+}
+
+
+export interface N0ctResolvedNamedTheme {
+  label: string;
+  colors: N0ctThemeColors;
+}
+
+export interface N0ctResolvedThemeConfig {
+  defaultTheme: string;
+  themes: Record<string, N0ctResolvedNamedTheme>;
+}
+
+function titleCaseThemeId(id: string): string {
+  return id.split(/[-_]+/).filter(Boolean).map((part) =>
+    part.charAt(0).toUpperCase() + part.slice(1),
+  ).join(' ');
+}
+
+/**
+ * Normalize the public named-theme configuration.
+ * The legacy `theme.colors` shape continues to configure the built-in
+ * `n0ctane` theme when no explicit `themes.n0ctane` entry is provided.
+ */
+export function resolveN0ctThemeConfig(input?: N0ctThemeConfig): N0ctResolvedThemeConfig {
+  const source = input?.themes ?? {};
+  const themes: Record<string, N0ctResolvedNamedTheme> = {};
+
+  for (const [id, definition] of Object.entries(source)) {
+    if (!/^[a-z][a-z0-9_-]*$/.test(id)) {
+      throw new Error('N0ctane theme.themes key "' + id + '" must start with a lowercase letter and contain only lowercase letters, numbers, hyphens, and underscores.');
+    }
+    const label = definition.label?.trim() || titleCaseThemeId(id);
+    themes[id] = {
+      label,
+      colors: definition.colors ?? (id === 'n0ctane' ? input?.colors ?? {} : {}),
+    };
+  }
+
+  if (!themes.n0ctane) {
+    themes.n0ctane = {
+      label: 'N0ctane',
+      colors: input?.colors ?? {},
+    };
+  }
+
+  const defaultTheme = input?.defaultTheme ?? 'n0ctane';
+  if (!themes[defaultTheme]) {
+    throw new Error(
+      'N0ctane theme.defaultTheme "' + defaultTheme +
+      '" does not match a key in theme.themes.',
+    );
+  }
+
+  return { defaultTheme, themes };
+}
+
+/**
+ * Generate palette CSS for all named themes. Site colors use
+ * data-n0ct-theme="<id>" while light/dark appearance remains in data-theme.
+ * This keeps palette selection independent from the two-state appearance toggle.
+ */
+export function generateN0ctThemeSetCss(input?: N0ctThemeConfig): string {
+  const themeSet = resolveN0ctThemeConfig(input);
+  const declarations = (variables: Record<string, string>) => Object.entries(variables)
+    .map(([name, value]) => name + ': ' + value + ';')
+    .join('\\n  ');
+  const active = (variables: Record<string, string>) => Object.fromEntries(
+    Object.entries(variables).filter(([name]) => !/^--n0ct-(?:dark|light)-/.test(name)),
+  );
+  const qualified = (dark: Record<string, string>, light: Record<string, string>) => ({
+    ...Object.fromEntries(Object.entries(dark).filter(([name]) => name.startsWith('--n0ct-dark-'))),
+    ...Object.fromEntries(Object.entries(light).filter(([name]) => name.startsWith('--n0ct-light-'))),
+  });
+  const blocks: string[] = [];
+
+  for (const [id, definition] of Object.entries(themeSet.themes)) {
+    const resolved = resolveN0ctThemeColors(definition.colors);
+    const dark = resolved.dark.variables;
+    const light = resolved.light.variables;
+    const themeScope = ':root[data-n0ct-theme="' + id + '"]';
+
+    blocks.push(
+      themeScope + ' { color-scheme: dark;\\n  ' +
+      declarations({ ...qualified(dark, light), ...active(dark) }) + '\\n}',
+      themeScope + '[data-theme="dark"] { color-scheme: dark;\\n  ' +
+      declarations(active(dark)) + '\\n}',
+      themeScope + '[data-theme="light"] { color-scheme: light;\\n  ' +
+      declarations(active(light)) + '\\n}',
+    );
+  }
+
+  const fallback = resolveN0ctThemeColors(themeSet.themes[themeSet.defaultTheme]!.colors);
+  blocks.unshift(
+    ':root { color-scheme: dark;\\n  ' +
+    declarations({
+      ...qualified(fallback.dark.variables, fallback.light.variables),
+      ...active(fallback.dark.variables),
+    }) + '\\n}',
+  );
+
+  return blocks.join('\\n\\n') + '\\n';
 }
