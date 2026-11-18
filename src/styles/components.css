@@ -426,14 +426,48 @@
 }
 
 .expressive-code .frame .header > .scb-tabs-list > [role='tab'][aria-selected='true'] {
+  margin-block-start: 0.24rem !important;
+  border: 1px solid var(--n0ct-border) !important;
+  border-bottom: 0 !important;
+  border-radius: 0.58rem 0.58rem 0 0 !important;
   color: var(--n0ct-code-tabs-active-text) !important;
   background: var(--n0ct-code-tabs-active-bg) !important;
   font-weight: 700 !important;
+  box-shadow: 0 -2px 9px color-mix(in srgb, var(--n0ct-primary-500) 8%, transparent);
 }
 
 .expressive-code .frame .header > .scb-tabs-list > [role='tab'][aria-selected='true']::after {
   position: absolute;
-  inset-inline: 0.5rem;
+  inset-inline: 0.55rem;
+  inset-block-end: 0;
+  height: 2px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--n0ct-gradient-brand);
+  content: '';
+}
+
+/* Keep the Expressive Code title tab shape, but move its accent from the top edge to an underline. */
+.expressive-code .frame.has-title:not(.is-terminal) > .header > .title {
+  border-radius: 0.58rem 0.58rem 0 0 !important;
+  border-bottom: 0 !important;
+}
+
+.expressive-code .frame.has-title:not(.is-terminal) > .header > .title::after {
+  inset: auto 0 0 !important;
+  height: 2px !important;
+  border: 0 !important;
+  border-radius: 999px;
+  background: var(--n0ct-gradient-brand) !important;
+}
+
+.expressive-code .frame.is-terminal.has-title > .header {
+  position: relative;
+}
+
+.expressive-code .frame.is-terminal.has-title > .header::after {
+  position: absolute;
+  inset-inline: 0.75rem;
   inset-block-end: 0;
   height: 2px;
   border-radius: 999px;
