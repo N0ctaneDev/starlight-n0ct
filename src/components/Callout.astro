@@ -10,24 +10,24 @@ const names = { note: 'Note', tip: 'Tip', warning: 'Warning', danger: 'Danger', 
 </aside>
 <style>
   .n0ct-callout {
-    --callout: var(--noct-cyan-500);
+    --callout: var(--n0ct-accent-500);
     margin-block: .8rem;
     padding: .58rem .72rem;
-    border: 1px solid var(--noct-border);
+    border: 1px solid var(--n0ct-border);
     border-inline-start: 3px solid var(--callout);
-    border-radius: var(--noct-radius-md);
+    border-radius: var(--n0ct-radius-md);
     background:
       linear-gradient(125deg, color-mix(in srgb, var(--callout) 8%, transparent), transparent 62%),
-      var(--noct-bg-surface);
-    box-shadow: var(--noct-shadow-soft);
+      var(--n0ct-surface);
+    box-shadow: var(--n0ct-shadow-soft);
     font-size: .88rem;
     line-height: 1.55;
   }
-  .n0ct-callout--note { --callout: var(--noct-text-muted); }
-  .n0ct-callout--tip { --callout: var(--noct-success); }
-  .n0ct-callout--warning { --callout: var(--noct-warning); }
-  .n0ct-callout--danger { --callout: var(--noct-error); }
-  .n0ct-callout--info { --callout: var(--noct-info); }
+  .n0ct-callout--note { --callout: var(--n0ct-text-muted); }
+  .n0ct-callout--tip { --callout: var(--n0ct-success); }
+  .n0ct-callout--warning { --callout: var(--n0ct-warning); }
+  .n0ct-callout--danger { --callout: var(--n0ct-danger); }
+  .n0ct-callout--info { --callout: var(--n0ct-info); }
   .n0ct-callout__title {
     display: flex;
     align-items: center;
