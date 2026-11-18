@@ -36,18 +36,25 @@ describe('code filename Markdown integration', () => {
     expect(logger.warn).not.toHaveBeenCalled();
     expect(processor.options.mdastPlugins).toHaveLength(1);
 
+    type Node = { type?: string; meta?: string; children?: Node[] };
     const plugin = processor.options.mdastPlugins?.[0] as {
       name: string;
-      before(tree: { children?: Array<{ type?: string; meta?: string }> }): void;
+      before(tree: Node, ctx: {
+        setProperty(node: Node, key: string, value: unknown): void;
+      }): void;
     };
     expect(plugin.name).toBe('starlight-n0ct:code-filenames');
 
-    const tree = {
+    const tree: Node = {
       type: 'root',
       children: [{ type: 'code', meta: 'n0ct.config.mjs' }],
     };
-    plugin.before(tree);
-    expect(tree.children[0].meta).toBe('title="n0ct.config.mjs"');
+    const setProperty = vi.fn((node: Node, key: string, value: unknown) => {
+      (node as Record<string, unknown>)[key] = value;
+    });
+    plugin.before(tree, { setProperty });
+    expect(setProperty).toHaveBeenCalledWith(tree.children?.[0], 'meta', 'title="n0ct.config.mjs"');
+    expect(tree.children?.[0].meta).toBe('title="n0ct.config.mjs"');
     expect(processor.options.remarkPlugins).toBeUndefined();
   });
 
