@@ -164,4 +164,35 @@ describe('N0ctane configuration expansion', () => {
   it('leaves validation of versioning options to starlight-versions', () => {
     expect(normalizeN0ctConfig({ title: 'Docs', versioning: false })).toMatchObject({ title: 'Docs' });
   });
+  it('builds two-state named syntax themes and disables automatic appearance switching', () => {
+    const config = n0ctane({
+      title: 'Docs',
+      integrations: { blog: false },
+      theme: {
+        defaultTheme: 'github',
+        themes: {
+          n0ctane: {},
+          github: { label: 'GitHub' },
+        },
+      },
+    });
+    const expressiveCode = config.expressiveCode as {
+      themes?: Array<{ name: string }>;
+      useStarlightDarkModeSwitch?: boolean;
+      useDarkModeMediaQuery?: boolean;
+      themeCssSelector?: (theme: { name: string }) => string;
+    };
+
+    expect(expressiveCode.themes?.map(({ name }) => name)).toEqual([
+      'n0ctane-dark',
+      'n0ctane-light',
+      'github-dark',
+      'github-light',
+    ]);
+    expect(expressiveCode.useStarlightDarkModeSwitch).toBe(false);
+    expect(expressiveCode.useDarkModeMediaQuery).toBe(false);
+    expect(expressiveCode.themeCssSelector?.({ name: 'github-dark' }))
+      .toBe('[data-n0ct-code-theme="github-dark"]');
+  });
+
 });
