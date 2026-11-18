@@ -12,7 +12,7 @@ describe('semantic theme palettes', () => {
     expect(theme.dark.variables['--n0ct-accent-500']).toBe('#00E5FF');
     expect(theme.dark.variables['--n0ct-highlight']).toBe('#2A85FF');
     expect(theme.dark.variables['--n0ct-surface-code']).toBe('#0D1020');
-    expect(theme.dark.variables['--n0ct-border']).toBe('#282C42');
+    expect(theme.dark.variables['--n0ct-border']).toBe('#343B59');
     expect(theme.dark.variables['--n0ct-success']).toBe('#06D6A0');
     expect(theme.light.variables['--n0ct-accent-500']).toBe('#00AFC2');
     expect(theme.light.variables['--n0ct-highlight']).toBe('#286DCE');
