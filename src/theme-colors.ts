@@ -169,8 +169,8 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
   for (const semantic of ['success', 'warning', 'danger', 'info'] as const) {
     const config = input?.semantic?.[semantic] ?? {};
     const foreground = config.foreground ?? SEMANTIC_DEFAULTS[mode][semantic];
-    const background = config.background ?? mix(foreground, palette.surface, dark ? 0.14 : 0.10);
-    const border = config.border ?? mix(foreground, palette.surface, 0.44);
+    const background = config.background ?? mix(foreground, palette.surface, dark ? 0.86 : 0.90);
+    const border = config.border ?? mix(foreground, palette.surface, 0.56);
     declare(vars, semantic, foreground);
     declare(vars, semantic + '-text', config.text ?? foreground);
     declare(vars, semantic + '-bg', background);
