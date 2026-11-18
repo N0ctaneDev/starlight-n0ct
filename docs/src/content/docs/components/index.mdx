@@ -4,7 +4,6 @@ description: Reusable N0ctane components, native Starlight elements, and express
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
-import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
 import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
 import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
 import FileTree from '@n0ctanedev/starlight-n0ct/components/docs/FileTree.astro';
@@ -23,18 +22,6 @@ N0ctane keeps native Starlight semantics and adds a small set of reusable compon
 <Callout tone="info">An informational callout.</Callout>
 
 The type prop remains supported for compatibility; tone takes precedence when both are provided.
-
-## Badges
-
-<Badge>Default</Badge> <Badge tone="pink">Primary</Badge> <Badge tone="cyan">Accent</Badge> <Badge tone="success">Success</Badge> <Badge tone="warning">Warning</Badge> <Badge tone="danger">Danger</Badge>
-
-Badges use a larger inline-flex hit area and align to the vertical center of surrounding text.
-
-~~~mdx
-import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
-
-<Badge tone="success">Stable</Badge>
-~~~
 
 ## Link cards
 
@@ -82,7 +69,6 @@ import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
 - src/
   - components/
     - docs/
-      - Badge.astro
       - Callout.astro
       - DocCard.astro
       - DocGrid.astro
@@ -104,7 +90,7 @@ Use <Kbd>Ctrl</Kbd> + <Kbd>K</Kbd> to open the command palette. The starlight-kb
 
 ## Code frames
 
-Standard fenced Markdown code blocks use the N0ctane syntax palette. Terminal fences receive a compact title bar with macOS-style dots. The additional copy button in the title bar is disabled to keep the frame uncluttered.
+Standard fenced code blocks retain Expressive Code's copy controls and built-in frame behavior. N0ctane supplies the syntax palette and a single outer frame border.
 
 ~~~bash title="Build the documentation" frame="terminal"
 npm run build

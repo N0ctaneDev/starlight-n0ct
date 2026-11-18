@@ -185,7 +185,7 @@ A bare filename after the fence language becomes a title tab. Shell-language fen
 export default { title: 'My Docs' };
 ```
 
-N0ctane uses dedicated `theme.colors.dark.codePalette` and `theme.colors.light.codePalette` settings for syntax colors, separate from the UI palette. Mode-qualified CSS variables such as `--n0ct-dark-base` and `--n0ct-light-surface` are available alongside active-mode aliases. Regular Expressive Code metadata such as `title=`, line highlighting, and wrapping remains available. Terminal frames use macOS-style dots and the redundant title-bar copy button is disabled.
+N0ctane uses dedicated `theme.colors.dark.codePalette` and `theme.colors.light.codePalette` settings for syntax colors, separate from the UI palette. Mode-qualified CSS variables such as `--n0ct-dark-base` and `--n0ct-light-surface` are available alongside active-mode aliases. Regular Expressive Code metadata such as `title=`, line highlighting, and wrapping remains available. Expressive Code's built-in copy controls and terminal titlebar behavior remain enabled; the frame uses one border without an extra shadow outline.
 
 ## Icons
 
@@ -246,6 +246,8 @@ integrations: {
   llmActions: {},
 }
 ```
+
+For the global keyboard layout selector in the header, explicitly set `integrations.kbd.globalPicker: true`; N0ctane keeps it hidden when the option is omitted or false.
 
 The dedicated `llmsTxt` plugin owns site-level indexes by default. To use the LLM Actions plugin for those indexes instead, set `llmsTxt: false`; N0ctane then enables `llmActions.llmsTxt` by default. Enabling both generators at once is rejected to prevent duplicate output routes. Each integration's options are forwarded to its upstream plugin; consult the linked upstream documentation for the exact option schema.
 

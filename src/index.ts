@@ -74,6 +74,11 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
   const blogNavigation = blogOptions.navigation ?? 'header-end';
   const hasBlogHeaderStart = blogEnabled && blogNavigation === 'header-start';
   const hasBlogHeaderEnd = blogEnabled && blogNavigation === 'header-end';
+  const kbdOptions = config.integrations?.kbd;
+  // Render KbdPicker through N0ctane's wrapper only when explicitly opted in.
+  const hasGlobalKbdPicker = Boolean(
+    kbdOptions && typeof kbdOptions === 'object' && kbdOptions.globalPicker === true,
+  );
 
   const defaultCss = fileURLToPath(new URL('./styles/theme.css', import.meta.url));
   const interfaceCss = fileURLToPath(new URL('./styles/interface.css', import.meta.url));
@@ -83,7 +88,9 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     // Blog and Versions both override ThemeSelect. The composed N0ctane
     // variants render their public components alongside the N0ctane toggle.
     // Intentional override: starlight-versions normally places VersionSelect in the header; VersionedSidebar renders its public selector in the sidebar instead.
-    ThemeSelect: component(hasBlogHeaderEnd ? 'BlogThemeSelect' : 'ThemeSelect'),
+    ThemeSelect: component(hasBlogHeaderEnd
+      ? (hasGlobalKbdPicker ? 'BlogKbdThemeSelect' : 'BlogThemeSelect')
+      : (hasGlobalKbdPicker ? 'KbdThemeSelect' : 'ThemeSelect')),
     // Keep the snapshot's native Starlight header composition; customize only its title and theme control.
     SiteTitle: component(hasBlogHeaderStart ? 'BlogSiteTitle' : 'SiteTitle'),
     Footer: component('Footer'),
@@ -108,8 +115,8 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     frames: {
       shadowColor: 'transparent',
       frameBoxShadowCssValue: 'none',
-      terminalIcon: 'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2754%27 height=%2714%27 viewBox=%270 0 54 14%27%3E%3Ccircle cx=%277%27 cy=%277%27 r=%276%27 fill=%27%23FF5F57%27/%3E%3Ccircle cx=%2727%27 cy=%277%27 r=%276%27 fill=%27%23FEBC2E%27/%3E%3Ccircle cx=%2747%27 cy=%277%27 r=%276%27 fill=%27%2328C840%27/%3E%3C/svg%3E")',
-      terminalTitlebarDotsOpacity: '1',
+      terminalIcon: 'none',
+      terminalTitlebarDotsOpacity: '0',
       terminalTitlebarBackground: 'var(--n0ct-surface-elevated)',
       terminalTitlebarForeground: 'var(--n0ct-text-primary)',
       terminalTitlebarBorderBottomColor: 'var(--n0ct-border)',
@@ -146,7 +153,6 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     useStarlightDarkModeSwitch: advancedExpressiveCode.useStarlightDarkModeSwitch ?? true,
     frames: {
       ...advancedFrames,
-      showCopyToClipboardButton: false,
     },
     styleOverrides: {
       ...defaultStyleOverrides,
@@ -184,7 +190,7 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
         notation: {},
         lineStates: {},
         wordDiff: {},
-        shellCopy: false,
+        shellCopy: {},
         codeTabs: { control: 'tabs' },
       })]),
     ],

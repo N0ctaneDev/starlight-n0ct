@@ -4,9 +4,7 @@ description: A working preview of N0ctane's original documentation components.
 ---
 
 import { FileTree } from '@astrojs/starlight/components';
-import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
 import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
-import Command from '@n0ctanedev/starlight-n0ct/components/docs/Command.astro';
 import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
 import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
 import Kbd from '@n0ctanedev/starlight-n0ct/components/docs/Kbd.astro';
@@ -19,10 +17,6 @@ import Steps from '@n0ctanedev/starlight-n0ct/components/docs/Steps.astro';
 <Callout tone="warning">A warning that needs attention.</Callout>
 <Callout tone="danger">An important warning for destructive actions.</Callout>
 <Callout tone="info">Additional information.</Callout>
-
-## Badges
-
-<Badge>Default</Badge> <Badge tone="pink">Primary</Badge> <Badge tone="cyan">Accent</Badge> <Badge tone="success">Success</Badge> <Badge tone="warning">Warning</Badge> <Badge tone="danger">Danger</Badge>
 
 ## Cards
 
@@ -45,7 +39,6 @@ import Steps from '@n0ctanedev/starlight-n0ct/components/docs/Steps.astro';
 - src/
   - components/
     - docs/
-      - Badge.astro
       - Callout.astro
       - DocCard.astro
       - FileTree.astro
@@ -55,11 +48,13 @@ import Steps from '@n0ctanedev/starlight-n0ct/components/docs/Steps.astro';
 - n0ct.config.mjs
 </FileTree>
 
-## Commands and keyboard keys
-
-<Command command="npx astro dev --host 0.0.0.0" />
+## Keyboard hints
 
 Use <Kbd>Ctrl</Kbd> + <Kbd>K</Kbd> to open the command palette.
+
+~~~bash title="Start the documentation server"
+npx astro dev --host 0.0.0.0
+~~~
 
 ## Fenced code blocks
 

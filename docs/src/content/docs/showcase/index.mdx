@@ -4,7 +4,6 @@ description: A live tour of N0ctane components, syntax themes, integrations, and
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
-import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
 import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
 import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
 import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
@@ -15,8 +14,6 @@ import Steps from '@n0ctanedev/starlight-n0ct/components/docs/Steps.astro';
 The demo site uses the same configuration and components available to package consumers. This page is intentionally packed with examples so you can inspect the theme in both color modes.
 
 ## Component system
-
-<Badge tone="pink">Primary</Badge> <Badge tone="cyan">Accent</Badge> <Badge tone="success">Stable</Badge> <Badge tone="warning">Preview</Badge> <Badge tone="danger">Deprecated</Badge>
 
 <Callout tone="note" title="Note">Callouts support note, tip, warning, danger, and info tones.</Callout>
 <Callout tone="tip" title="Tip">Use the semantic tone that describes the message, not the hue you want it to have.</Callout>
@@ -70,11 +67,11 @@ The demo site uses the same configuration and components available to package co
 
 Use <Kbd>Ctrl</Kbd> + <Kbd>K</Kbd> for the search palette, <Kbd>Esc</Kbd> to dismiss a dialog, and <Kbd>⌘</Kbd> + <Kbd>K</Kbd> on macOS.
 
-## Code frames and macOS-style terminal title bars
+## Code frames
 
-~~~bash title="Terminal" frame="terminal"
-$ npm run docs:build
-$ npm run check:ci
+~~~bash title="Build the documentation"
+npm run docs:build
+npm run check:ci
 ~~~
 
 The syntax palette is independent for each mode. Switch between dark and light themes to compare the token colors below.
