@@ -255,7 +255,6 @@
   box-shadow: var(--n0ct-shadow-soft);
 }
 .expressive-code figure.frame > .header {
-  display: flex;
   min-height: 2.2rem;
   align-items: center;
   border: 0 !important;
@@ -271,18 +270,10 @@
   font-family: var(--font-mono);
   font-size: .75rem;
 }
-.expressive-code .copy {
-  position: static !important;
-  display: flex;
-  align-items: center;
-  margin-inline-start: auto;
-  padding-inline: .45rem;
-}
 .expressive-code .copy button {
-  position: static !important;
-  display: inline-grid;
-  min-width: 1.9rem;
-  min-height: 1.9rem;
+  display: grid;
+  width: 1.9rem;
+  height: 1.9rem;
   place-items: center;
   border: 1px solid transparent !important;
   border-radius: var(--n0ct-radius-xs) !important;
