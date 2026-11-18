@@ -71,14 +71,34 @@
   --color-n0ct-border-focus: var(--n0ct-border-focus);
   --color-n0ct-highlight: var(--n0ct-highlight);
   --color-n0ct-highlight-text: var(--n0ct-highlight-text);
+  --color-n0ct-highlight-border: var(--n0ct-highlight-border);
+  --color-n0ct-selection-background: var(--n0ct-selection-background);
+  --color-n0ct-selection-text: var(--n0ct-selection-text);
+  --color-n0ct-interactive-hover: var(--n0ct-interactive-hover);
+  --color-n0ct-interactive-active: var(--n0ct-interactive-active);
+  --color-n0ct-interactive-selected: var(--n0ct-interactive-selected);
   --color-n0ct-success: var(--n0ct-success);
   --color-n0ct-success-bg: var(--n0ct-success-bg);
+  --color-n0ct-success-text: var(--n0ct-success-text);
+  --color-n0ct-success-border: var(--n0ct-success-border);
   --color-n0ct-warning: var(--n0ct-warning);
   --color-n0ct-warning-bg: var(--n0ct-warning-bg);
+  --color-n0ct-warning-text: var(--n0ct-warning-text);
+  --color-n0ct-warning-border: var(--n0ct-warning-border);
   --color-n0ct-danger: var(--n0ct-danger);
   --color-n0ct-danger-bg: var(--n0ct-danger-bg);
+  --color-n0ct-danger-text: var(--n0ct-danger-text);
+  --color-n0ct-danger-border: var(--n0ct-danger-border);
   --color-n0ct-info: var(--n0ct-info);
   --color-n0ct-info-bg: var(--n0ct-info-bg);
+  --color-n0ct-info-text: var(--n0ct-info-text);
+  --color-n0ct-info-border: var(--n0ct-info-border);
+  --color-n0ct-code-background: var(--n0ct-code-background);
+  --color-n0ct-code-foreground: var(--n0ct-code-foreground);
+  --color-n0ct-code-diff-added-bg: var(--n0ct-code-diff-added-bg);
+  --color-n0ct-code-diff-added-text: var(--n0ct-code-diff-added-text);
+  --color-n0ct-code-diff-removed-bg: var(--n0ct-code-diff-removed-bg);
+  --color-n0ct-code-diff-removed-text: var(--n0ct-code-diff-removed-text);
 }
 
 :root {
