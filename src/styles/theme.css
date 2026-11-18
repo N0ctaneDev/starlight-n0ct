@@ -1,594 +1,118 @@
+@layer base, starlight, theme, components, utilities, n0ctane;
+
+@import '@astrojs/starlight-tailwind';
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
 @import '@fontsource-variable/space-grotesk';
 @import '@fontsource/space-mono/400.css';
 @import '@fontsource/space-mono/700.css';
 
-/* -------------------------------------------------------------------------- */
-/* N0ctane identity                                                            */
-/* One brand gradient is shared by dark and light modes. Only surfaces and    */
-/* contrast values change; the brand never switches from purple to blue.      */
-/* -------------------------------------------------------------------------- */
+@theme {
+  --font-sans: 'Space Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, monospace;
+
+  --color-n0ct-primary-50: var(--n0ct-primary-50);
+  --color-n0ct-primary-100: var(--n0ct-primary-100);
+  --color-n0ct-primary-200: var(--n0ct-primary-200);
+  --color-n0ct-primary-300: var(--n0ct-primary-300);
+  --color-n0ct-primary-400: var(--n0ct-primary-400);
+  --color-n0ct-primary-500: var(--n0ct-primary-500);
+  --color-n0ct-primary-600: var(--n0ct-primary-600);
+  --color-n0ct-primary-700: var(--n0ct-primary-700);
+  --color-n0ct-primary-800: var(--n0ct-primary-800);
+  --color-n0ct-primary-900: var(--n0ct-primary-900);
+  --color-n0ct-primary-950: var(--n0ct-primary-950);
+  --color-n0ct-secondary-50: var(--n0ct-secondary-50);
+  --color-n0ct-secondary-100: var(--n0ct-secondary-100);
+  --color-n0ct-secondary-200: var(--n0ct-secondary-200);
+  --color-n0ct-secondary-300: var(--n0ct-secondary-300);
+  --color-n0ct-secondary-400: var(--n0ct-secondary-400);
+  --color-n0ct-secondary-500: var(--n0ct-secondary-500);
+  --color-n0ct-secondary-600: var(--n0ct-secondary-600);
+  --color-n0ct-secondary-700: var(--n0ct-secondary-700);
+  --color-n0ct-secondary-800: var(--n0ct-secondary-800);
+  --color-n0ct-secondary-900: var(--n0ct-secondary-900);
+  --color-n0ct-secondary-950: var(--n0ct-secondary-950);
+  --color-n0ct-accent-50: var(--n0ct-accent-50);
+  --color-n0ct-accent-100: var(--n0ct-accent-100);
+  --color-n0ct-accent-200: var(--n0ct-accent-200);
+  --color-n0ct-accent-300: var(--n0ct-accent-300);
+  --color-n0ct-accent-400: var(--n0ct-accent-400);
+  --color-n0ct-accent-500: var(--n0ct-accent-500);
+  --color-n0ct-accent-600: var(--n0ct-accent-600);
+  --color-n0ct-accent-700: var(--n0ct-accent-700);
+  --color-n0ct-accent-800: var(--n0ct-accent-800);
+  --color-n0ct-accent-900: var(--n0ct-accent-900);
+  --color-n0ct-accent-950: var(--n0ct-accent-950);
+
+  --color-n0ct-base: var(--n0ct-base);
+  --color-n0ct-surface: var(--n0ct-surface);
+  --color-n0ct-surface-elevated: var(--n0ct-surface-elevated);
+  --color-n0ct-text-primary: var(--n0ct-text-primary);
+  --color-n0ct-text-secondary: var(--n0ct-text-secondary);
+  --color-n0ct-text-muted: var(--n0ct-text-muted);
+  --color-n0ct-success: var(--n0ct-success);
+  --color-n0ct-warning: var(--n0ct-warning);
+  --color-n0ct-danger: var(--n0ct-danger);
+  --color-n0ct-info: var(--n0ct-info);
+}
 
 :root {
   --sl-font: 'Space Grotesk Variable', sans-serif;
+  --sl-font-mono: 'Space Mono', monospace;
   --sl-font-system-mono: 'Space Mono', monospace;
   --sl-content-width: 55rem;
   --sl-sidebar-width: 17rem;
+  --sl-nav-height: 3.25rem;
+  --sl-nav-pad-x: 1rem;
+  --sl-nav-pad-y: .5rem;
+  --sl-nav-gap: .75rem;
 
-  --n0ct-pink: #f45fb9;
-  --n0ct-violet: #9c68f2;
-  --n0ct-cyan: #42cfe5;
-  --n0ct-brand-gradient: linear-gradient(
-    118deg,
-    var(--n0ct-pink) 0%,
-    #c45ee7 34%,
-    var(--n0ct-violet) 58%,
-    var(--n0ct-cyan) 100%
-  );
-  --n0ct-brand-gradient-soft: linear-gradient(
-    118deg,
-    color-mix(in srgb, var(--n0ct-pink) 16%, transparent),
-    color-mix(in srgb, var(--n0ct-violet) 11%, transparent) 55%,
-    color-mix(in srgb, var(--n0ct-cyan) 12%, transparent)
-  );
-
-  --n0ct-radius-xs: .3rem;
-  --n0ct-radius-sm: .45rem;
-  --n0ct-radius-md: .7rem;
-  --n0ct-radius-lg: .9rem;
-  --n0ct-radius-xl: 1.15rem;
-  --n0ct-shadow-soft: 0 10px 34px rgb(7 14 25 / .13);
-  --n0ct-shadow-float: 0 18px 46px rgb(7 14 25 / .25);
-  --n0ct-code-bg: #0c1420;
-  --n0ct-code-header: #141f2d;
-  --n0ct-file-selected-bg: linear-gradient(105deg, #fff8fd 0%, #e5f8ff 55%, #f4edff 100%);
-  --n0ct-file-selected-text: #101722;
-  --n0ct-glow-strength: 24%;
-
-  --sl-color-accent: #e34eae;
-  --sl-color-text-accent: #f28acb;
-  --sl-color-accent-high: #ffe3f5;
-  --sl-color-accent-low: #3c1d38;
-  --sl-color-white: #edf3fb;
-  --sl-color-gray-1: #dce5f0;
-  --sl-color-gray-2: #bac8d8;
-  --sl-color-gray-3: #8c9caf;
-  --sl-color-gray-4: #627287;
-  --sl-color-gray-5: #344457;
-  --sl-color-gray-6: #192636;
-  --sl-color-gray-7: #101a27;
-  --sl-color-black: #0a111b;
-  --sl-color-bg: #0b121d;
-  --sl-color-bg-nav: #101a27;
-  --sl-color-bg-sidebar: #101a27;
-  --sl-color-hairline: #26364a;
-  --sl-color-hairline-light: #1d2b3d;
-  --sl-color-text: #dce5f0;
-
-  color-scheme: dark;
-}
-
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --sl-color-accent: #f071c1;
-  --sl-color-text-accent: #f69bd1;
-  --sl-color-accent-high: #ffe6f6;
-  --sl-color-accent-low: #3d2039;
-  --sl-color-bg: #0b121d;
-  --sl-color-bg-nav: #101a27;
-  --sl-color-bg-sidebar: #101a27;
-  --sl-color-hairline: #26364a;
-  --sl-color-hairline-light: #1d2b3d;
-  --sl-color-text: #dce5f0;
-  --n0ct-code-bg: #0b131f;
-  --n0ct-code-header: #121e2c;
-  --n0ct-shadow-soft: 0 10px 34px rgb(0 0 0 / .2);
-  --n0ct-shadow-float: 0 18px 46px rgb(0 0 0 / .38);
-}
-
-:root[data-theme='light'] {
-  color-scheme: light;
-  --sl-color-accent: #b72b8c;
-  --sl-color-text-accent: #a92480;
-  --sl-color-accent-high: #65144f;
-  --sl-color-accent-low: #f7e1f0;
-  --sl-color-white: #172333;
-  --sl-color-gray-1: #243449;
-  --sl-color-gray-2: #45586e;
-  --sl-color-gray-3: #65788e;
-  --sl-color-gray-4: #8999aa;
-  --sl-color-gray-5: #cbd5df;
-  --sl-color-gray-6: #edf1f6;
-  --sl-color-gray-7: #f7f9fc;
-  --sl-color-black: #ffffff;
-  --sl-color-bg: #f7f9fc;
-  --sl-color-bg-nav: #ffffff;
-  --sl-color-bg-sidebar: #f1f4f8;
-  --sl-color-hairline: #d9e1ea;
-  --sl-color-hairline-light: #e7edf3;
-  --sl-color-text: #344357;
-  --n0ct-code-bg: #f5f8fc;
-  --n0ct-code-header: #eaf0f6;
-  --n0ct-shadow-soft: 0 10px 30px rgb(28 47 70 / .08);
-  --n0ct-shadow-float: 0 18px 42px rgb(28 47 70 / .15);
+  --n0ct-radius-xs: .22rem;
+  --n0ct-radius-sm: .38rem;
+  --n0ct-radius-md: .55rem;
+  --n0ct-radius-lg: .72rem;
+  --n0ct-radius-xl: .95rem;
+  --n0ct-space-1: .25rem;
+  --n0ct-space-2: .5rem;
+  --n0ct-space-3: .75rem;
+  --n0ct-space-4: 1rem;
+  --n0ct-space-5: 1.25rem;
+  --n0ct-space-6: 1.5rem;
+  --n0ct-shadow-soft: 0 10px 34px rgb(0 0 0 / .12);
+  --n0ct-shadow-float: 0 16px 44px rgb(0 0 0 / .22);
 }
 
 html {
   scroll-behavior: smooth;
-  scrollbar-color: var(--sl-color-gray-4) var(--sl-color-bg);
+  scrollbar-color: var(--n0ct-text-muted) var(--n0ct-base);
 }
 
 body {
-  background-color: var(--sl-color-bg);
-  background-image:
-    radial-gradient(ellipse at 0% 0%, color-mix(in srgb, var(--n0ct-pink) var(--n0ct-glow-strength), transparent), transparent 36rem),
-    radial-gradient(ellipse at 100% 100%, color-mix(in srgb, var(--n0ct-cyan) var(--n0ct-glow-strength), transparent), transparent 40rem);
-  color: var(--sl-color-text);
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  color: var(--n0ct-text-secondary);
+  background: var(--n0ct-base);
   font-feature-settings: 'ss01' on;
 }
 
+/* The ambient canvas is fixed to the viewport and never moves with page scroll. */
+body::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  background:
+    radial-gradient(ellipse at 0% 0%, color-mix(in srgb, var(--n0ct-primary-500) 8%, transparent), transparent 34rem),
+    radial-gradient(ellipse at 100% 100%, color-mix(in srgb, var(--n0ct-accent-500) 6%, transparent), transparent 38rem);
+  background-repeat: no-repeat;
+  content: '';
+  pointer-events: none;
+}
+
 ::selection {
-  color: #101722;
-  background: #f4a4d7;
-}
-
-:where(h1, h2, h3, h4) {
-  letter-spacing: -.035em;
-}
-
-.sl-markdown-content h1 {
-  color: transparent;
-  background: var(--n0ct-brand-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-}
-
-.sl-markdown-content h2 {
-  position: relative;
-  padding-block-end: .45rem;
-  border-block-end: 1px solid var(--sl-color-hairline);
-}
-
-.sl-markdown-content h2::after {
-  position: absolute;
-  inset-block-end: -1px;
-  inset-inline-start: 0;
-  width: 3.7rem;
-  height: 2px;
-  background: var(--n0ct-brand-gradient);
-  content: '';
-}
-
-.sl-markdown-content a:not([class]) {
-  text-decoration-color: color-mix(in srgb, var(--sl-color-text-accent) 45%, transparent);
-  text-underline-offset: .18em;
-}
-
-.sl-markdown-content a:not([class]):hover {
-  color: var(--sl-color-accent);
-  text-decoration-color: currentColor;
-}
-
-/* Native Starlight Cards receive the reference theme's gradient-card treatment. */
-.sl-markdown-content .sl-card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-  gap: .8rem;
-  margin-block: 1.25rem;
-}
-
-.sl-markdown-content .sl-link-card {
-  position: relative;
-  min-width: 0;
-  overflow: hidden;
-  border: 1px solid var(--sl-color-hairline) !important;
-  border-radius: var(--n0ct-radius-lg) !important;
-  color: var(--sl-color-text) !important;
-  background:
-    linear-gradient(120deg, color-mix(in srgb, var(--n0ct-pink) 10%, transparent), transparent 52%),
-    linear-gradient(320deg, color-mix(in srgb, var(--n0ct-cyan) 9%, transparent), transparent 58%),
-    var(--sl-color-bg-sidebar) !important;
-  box-shadow: var(--n0ct-shadow-soft);
-  text-decoration: none !important;
-  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
-}
-
-.sl-markdown-content .sl-link-card::before {
-  position: absolute;
-  inset: 0 auto auto 0;
-  width: 100%;
-  height: 2px;
-  background: var(--n0ct-brand-gradient);
-  opacity: .72;
-  content: '';
-}
-
-.sl-markdown-content .sl-link-card:hover,
-.sl-markdown-content .sl-link-card:focus-visible {
-  border-color: color-mix(in srgb, var(--n0ct-violet) 52%, var(--sl-color-hairline)) !important;
-  color: var(--sl-color-text) !important;
-  box-shadow: var(--n0ct-shadow-float), 0 0 1.3rem color-mix(in srgb, var(--n0ct-pink) 12%, transparent);
-  transform: translateY(-2px);
-}
-
-.sl-markdown-content .sl-link-card .title {
-  color: var(--sl-color-white);
-  font-weight: 680;
-  letter-spacing: -.015em;
-}
-
-.sl-markdown-content .sl-link-card .description {
-  color: var(--sl-color-gray-2);
-  font-size: .9rem;
-  line-height: 1.5;
-}
-
-/* Gradient surfaces shared by Steps and custom callouts. */
-.sl-markdown-content ol.sl-steps {
-  --n0ct-bullet-size: 1.35rem;
-  display: grid;
-  gap: .58rem;
-  margin-block: 1.35rem;
-  padding: 1rem 1.1rem .78rem;
-  border: 1px solid var(--sl-color-hairline);
-  border-radius: var(--n0ct-radius-lg);
-  background:
-    linear-gradient(120deg, color-mix(in srgb, var(--n0ct-pink) 9%, transparent), transparent 50%),
-    linear-gradient(315deg, color-mix(in srgb, var(--n0ct-cyan) 8%, transparent), transparent 56%),
-    var(--sl-color-bg-sidebar);
-  box-shadow: var(--n0ct-shadow-soft);
-}
-
-.sl-markdown-content ol.sl-steps > li {
-  min-height: calc(var(--n0ct-bullet-size) + .25rem);
-  padding-inline-start: calc(var(--n0ct-bullet-size) + .8rem);
-  padding-block-end: .25rem;
-}
-
-.sl-markdown-content ol.sl-steps > li::before {
-  width: var(--n0ct-bullet-size);
-  height: var(--n0ct-bullet-size);
-  line-height: var(--n0ct-bullet-size);
-  border: 0;
-  color: #101722;
-  background: var(--n0ct-brand-gradient);
-  box-shadow: 0 0 .9rem color-mix(in srgb, var(--n0ct-pink) 30%, transparent);
-  font: 700 .72rem/var(--n0ct-bullet-size) var(--sl-font-system-mono);
-}
-
-.sl-markdown-content ol.sl-steps > li::after {
-  inset-block-start: calc(var(--n0ct-bullet-size) + .38rem);
-  inset-block-end: -.72rem;
-  background: linear-gradient(var(--n0ct-pink), var(--n0ct-cyan));
-  opacity: .48;
-}
-
-.sl-markdown-content ol.sl-steps > li:last-child::after {
-  display: none;
-}
-
-/* FileTree selection is deliberately light in both color modes for contrast. */
-.sl-markdown-content starlight-file-tree {
-  --x-space: 1.4rem;
-  --y-space: .12rem;
-  --y-pad: .06rem;
-  display: block;
-  max-width: 100%;
-  margin-block: 1.2rem;
-  padding: .9rem 1rem;
-  overflow-x: auto;
-  border: 1px solid var(--sl-color-hairline);
-  border-radius: var(--n0ct-radius-md);
-  color: var(--sl-color-gray-2);
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--n0ct-violet) 6%, transparent), transparent 58%),
-    var(--n0ct-code-bg);
-  box-shadow: var(--n0ct-shadow-soft);
-  font-family: var(--sl-font-system-mono);
-  font-size: .8rem;
-}
-
-.sl-markdown-content starlight-file-tree :is(button, summary) {
-  border-radius: var(--n0ct-radius-xs);
-  color: var(--sl-color-text);
-}
-
-.sl-markdown-content starlight-file-tree :is(button, summary):hover,
-.sl-markdown-content starlight-file-tree :is(button, summary):focus-visible {
-  color: var(--sl-color-accent);
-  background: color-mix(in srgb, var(--n0ct-pink) 8%, transparent);
-  outline: none;
-}
-
-.sl-markdown-content starlight-file-tree ul {
-  border-inline-start-color: color-mix(in srgb, var(--n0ct-cyan) 24%, var(--sl-color-hairline));
-}
-
-.sl-markdown-content starlight-file-tree .file {
-  color: var(--sl-color-gray-2);
-}
-
-.sl-markdown-content starlight-file-tree .comment,
-.sl-markdown-content starlight-file-tree .empty {
-  color: var(--sl-color-gray-3);
-}
-
-.sl-markdown-content starlight-file-tree .highlight {
-  position: relative;
-  z-index: 1;
-  border-radius: .38rem;
-  color: var(--n0ct-file-selected-text) !important;
-  background: var(--n0ct-file-selected-bg) !important;
-  box-shadow:
-    0 0 0 1px rgb(255 255 255 / .72),
-    0 4px 18px rgb(60 120 160 / .28),
-    0 0 16px rgb(232 111 190 / .2);
-  text-shadow: none !important;
-}
-
-.sl-markdown-content starlight-file-tree .highlight :is(*, svg) {
-  color: var(--n0ct-file-selected-text) !important;
-  text-shadow: none !important;
-}
-
-.sl-markdown-content starlight-file-tree .highlight svg {
-  fill: currentColor !important;
-}
-
-/* Expressive Code is the renderer; N0ctane only supplies its visual frame. */
-.expressive-code {
-  --ec-codeBg: var(--n0ct-code-bg);
-  margin-block: 1.1rem;
-}
-
-.expressive-code figure.frame {
-  overflow: hidden;
-  border: 1px solid var(--sl-color-hairline) !important;
-  border-radius: var(--n0ct-radius-md) !important;
-  background: var(--n0ct-code-bg) !important;
-  box-shadow: var(--n0ct-shadow-soft);
-}
-
-.expressive-code figure.frame > .header {
-  display: flex;
-  min-height: 2.25rem;
-  align-items: center;
-  border-block-end: 1px solid var(--sl-color-hairline) !important;
-  background:
-    linear-gradient(105deg, color-mix(in srgb, var(--n0ct-pink) 7%, transparent), transparent 48%),
-    var(--n0ct-code-header) !important;
-}
-
-.expressive-code .header .title {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.25rem;
-  padding-inline: .85rem;
-  color: var(--sl-color-text) !important;
-  font-family: var(--sl-font-system-mono);
-  font-size: .74rem;
-}
-
-.expressive-code .header .title::after {
-  position: absolute;
-  inset-inline: .75rem;
-  inset-block-end: 0;
-  height: 2px;
-  background: var(--n0ct-brand-gradient);
-  content: '';
-}
-
-.expressive-code .frame pre {
-  background: var(--n0ct-code-bg) !important;
-}
-
-.expressive-code .copy button,
-.expressive-code button {
-  border-radius: var(--n0ct-radius-xs) !important;
-}
-
-.expressive-code .copy button {
-  color: var(--sl-color-gray-3) !important;
-}
-
-.expressive-code .copy button:hover,
-.expressive-code button:hover {
-  color: var(--sl-color-accent) !important;
-}
-
-/* Shell code gets a small terminal title bar with window controls. */
-.expressive-code .frame:has(pre[data-language='bash']),
-.expressive-code .frame:has(pre[data-language='sh']),
-.expressive-code .frame:has(pre[data-language='shellsession']),
-.expressive-code .frame:has(pre[data-language='zsh']) {
-  border-color: color-mix(in srgb, var(--n0ct-cyan) 24%, var(--sl-color-hairline)) !important;
-}
-
-.expressive-code .frame:has(pre[data-language='bash']) > .header,
-.expressive-code .frame:has(pre[data-language='sh']) > .header,
-.expressive-code .frame:has(pre[data-language='shellsession']) > .header,
-.expressive-code .frame:has(pre[data-language='zsh']) > .header {
-  position: relative;
-  min-height: 2.45rem;
-  padding-inline-start: 4.55rem;
-  background:
-    radial-gradient(circle at 1rem 50%, #ff625c 0 .24rem, transparent .27rem),
-    radial-gradient(circle at 2rem 50%, #ffc04d 0 .24rem, transparent .27rem),
-    radial-gradient(circle at 3rem 50%, #35c977 0 .24rem, transparent .27rem),
-    linear-gradient(105deg, color-mix(in srgb, var(--n0ct-cyan) 7%, transparent), transparent 55%),
-    var(--n0ct-code-header) !important;
-}
-
-.expressive-code .frame:has(pre[data-language='bash']) > .header:not(:has(.title))::after,
-.expressive-code .frame:has(pre[data-language='sh']) > .header:not(:has(.title))::after,
-.expressive-code .frame:has(pre[data-language='shellsession']) > .header:not(:has(.title))::after,
-.expressive-code .frame:has(pre[data-language='zsh']) > .header:not(:has(.title))::after {
-  color: var(--sl-color-gray-3);
-  content: 'Terminal';
-  font-family: var(--sl-font-system-mono);
-  font-size: .7rem;
-  letter-spacing: .02em;
-}
-
-/* Inline code, callouts, asides, tables, and navigation surfaces. */
-.sl-markdown-content :not(pre) > code {
-  padding: .13em .38em;
-  border: 1px solid var(--sl-color-hairline);
-  border-radius: var(--n0ct-radius-xs);
-  color: var(--sl-color-text-accent);
-  background: color-mix(in srgb, var(--sl-color-accent) 8%, var(--sl-color-bg));
-}
-
-.sl-markdown-content .starlight-aside {
-  border-width: 1px 1px 1px 3px;
-  border-radius: var(--n0ct-radius-md);
-  background: color-mix(in srgb, var(--sl-color-asides-text-accent) 5%, var(--sl-color-bg));
-}
-
-.sl-markdown-content table {
-  display: block;
-  max-width: 100%;
-  overflow-x: auto;
-  border-color: var(--sl-color-hairline);
-}
-
-.sl-markdown-content th {
-  color: var(--sl-color-white);
-  background: var(--sl-color-bg-sidebar);
-}
-
-.sl-markdown-content td,
-.sl-markdown-content th {
-  border-color: var(--sl-color-hairline);
-}
-
-header.header {
-  border-block-end: 1px solid color-mix(in srgb, var(--sl-color-hairline) 72%, transparent);
-  background:
-    linear-gradient(105deg, color-mix(in srgb, var(--n0ct-pink) 7%, transparent), transparent 42%),
-    linear-gradient(300deg, color-mix(in srgb, var(--n0ct-cyan) 6%, transparent), transparent 48%),
-    color-mix(in srgb, var(--sl-color-bg-nav) 92%, transparent);
-  box-shadow: 0 5px 24px rgb(0 0 0 / .055);
-  backdrop-filter: blur(16px) saturate(1.14);
-}
-
-header.header .site-title {
-  font-weight: 720;
-  letter-spacing: -.035em;
-}
-
-header.header .site-title:hover {
-  color: var(--sl-color-accent);
-}
-
-#starlight__sidebar .sidebar-content {
-  min-height: 100%;
-  background:
-    linear-gradient(155deg, color-mix(in srgb, var(--n0ct-pink) 6%, transparent), transparent 48%),
-    linear-gradient(320deg, color-mix(in srgb, var(--n0ct-cyan) 5%, transparent), transparent 52%);
-}
-
-.n0ct-sidebar-topic-switcher .starlight-sidebar-topics-dropdown-button {
-  min-height: 2.15rem;
-  border: 1px solid var(--sl-color-hairline) !important;
-  border-radius: var(--n0ct-radius-md) !important;
-  color: var(--sl-color-white) !important;
-  background: var(--sl-color-bg) !important;
-  box-shadow: 0 5px 18px rgb(0 0 0 / .09);
-}
-
-.n0ct-sidebar-topic-switcher .starlight-sidebar-topics-dropdown-button:hover,
-.n0ct-sidebar-topic-switcher .starlight-sidebar-topics-dropdown-button:focus-visible {
-  border-color: color-mix(in srgb, var(--n0ct-pink) 55%, var(--sl-color-hairline)) !important;
-  outline: none;
-}
-
-.starlight-sidebar-topics-dropdown-menu {
-  z-index: 500 !important;
-  border: 1px solid var(--sl-color-hairline) !important;
-  border-radius: var(--n0ct-radius-md) !important;
-  background: var(--sl-color-bg-sidebar) !important;
-  box-shadow: var(--n0ct-shadow-float) !important;
-}
-
-.starlight-sidebar-topics-dropdown-item {
-  border-radius: var(--n0ct-radius-sm);
-  color: var(--sl-color-gray-2) !important;
-  font-size: .82rem;
-  text-decoration: none !important;
-}
-
-.starlight-sidebar-topics-dropdown-item:hover,
-.starlight-sidebar-topics-dropdown-current-item {
-  color: var(--sl-color-white) !important;
-  background: var(--n0ct-brand-gradient-soft) !important;
-}
-
-.sidebar-content {
-  scrollbar-width: thin;
-  scrollbar-color: var(--sl-color-gray-5) transparent;
-}
-
-/* Keep Starlight's native collapsible sidebar compact without replacing its
-   semantics, persistence, active-link handling, or mobile behavior. */
-sl-sidebar-state-persist ul.top-level > li:not(:has(details)) {
-  margin-block: 0.15rem;
-}
-
-sl-sidebar-state-persist ul.top-level > li:has(details) {
-  margin-block: 0.3rem;
-}
-
-sl-sidebar-state-persist ul.top-level > li > a,
-sl-sidebar-state-persist ul.top-level > li > details > summary {
-  line-height: 1.25;
-}
-
-sl-sidebar-state-persist ul.top-level ul {
-  margin-block: 0.15rem;
-}
-
-.pagination-links a {
-  border-radius: var(--n0ct-radius-md);
-  transition: border-color .2s, transform .2s, box-shadow .2s;
-}
-
-.pagination-links a:hover {
-  border-color: var(--sl-color-accent);
-  box-shadow: 0 0 1.2rem color-mix(in srgb, var(--sl-color-accent) 12%, transparent);
-  transform: translateY(-2px);
-}
-
-.sl-link-button {
-  border-radius: var(--n0ct-radius-sm);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .sl-markdown-content img {
-    transition: transform .2s ease;
-  }
-
-  .sl-markdown-content img:hover {
-    transform: translateY(-2px);
-  }
-
-  .sl-markdown-content h1 {
-    animation: n0ct-title-in .45s ease both;
-  }
-
-  @keyframes n0ct-title-in {
-    from { opacity: 0; transform: translateY(7px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: .01ms !important;
-  }
+  color: var(--n0ct-selection-text);
+  background: var(--n0ct-selection-background);
 }
