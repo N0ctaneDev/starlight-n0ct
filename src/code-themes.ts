@@ -67,20 +67,21 @@ function palette(mode: Mode, config?: N0ctThemeMode): Palette {
   };
 }
 
-function createTheme(mode: Mode, colors: Palette) {
+function createTheme(mode: Mode, colors: Palette, config?: N0ctThemeMode) {
   const dark = mode === 'dark';
+  const code = config?.overrides?.code ?? {};
   const codeBackground = colors.surface;
   const codeForeground = colors.text;
-  const selection = mixHex(colors.accent, codeBackground, dark ? .48 : .82);
-  const lineHighlight = mixHex(colors.accent, codeBackground, dark ? .88 : .94);
+  const selection = code.selectionBackground ?? mixHex(colors.accent, codeBackground, dark ? .48 : .82);
+  const lineHighlight = code.lineHighlight ?? mixHex(colors.accent, codeBackground, dark ? .88 : .94);
   const colorsMap = {
-    'editor.background': codeBackground,
-    'editor.foreground': codeForeground,
-    'editorCursor.foreground': colors.accent,
+    'editor.background': code.background ?? codeBackground,
+    'editor.foreground': code.foreground ?? codeForeground,
+    'editorCursor.foreground': code.cursor ?? colors.accent,
     'editor.selectionBackground': selection,
     'editor.lineHighlightBackground': lineHighlight,
-    'editorLineNumber.foreground': colors.muted,
-    'editorLineNumber.activeForeground': codeForeground,
+    'editorLineNumber.foreground': code.lineNumber ?? colors.muted,
+    'editorLineNumber.activeForeground': code.lineNumberActive ?? codeForeground,
     'editorIndentGuide.background': mixHex(codeForeground, codeBackground, .88),
     'editorIndentGuide.activeBackground': mixHex(codeForeground, codeBackground, .72),
     'terminal.background': codeBackground,
@@ -112,7 +113,7 @@ function createTheme(mode: Mode, colors: Palette) {
 
 export function createN0ctaneCodeThemes(input?: N0ctThemeColors) {
   return [
-    createTheme('dark', palette('dark', input?.dark)),
-    createTheme('light', palette('light', input?.light)),
+    createTheme('dark', palette('dark', input?.dark), input?.dark),
+    createTheme('light', palette('light', input?.light), input?.light),
   ] as const;
 }
