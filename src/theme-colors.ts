@@ -116,8 +116,10 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
 
   const primary = normalizeHex(overrides.brand?.primary ?? palette.primary, 'theme.colors.' + mode + '.overrides.brand.primary');
   const accent = normalizeHex(overrides.brand?.accent ?? palette.accent, 'theme.colors.' + mode + '.overrides.brand.accent');
+  const surface = normalizeHex(overrides.surfaces?.surface ?? palette.surface, 'theme.colors.' + mode + '.overrides.surfaces.surface');
+  const textPrimary = normalizeHex(overrides.text?.primary ?? palette.text, 'theme.colors.' + mode + '.overrides.text.primary');
   const secondary = normalizeHex(overrides.brand?.secondary ?? (supplied.secondary ?? mixHex(primary, accent, 0.5)), 'theme.colors.' + mode + '.overrides.brand.secondary');
-  const highlight = normalizeHex(overrides.highlight?.background ?? overrides.brand?.highlight ?? (supplied.highlight ?? mixHex(accent, palette.surface, dark ? 0.78 : 0.88)), 'theme.colors.' + mode + '.overrides.highlight.background');
+  const highlight = normalizeHex(overrides.highlight?.background ?? overrides.brand?.highlight ?? (supplied.highlight ?? mixHex(accent, surface, dark ? 0.78 : 0.88)), 'theme.colors.' + mode + '.overrides.highlight.background');
   const highlightText = normalizeHex(overrides.highlight?.text ?? overrides.brand?.highlightText ?? (supplied.highlightText ?? contrastText(highlight)), 'theme.colors.' + mode + '.overrides.highlight.text');
 
   const vars: Record<string, string> = {};
@@ -132,14 +134,13 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
   }
 
   const base = normalizeHex(overrides.surfaces?.base ?? palette.background, 'theme.colors.' + mode + '.overrides.surfaces.base');
-  const surface = normalizeHex(overrides.surfaces?.surface ?? palette.surface, 'theme.colors.' + mode + '.overrides.surfaces.surface');
   const baseVoid = dark ? mix(base, '#000000', 0.34) : '#FFFFFF';
   const elevated = dark ? mix(surface, '#FFFFFF', 0.075) : mix(surface, '#111827', 0.035);
   const sunken = dark ? mix(base, '#000000', 0.12) : mix(base, surface, 0.46);
   const overlay = dark ? mix(elevated, base, 0.22) : mix(elevated, '#FFFFFF', 0.38);
   const navigation = dark ? mix(surface, base, 0.3) : mix(surface, base, 0.22);
-  const sidebar = dark ? mix(surface, base, 0.38) : mix(palette.surface, base, 0.32);
-  const code = dark ? mix(base, surface, 0.22) : mix(base, palette.surface, 0.44);
+  const sidebar = dark ? mix(surface, base, 0.38) : mix(surface, base, 0.32);
+  const code = dark ? mix(base, surface, 0.22) : mix(base, surface, 0.44);
   const surfaceRoles: Record<string, string> = {
     'base-void': baseVoid, base, surface: surface, 'surface-elevated': elevated,
     'surface-sunken': sunken, 'surface-overlay': overlay, 'surface-navigation': navigation,
@@ -148,10 +149,10 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
   for (const [key, value] of Object.entries(surfaceRoles)) declare(vars, key, value);
 
   const textRoles: Record<string, string> = {
-    'text-primary': palette.text,
-    'text-secondary': mix(palette.text, base, dark ? 0.12 : 0.10),
-    'text-muted': mix(palette.text, base, dark ? 0.29 : 0.30),
-    'text-subtle': mix(palette.text, base, dark ? 0.46 : 0.48),
+    'text-primary': textPrimary,
+    'text-secondary': mix(textPrimary, base, dark ? 0.12 : 0.10),
+    'text-muted': mix(textPrimary, base, dark ? 0.29 : 0.30),
+    'text-subtle': mix(textPrimary, base, dark ? 0.46 : 0.48),
     'text-inverse': contrastText(surface),
     'text-accent': dark ? mix(accent, '#FFFFFF', 0.18) : accent,
     'text-highlight': highlightText,
@@ -160,9 +161,9 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
   for (const [key, value] of Object.entries(textRoles)) declare(vars, key, value);
 
   const borderRoles: Record<string, string> = {
-    'border-subtle': mix(palette.text, base, dark ? 0.91 : 0.90),
-    border: mix(palette.text, base, dark ? 0.80 : 0.83),
-    'border-strong': mix(palette.text, base, dark ? 0.65 : 0.70),
+    'border-subtle': mix(textPrimary, base, dark ? 0.91 : 0.90),
+    border: mix(textPrimary, base, dark ? 0.80 : 0.83),
+    'border-strong': mix(textPrimary, base, dark ? 0.65 : 0.70),
     'border-focus': accent,
   };
   for (const [key, value] of Object.entries(borderRoles)) declare(vars, key, value);
@@ -216,7 +217,7 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
   declare(vars, 'code-foreground', codeOverrides.foreground ?? vars['--n0ct-text-primary']!);
   declare(vars, 'code-cursor', codeOverrides.cursor ?? vars['--n0ct-text-accent']!);
   declare(vars, 'code-selection-background', codeOverrides.selectionBackground ?? vars['--n0ct-selection-background']!);
-  declare(vars, 'code-line-highlight', codeOverrides.lineHighlight ?? mix(code, palette.text, 0.08));
+  declare(vars, 'code-line-highlight', codeOverrides.lineHighlight ?? mix(code, textPrimary, 0.08));
   declare(vars, 'code-line-number', codeOverrides.lineNumber ?? vars['--n0ct-text-subtle']!);
   declare(vars, 'code-line-number-active', codeOverrides.lineNumberActive ?? vars['--n0ct-text-secondary']!);
   declare(vars, 'code-diff-added-bg', codeOverrides.diffAdded?.background ?? vars['--n0ct-success-bg']!);
