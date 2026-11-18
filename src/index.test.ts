@@ -54,7 +54,7 @@ describe('N0ctane configuration expansion', () => {
     })).toThrow(/starlight\.components\.Sidebar replaces the topic selector/);
   });
 
-  it('leaves Starlight Sidebar untouched in collapsible mode and delegates list mode to Sidebar Topics', () => {
+  it('uses the recursive snapshot sidebar in every topic display mode', () => {
     const collapsible = n0ctane({
       title: 'Docs',
       sidebar: { topicDisplay: 'collapsible', topics: ['guides'] },
@@ -75,6 +75,15 @@ describe('N0ctane configuration expansion', () => {
 
     expect(list.components?.Sidebar).toContain('Sidebar.astro');
     expect(dropdown.components?.Sidebar).toContain('Sidebar.astro');
+  });
+
+  it('uses the upstream version selector wrapper only when versioning is enabled', () => {
+    const versioned = n0ctane({
+      title: 'Docs',
+      versioning: { versions: [{ slug: '1.0', label: 'v1.0' }] },
+      integrations: { blog: false },
+    });
+    expect(versioned.components?.Sidebar).toContain('VersionedSidebar.astro');
   });
 
   it('turns string topics into title-cased autogenerate groups', () => {
