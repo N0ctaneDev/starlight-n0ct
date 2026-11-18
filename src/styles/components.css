@@ -16,8 +16,8 @@
 .noct-shimmer:hover { background-position: 100% 0; }
 .noct-glow-hover { transition: box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease; }
 .noct-glow-hover:hover {
-  border-color: color-mix(in srgb, var(--n0ct-accent-500) 42%, var(--n0ct-border));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--n0ct-accent-500) 10%, transparent), 0 10px 28px color-mix(in srgb, var(--n0ct-primary-500) 9%, transparent);
+  border-color: color-mix(in srgb, var(--n0ct-accent-500) 44%, var(--n0ct-border));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--n0ct-primary-500) 12%, transparent), 0 10px 28px color-mix(in srgb, var(--n0ct-primary-500) 10%, transparent);
   transform: translateY(-1px);
 }
 
@@ -30,9 +30,9 @@
   border-inline-start: 3px solid var(--callout-accent);
   border-radius: var(--n0ct-radius-md);
   background: linear-gradient(125deg, color-mix(in srgb, var(--callout-accent) 8%, transparent), transparent 62%), var(--n0ct-surface);
-  box-shadow: var(--n0ct-shadow-soft);
-  font-size: .91rem;
-  line-height: 1.62;
+  box-shadow: 0 5px 18px rgb(0 0 0 / .07);
+  font-size: .88rem;
+  line-height: 1.55;
 }
 .noct-callout[data-tone='tip'] { --callout-accent: var(--n0ct-success); }
 .noct-callout[data-tone='warning'] { --callout-accent: var(--n0ct-warning); }
@@ -43,9 +43,9 @@
   align-items: center;
   gap: .4rem;
   margin: 0 0 .22rem;
-  color: var(--callout-accent);
-  font-size: .91rem;
-  font-weight: 700;
+  color: var(--n0ct-text-primary);
+  font-size: .86rem;
+  font-weight: 680;
 }
 .noct-callout-content > :first-child { margin-top: 0; }
 .noct-callout-content > :last-child { margin-bottom: 0; }
@@ -79,8 +79,8 @@
 }
 .noct-doc-card:hover { color: var(--n0ct-text-primary); text-decoration: none; }
 .noct-doc-card-title { position: relative; z-index: 1; color: var(--n0ct-text-primary); font-size: 1rem; font-weight: 650; }
-.noct-doc-card-description { position: relative; z-index: 1; max-width: 90%; color: var(--n0ct-text-muted); font-size: .91rem; line-height: 1.58; }
-.noct-doc-card-eyebrow { position: relative; z-index: 1; color: var(--n0ct-text-accent); font-family: var(--font-mono); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
+.noct-doc-card-description { position: relative; z-index: 1; max-width: 90%; color: var(--n0ct-text-muted); font-size: .9rem; line-height: 1.55; }
+.noct-doc-card-eyebrow { position: relative; z-index: 1; color: var(--n0ct-text-accent); font-family: var(--font-mono); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; }
 .noct-doc-card-chain {
   position: absolute;
   z-index: 0;
@@ -96,9 +96,9 @@
 .noct-doc-card-chain path { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .noct-doc-card:hover .noct-doc-card-chain,
 .noct-doc-card:focus-visible .noct-doc-card-chain {
-  opacity: .22;
+  opacity: .28;
   transform: translate(-.15rem, -.12rem) rotate(-5deg) scale(1);
-  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--n0ct-primary-500) 40%, transparent));
+  filter: drop-shadow(0 0 13px color-mix(in srgb, var(--n0ct-primary-500) 48%, transparent));
 }
 
 /* Badges keep the original tone API, with more breathing room and a quiet outline. */
@@ -128,7 +128,7 @@
   display: grid;
   gap: .7rem;
   margin-block: 1.35rem;
-  padding: 1.1rem 1.2rem .82rem;
+  padding: 1.15rem 1.2rem .8rem;
   border: 1px solid var(--n0ct-border);
   border-radius: var(--n0ct-radius-lg);
   background:
@@ -140,8 +140,8 @@
 .sl-markdown-content .sl-steps > li,
 .sl-markdown-content ol.noct-steps > li {
   min-height: 1.6rem;
-  padding-inline-start: 2.4rem;
-  padding-block-end: .3rem;
+  padding-inline-start: 2.65rem;
+  padding-block-end: .35rem;
 }
 .sl-markdown-content .sl-steps > li::before,
 .sl-markdown-content ol.noct-steps > li::before {
@@ -172,26 +172,26 @@
 .noct-command-copy {
   position: absolute;
   inset: .55rem .55rem auto auto;
-  padding: .34rem .58rem;
+  padding: .32rem .55rem;
   border: 1px solid var(--n0ct-border);
   border-radius: var(--n0ct-radius-xs);
   color: var(--n0ct-text-secondary);
   background: var(--n0ct-surface-elevated);
-  font-size: .75rem;
+  font-size: .72rem;
   cursor: pointer;
 }
 .noct-command-copy:hover,
 .noct-command-copy[data-copied='true'] { color: var(--n0ct-text-primary); border-color: var(--n0ct-border-focus); }
 .noct-kbd {
   display: inline-block;
-  padding: .1rem .4rem;
+  padding: .1rem .38rem;
   border: 1px solid var(--n0ct-border);
   border-bottom-width: 2px;
   border-radius: var(--n0ct-radius-xs);
   color: var(--n0ct-text-primary);
   background: var(--n0ct-surface-elevated);
   font-family: var(--font-mono);
-  font-size: .8em;
+  font-size: .78em;
   line-height: 1.35;
   white-space: nowrap;
 }
@@ -200,7 +200,7 @@
 /* Native Starlight FileTree keeps the real parser, icons, and open/close behavior. */
 .sl-markdown-content starlight-file-tree {
   --x-space: 1.4rem;
-  --y-space: .14rem;
+  --y-space: .16rem;
   --y-pad: .08rem;
   display: block;
   max-width: 100%;
@@ -213,7 +213,7 @@
   background: linear-gradient(135deg, color-mix(in srgb, var(--n0ct-primary-500) 7%, transparent), transparent 58%), var(--n0ct-surface-code);
   box-shadow: var(--n0ct-shadow-soft);
   font-family: var(--font-mono);
-  font-size: .83rem;
+  font-size: .82rem;
 }
 .sl-markdown-content starlight-file-tree :is(button, summary) { border-radius: var(--n0ct-radius-xs); color: var(--n0ct-text-primary); }
 .sl-markdown-content starlight-file-tree :is(button, summary):hover,
@@ -234,7 +234,7 @@
   border: 1px solid var(--n0ct-highlight-border);
   border-radius: var(--n0ct-radius-xs);
   color: var(--n0ct-highlight-text) !important;
-  background: var(--n0ct-highlight) !important;
+  background: var(--n0ct-gradient-brand) !important;
   box-shadow: none;
   text-shadow: none;
 }
