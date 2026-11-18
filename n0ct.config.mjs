@@ -34,7 +34,7 @@ const config = {
     linksValidator: {
       // Blog routes are intentionally excluded from archived docs versions.
       // Ignore these links only inside the generated v0.1.4 snapshot.
-      exclude: ({ link }) => /(?:^|\\/)blog(?:\\/|$)/.test(link.split(/[?#]/, 1)[0] ?? link),
+      exclude: ({ link }) => /(?:^|\/)blog(?:\/|$)/.test(link.split(/[?#]/, 1)[0] ?? link),
     },
     blog: {
       navigation: 'none',
