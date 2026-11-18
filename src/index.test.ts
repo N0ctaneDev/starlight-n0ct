@@ -17,9 +17,22 @@ describe('N0ctane configuration expansion', () => {
     expect(config.components?.Header).toBe('./src/components/MyHeader.astro');
   });
 
-  it('disables the built-in Expressive Code copy button by default', () => {
+  it('keeps Expressive Code built-in copy controls enabled by default', () => {
     const config = n0ctane({ title: 'Docs', integrations: { blog: false } });
-    expect(config.expressiveCode).toMatchObject({ frames: { showCopyToClipboardButton: false } });
+    expect(config.expressiveCode).not.toMatchObject({ frames: { showCopyToClipboardButton: false } });
+  });
+
+  it('shows the keyboard layout picker only when globalPicker is explicitly enabled', () => {
+    const hidden = n0ctane({ title: 'Docs', integrations: { blog: false } });
+    const enabled = n0ctane({ title: 'Docs', integrations: { blog: false, kbd: { globalPicker: true } } });
+    expect(hidden.components?.ThemeSelect).toContain('/components/ThemeSelect.astro');
+    expect(enabled.components?.ThemeSelect).toContain('/components/KbdThemeSelect.astro');
+
+    const blogEnabled = n0ctane({
+      title: 'Docs',
+      integrations: { blog: { navigation: 'header-end' }, kbd: { globalPicker: true } },
+    });
+    expect(blogEnabled.components?.ThemeSelect).toContain('/components/BlogKbdThemeSelect.astro');
   });
 
   it('omits code-block enhancements only when Expressive Code is explicitly disabled', () => {
