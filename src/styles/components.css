@@ -101,6 +101,55 @@
   filter: drop-shadow(0 0 13px color-mix(in srgb, var(--n0ct-primary-500) 48%, transparent));
 }
 
+/* Native Starlight Card and CardGrid receive the same brand surface as N0ctane's cards. */
+.sl-markdown-content .sl-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: .8rem;
+  margin-block: 1.25rem;
+}
+.sl-markdown-content .sl-link-card {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--n0ct-border) !important;
+  border-radius: var(--n0ct-radius-lg) !important;
+  color: var(--n0ct-text-secondary) !important;
+  background:
+    linear-gradient(120deg, color-mix(in srgb, var(--n0ct-primary-500) 10%, transparent), transparent 52%),
+    linear-gradient(320deg, color-mix(in srgb, var(--n0ct-accent-500) 9%, transparent), transparent 58%),
+    var(--n0ct-surface) !important;
+  box-shadow: var(--n0ct-shadow-soft);
+  text-decoration: none !important;
+  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+.sl-markdown-content .sl-link-card::before {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 2px;
+  background: var(--n0ct-gradient-brand);
+  opacity: .72;
+  content: '';
+}
+.sl-markdown-content .sl-link-card:hover,
+.sl-markdown-content .sl-link-card:focus-visible {
+  border-color: color-mix(in srgb, var(--n0ct-primary-500) 52%, var(--n0ct-border)) !important;
+  color: var(--n0ct-text-primary) !important;
+  box-shadow: var(--n0ct-shadow-float), 0 0 1.3rem color-mix(in srgb, var(--n0ct-primary-500) 12%, transparent);
+  transform: translateY(-2px);
+}
+.sl-markdown-content .sl-link-card .title {
+  color: var(--n0ct-text-primary);
+  font-weight: 680;
+  letter-spacing: -.015em;
+}
+.sl-markdown-content .sl-link-card .description {
+  color: var(--n0ct-text-muted);
+  font-size: .9rem;
+  line-height: 1.5;
+}
+
 /* Badges keep the original tone API, with more breathing room and a quiet outline. */
 .noct-badge {
   display: inline-flex;

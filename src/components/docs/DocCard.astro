@@ -3,7 +3,7 @@ export interface Props { title: string; description?: string; href?: string; eye
 const { title, description, href, eyebrow, external = false } = Astro.props;
 ---
 {href ? (
-  <a class="noct-doc-card noct-glow-hover noct-shimmer" href={href} target={external ? '_blank' : undefined} rel={external ? 'noreferrer' : undefined}>
+  <a class="noct-doc-card noct-glow-hover noct-shimmer" href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
     <svg class="noct-doc-card-chain" viewBox="0 0 120 120" aria-hidden="true">
       <path d="M46 39 35 50a18 18 0 0 0 25 25l12-12M74 81l11-11a18 18 0 0 0-25-25L48 57M43 77l34-34" />
       <path d="M43 56 56 43m8 34 13-13" />

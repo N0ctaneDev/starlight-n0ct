@@ -13,7 +13,7 @@ import Kbd from '@n0ctanedev/starlight-n0ct/components/docs/Kbd.astro';
 import Steps from '@n0ctanedev/starlight-n0ct/components/docs/Steps.astro';
 import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
 
-N0ctane keeps native Starlight semantics and adds a small set of reusable components. Every component uses the same pink–purple–blue–cyan identity in dark and light mode.
+N0ctane keeps native Starlight semantics and adds a small set of reusable components. The semantic palette adapts by mode: purple-led in dark mode and blue-led in light mode, with independent role overrides.
 
 ## Callouts
 
@@ -23,11 +23,11 @@ N0ctane keeps native Starlight semantics and adds a small set of reusable compon
 <Callout tone="danger">An important warning for potentially destructive actions.</Callout>
 <Callout tone="info">An informational callout.</Callout>
 
-The existing `type` prop remains supported; `tone` is an equivalent alias.
+The existing `type` prop remains supported; `tone` takes precedence when both are provided.
 
 ## Badges
 
-<Badge>Default</Badge> <Badge tone="pink">Pink</Badge> <Badge tone="cyan">Cyan</Badge> <Badge tone="success">Success</Badge> <Badge tone="warning">Warning</Badge> <Badge tone="danger">Danger</Badge>
+<Badge>Default</Badge> <Badge tone="pink">Primary</Badge> <Badge tone="cyan">Accent</Badge> <Badge tone="success">Success</Badge> <Badge tone="warning">Warning</Badge> <Badge tone="danger">Danger</Badge>
 
 ```mdx
 import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
@@ -87,7 +87,8 @@ import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
     - Header.astro
     - Sidebar.astro
   - styles/
-    - reference.css
+    - components.css
+    - interface.css
     - theme.css
 - astro.config.mjs
 - n0ct.config.mjs
@@ -101,7 +102,7 @@ Use <Kbd>Ctrl</Kbd> + <Kbd>K</Kbd> to open the command palette.
 
 ## Code frames and terminal blocks
 
-Code fences keep Expressive Code syntax highlighting and get a themed frame. Shell blocks add a terminal title bar with window controls.
+Code fences keep Expressive Code syntax highlighting inside a single restrained frame. Terminal fences use a minimal title strip without decorative window dots.
 
 ```bash title="Build the documentation"
 $ npm run build
@@ -158,6 +159,6 @@ const nextVersion = '0.1.4';
 
 Tailwind v4 is enabled by the theme. The bundled design tokens are available as utilities without a separate Vite setup in your site's Astro config.
 
-<div class="rounded-xl border border-n0ct-accent-500/40 bg-n0ct-surface p-4 text-noct-text-primary">
+<div class="rounded-xl border border-n0ct-accent-500/40 bg-n0ct-surface p-4 text-n0ct-text-primary">
   This panel uses Tailwind utilities from the N0ctane token palette.
 </div>
