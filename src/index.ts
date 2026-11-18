@@ -88,7 +88,7 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     useStarlightDarkModeSwitch: true,
     styleOverrides: {
       borderRadius: '0.65rem',
-      frames: { shadowColor: 'transparent' },
+      frames: { shadowColor: 'transparent', terminalIcon: 'none', terminalTitlebarDotsOpacity: '0' },
     },
     ...(typeof advanced.expressiveCode === 'object' && advanced.expressiveCode !== null
       ? advanced.expressiveCode
