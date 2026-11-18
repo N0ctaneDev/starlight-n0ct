@@ -25,7 +25,16 @@ export { normalizeN0ctConfig, topicToSidebar } from './config.js';
 export { createN0ctIntegrations, createN0ctVersioning } from './integrations.js';
 export { createN0ctSidebarTopics } from './sidebar-topics.js';
 export { resolveN0ctThemeColors, generateN0ctThemeCss, validateN0ctThemeColors } from './theme-colors.js';
-export type { N0ctThemeColors, N0ctThemeMode, N0ctThemePalette, N0ctThemeOverrides, N0ctThemeSemanticColors, N0ctThemeConfig } from './types.js';
+export type {
+  N0ctThemeColors,
+  N0ctThemeMode,
+  N0ctThemePalette,
+  N0ctThemeOverrides,
+  N0ctThemeSemantic,
+  N0ctThemeSemanticColors,
+  N0ctThemeCodeOverrides,
+  N0ctThemeConfig,
+} from './types.js';
 
 /**
  * Expand the intentionally small `n0ct.config.mjs` API into a complete
