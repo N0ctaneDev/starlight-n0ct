@@ -343,18 +343,33 @@
   display: none !important;
 }
 
-.expressive-code .ec-tab-bar,
-.expressive-code .tab-bar,
-.code-tabs [role='tablist'] {
+/* starlight-codeblocks renders a tab list inside every visible code-frame header.
+   The selected variant is .title; the remaining variants are .scb-tabs-tab. */
+.expressive-code .frame .header .scb-tabs-list {
   position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  align-self: stretch;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
   border: 0 !important;
   border-block-end: 1px solid var(--n0ct-code-tabs-border) !important;
   background: var(--n0ct-code-tabs-bg) !important;
 }
 
-.expressive-code .ec-tab-bar::after,
-.expressive-code .tab-bar::after,
-.code-tabs [role='tablist']::after {
+.expressive-code .frame .header .scb-tabs-list::-webkit-scrollbar {
+  display: none;
+}
+
+.expressive-code .frame .header .scb-tabs-list::after {
   position: absolute;
   inset-inline: 0;
   inset-block-end: -1px;
@@ -364,33 +379,51 @@
   pointer-events: none;
 }
 
-.expressive-code .ec-tab,
-.expressive-code .tab-bar button,
-.code-tabs [role='tab'] {
+.expressive-code .frame .header .scb-tabs-list > [role='tab'] {
   position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.65rem;
+  margin: 0;
+  padding: 0.58rem 0.9rem;
   border: 0 !important;
   border-radius: 0 !important;
   color: var(--n0ct-code-tabs-text) !important;
   background: transparent !important;
+  font: inherit;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 150ms ease, background-color 150ms ease;
 }
 
-.expressive-code .ec-tab[aria-selected='true'],
-.expressive-code .tab-bar button[aria-selected='true'],
-.code-tabs [role='tab'][aria-selected='true'] {
+.expressive-code .frame .header .scb-tabs-list > [role='tab']:hover {
+  color: var(--n0ct-code-tabs-active-text) !important;
+  background: color-mix(in srgb, var(--n0ct-primary-500) 7%, transparent) !important;
+}
+
+.expressive-code .frame .header .scb-tabs-list > [role='tab'][aria-selected='true'] {
   color: var(--n0ct-code-tabs-active-text) !important;
   background: var(--n0ct-code-tabs-active-bg) !important;
+  font-weight: 650;
 }
 
-.expressive-code .ec-tab[aria-selected='true']::after,
-.expressive-code .tab-bar button[aria-selected='true']::after,
-.code-tabs [role='tab'][aria-selected='true']::after {
+.expressive-code .frame .header .scb-tabs-list > [role='tab'][aria-selected='true']::after {
   position: absolute;
-  inset-inline: 0.5rem;
+  inset-inline: 0.48rem;
   inset-block-end: 0;
   height: 2px;
   border-radius: 999px;
   background: var(--n0ct-gradient-brand);
   content: '';
+}
+
+.expressive-code .frame .header .scb-tabs-list > [role='tab']:focus-visible {
+  outline: 2px solid var(--n0ct-border-focus) !important;
+  outline-offset: -3px;
 }
 
 .expressive-code .frame .header .title,
