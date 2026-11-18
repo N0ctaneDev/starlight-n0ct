@@ -447,6 +447,11 @@
 }
 
 /* Terminal frames normally keep an empty title bar; omit it when no title was supplied. */
+.expressive-code .frame.is-terminal:not(.has-title):not(:has(.scb-tools, .scb-steps-head, .cb-fullscreen__button)) {
+  /* Expressive Code still reserves title-bar space for its absolute copy button. */
+  --button-spacing: 0.4rem;
+}
+
 .expressive-code .frame.is-terminal:not(.has-title):not(:has(.scb-tools, .scb-steps-head, .cb-fullscreen__button)) > .header {
   display: none !important;
 }
