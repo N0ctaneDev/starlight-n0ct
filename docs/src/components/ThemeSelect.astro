@@ -1,0 +1,47 @@
+---
+import KbdPicker from 'starlight-kbd/components/KbdPicker.astro';
+import ThemeSelect from '@n0ctanedev/starlight-n0ct/components/ThemeSelect.astro';
+---
+<div class="n0ct-demo-theme-controls">
+  <KbdPicker />
+  <ThemeSelect />
+</div>
+
+<style>
+  .n0ct-demo-theme-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  :global(starlight-kbd-picker) {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  :global(starlight-kbd-picker label) {
+    height: 2.35rem;
+    padding-inline: 0.45rem;
+    gap: 0.3rem;
+    border: 1px solid var(--n0ct-border);
+    border-radius: 0.72rem;
+    color: var(--n0ct-text-secondary);
+    background: var(--n0ct-surface-navigation);
+    transition: border-color 180ms ease, color 180ms ease, background-color 180ms ease;
+  }
+
+  :global(starlight-kbd-picker label:hover) {
+    border-color: var(--n0ct-accent-500);
+    color: var(--n0ct-text-primary);
+  }
+
+  :global(starlight-kbd-picker select) {
+    color: inherit;
+    font-size: 0.78rem;
+  }
+
+  :global(starlight-kbd-picker select:focus-visible) {
+    outline: 2px solid var(--n0ct-accent-500);
+    outline-offset: 3px;
+  }
+</style>
