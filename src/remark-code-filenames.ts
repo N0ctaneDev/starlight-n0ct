@@ -14,7 +14,7 @@ type MarkdownProcessor = {
   };
 };
 
-const SÄTTERI_PLUGIN_NAME = 'starlight-n0ct:code-filenames';
+const SATTERI_PLUGIN_NAME = 'starlight-n0ct:code-filenames';
 
 /**
  * Convert shorthand filename metadata into Expressive Code title syntax.
@@ -52,10 +52,14 @@ export function normalizeCodeFenceMeta(meta: string | null | undefined): string 
   return 'title=' + JSON.stringify(filename) + (remainder ? ' ' + remainder : '');
 }
 
-function transformCodeFilenames(tree: MdastNode) {
+function transformCodeFilenames(
+  tree: MdastNode,
+  setMeta: (node: MdastNode, meta: string) => void,
+) {
   const visit = (node: MdastNode) => {
     if (node.type === 'code' && node.meta) {
-      node.meta = normalizeCodeFenceMeta(node.meta) ?? node.meta;
+      const normalized = normalizeCodeFenceMeta(node.meta);
+      if (normalized && normalized !== node.meta) setMeta(node, normalized);
     }
 
     for (const child of node.children ?? []) visit(child);
@@ -66,19 +70,25 @@ function transformCodeFilenames(tree: MdastNode) {
 
 /** Remark plugin for sites that explicitly configure Astro's Unified processor. */
 export function remarkCodeFilenames() {
-  return (tree: MdastNode) => transformCodeFilenames(tree);
+  return (tree: MdastNode) => transformCodeFilenames(tree, (node, meta) => {
+    node.meta = meta;
+  });
 }
 
 /**
  * Native Sätteri plugin for Astro 7's default Markdown processor.
- * Keeping this in mdastPlugins avoids activating Astro's deprecated
+ * Sätteri AST nodes are immutable: use its visitor context to update metadata.
+ * Keeping this in mdastPlugins also avoids activating Astro's deprecated
  * markdown.remarkPlugins compatibility path, which can replace Sätteri.
  */
 export function mdastCodeFilenames() {
   return {
     name: SÄTTERI_PLUGIN_NAME,
-    before(tree: MdastNode) {
-      transformCodeFilenames(tree);
+    before(
+      tree: MdastNode,
+      ctx: { setProperty(node: MdastNode, key: string, value: unknown): void },
+    ) {
+      transformCodeFilenames(tree, (node, meta) => ctx.setProperty(node, 'meta', meta));
     },
   };
 }
