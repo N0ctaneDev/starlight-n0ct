@@ -66,39 +66,64 @@ const config = {
     ],
   },
   theme: {
-    glow: 'balanced',
-    contentWidth: '58rem',
-    sidebarWidth: '17rem',
-    colors: {
-      dark: {
-        palette: {
-          primary: '#F25CFF', secondary: '#8C42FF', accent: '#00E5FF',
-          surface: '#131626', text: '#E6EAF8', highlight: '#2A85FF',
-          highlightText: '#080A15', background: '#0B0D17',
-        },
-        codePalette: {
-          background: '#0D1020', foreground: '#E6EAF8',
-          comment: '#A3AED1', keyword: '#FF8DD6', string: '#9FE6B8',
-          number: '#FFD18A', function: '#79DDF8', type: '#BDAAFF',
-          variable: '#E8ECFA', tag: '#72DCEB', attribute: '#F6A8D8',
-          punctuation: '#C0CBE5', invalid: '#FF829A',
+    defaultTheme: 'n0ctane',
+    themes: {
+      n0ctane: {
+        label: 'N0ctane',
+        colors: {
+          dark: {
+            palette: {
+              primary: '#F25CFF', secondary: '#8C42FF', accent: '#00E5FF',
+              surface: '#131626', text: '#E6EAF8', highlight: '#2A85FF',
+              highlightText: '#080A15', background: '#0B0D17',
+            },
+            codePalette: {
+              background: '#0D1020', foreground: '#E6EAF8',
+              comment: '#A3AED1', keyword: '#FF8DD6', string: '#9FE6B8',
+              number: '#FFD18A', function: '#79DDF8', type: '#BDAAFF',
+              variable: '#E8ECFA', tag: '#72DCEB', attribute: '#F6A8D8',
+              punctuation: '#C0CBE5', invalid: '#FF829A',
+            },
+          },
+          light: {
+            palette: {
+              primary: '#B72DBF', secondary: '#7540CE', accent: '#00AFC2',
+              surface: '#FFFFFF', text: '#211D32', highlight: '#286DCE',
+              highlightText: '#FFFFFF', background: '#F6F5FB',
+            },
+            codePalette: {
+              background: '#F3F1F8', foreground: '#29253D',
+              comment: '#68627F', keyword: '#92247E', string: '#08764D',
+              number: '#875400', function: '#00688F', type: '#5D3BA5',
+              variable: '#29253D', tag: '#006F88', attribute: '#92266B',
+              punctuation: '#514B64', invalid: '#B42345',
+            },
+          },
         },
       },
-      light: {
-        palette: {
-          primary: '#B72DBF', secondary: '#7540CE', accent: '#00AFC2',
-          surface: '#FFFFFF', text: '#211D32', highlight: '#286DCE',
-          highlightText: '#FFFFFF', background: '#F6F5FB',
-        },
-        codePalette: {
-          background: '#F3F1F8', foreground: '#29253D',
-          comment: '#68627F', keyword: '#92247E', string: '#08764D',
-          number: '#875400', function: '#00688F', type: '#5D3BA5',
-          variable: '#29253D', tag: '#006F88', attribute: '#92266B',
-          punctuation: '#514B64', invalid: '#B42345',
+      github: {
+        label: 'GitHub',
+        colors: {
+          dark: {
+            palette: {
+              primary: '#4493F8', secondary: '#8957E5', accent: '#3FB950',
+              surface: '#161B22', text: '#E6EDF3', highlight: '#1F6FEB',
+              highlightText: '#FFFFFF', background: '#0D1117',
+            },
+          },
+          light: {
+            palette: {
+              primary: '#0969DA', secondary: '#8250DF', accent: '#1A7F37',
+              surface: '#FFFFFF', text: '#1F2328', highlight: '#DDF4FF',
+              highlightText: '#0550AE', background: '#F6F8FA',
+            },
+          },
         },
       },
     },
+    glow: 'balanced',
+    contentWidth: '58rem',
+    sidebarWidth: '17rem',
   },
   starlight: {
     lastUpdated: true,
