@@ -72,6 +72,68 @@ For granular control, use overrides under either mode to adjust brand roles, sur
 
 The generated shade ramps are available as Tailwind classes such as bg-n0ct-primary-500, text-n0ct-text-primary, and border-n0ct-border.
 
+
+## Fine-grained role overrides
+
+Place these under either mode's overrides object. Every field is optional; unset values are derived from the palette.
+
+| Group | Available roles |
+|---|---|
+| brand | primary, secondary, accent, highlight, highlightText |
+| surfaces | void, base, surface, elevated, sunken, overlay, navigation, sidebar, code |
+| text | primary, secondary, muted, subtle, inverse, accent, highlight, onAccent |
+| borders | subtle, default, strong, focus |
+| interactive | hover, active, selected |
+| highlight | background, text, border, selectionBackground, selectionText |
+| code | background, foreground, cursor, selectionBackground, lineHighlight, lineNumber, lineNumberActive, diffAdded, diffRemoved, tabs |
+
+The code group also accepts nested controls:
+- diffAdded and diffRemoved: foreground, background, border, text
+- tabs: background, activeBackground, foreground, activeForeground, border
+
+For example:
+
+~~~js
+theme: {
+  colors: {
+    dark: {
+      overrides: {
+        surfaces: {
+          base: '#0C0B17',
+          surface: '#17152A',
+          elevated: '#211E39',
+          code: '#0E1020',
+        },
+        text: {
+          primary: '#F0EDFF',
+          secondary: '#D0CBE7',
+          muted: '#9690B4',
+          highlight: '#FFFFFF',
+        },
+        borders: {
+          default: '#37314F',
+          focus: '#4F91E8',
+        },
+        highlight: {
+          background: '#30264C',
+          text: '#F5F0FF',
+        },
+        code: {
+          diffAdded: { background: '#173D32', foreground: '#B9F3D9' },
+          diffRemoved: { background: '#4B2634', foreground: '#FFD0DA' },
+        },
+      },
+      semantic: {
+        success: { foreground: '#53D6A4', background: '#15382F', border: '#286B57' },
+        warning: { foreground: '#F2C66D', background: '#3B301C', border: '#6B5328' },
+        danger: { foreground: '#FF8499', background: '#45202B', border: '#783849' },
+        info: { foreground: '#82C8F0', background: '#1B3044', border: '#315C7B' },
+      },
+    },
+  },
+}
+~~~
+
 ## Layout
 
 The defaults use a 55rem reading width, a 17rem sidebar and a 3.25rem native Starlight header. Override theme.contentWidth and theme.sidebarWidth to change the layout.
