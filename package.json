@@ -51,7 +51,7 @@
   },
   "scripts": {
     "clean": "node ./scripts/clean.mjs",
-    "build": "npm run clean && tsup && node ./scripts/copy-assets.mjs",
+    "build": "npm run clean && tsup && tsup --config tsup.playground.config.ts && node ./scripts/copy-assets.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
