@@ -1,30 +1,31 @@
 ---
 title: Theme reference
-description: Semantic color roles, typography, layout and code styling.
+description: Semantic color roles, mode-qualified tokens, typography, and syntax palettes.
 ---
 
 ## Typography
 
 The theme uses **Space Grotesk Variable** for interface and body text and **Space Mono** for code.
 
-## Color system
+## Semantic color system
 
-The theme is role-based rather than hue-named. It keeps the original N0ctane four-color identity while exposing stable roles: the original pink is primary, violet is secondary, cyan is accent, and blue is highlight. Dark and light values are tuned independently; complete shade ramps are generated for the three brand seeds.
+N0ctane exposes design roles rather than hue-named variables. The original brand identity maps to stable roles:
 
 | Role | Purpose |
 |---|---|
-| primary | Main brand identity, links and monochrome gradient |
+| primary | Brand identity, links, and primary gradients |
 | secondary | Supporting brand color |
-| accent | Focus, active controls and interactive highlights |
-| base | Main page background |
-| surface | Cards, panels and content surfaces |
-| text.primary | Main readable text |
-| text.secondary | Body text |
-| text.muted | Supporting and metadata text |
+| accent | Focus, active controls, and interactive highlights |
 | highlight | Selected or emphasized content |
+| base | Main page background |
+| surface | Cards, panels, and content surfaces |
+| text.primary | Main readable text |
+| text.secondary | Body copy |
+| text.muted | Supporting and metadata text |
+| border | Separators and component outlines |
 | success, warning, danger, info | Semantic status colors |
 
-Dark and light modes are configured independently. Each mode accepts four core palette colors (primary, accent, surface, text) plus optional secondary, highlight, highlightText, and background. The default values preserve the original palette in both modes. Omit optional values and they are derived from the core colors.
+Dark and light values are tuned independently. The default light palette uses a darker primary text accent and stronger neutral contrast for readability.
 
 ## Configuration
 
@@ -45,45 +46,83 @@ theme: {
     },
     light: {
       palette: {
-        primary: '#C92FCF',
+        primary: '#B72DBF',
         secondary: '#7540CE',
         accent: '#00AFC2',
         surface: '#FFFFFF',
-        text: '#191629',
+        text: '#211D32',
         highlight: '#286DCE',
         highlightText: '#FFFFFF',
-        background: '#F8F7FC',
+        background: '#F6F5FB',
       },
     },
   },
 }
 ~~~
 
-Semantic statuses can be overridden independently in each mode:
+The four core palette values are primary, accent, surface, and text. Secondary, highlight, highlightText, and background are optional and are derived when omitted.
+
+## Mode-qualified color tokens
+
+Every resolved role is available under a mode-specific prefix, regardless of the active theme:
+
+- --n0ct-dark-base, --n0ct-dark-surface, --n0ct-dark-text-primary
+- --n0ct-light-base, --n0ct-light-surface, --n0ct-light-text-primary
+- --n0ct-dark-primary-500, --n0ct-light-primary-500
+- --n0ct-dark-code-background, --n0ct-light-code-background
+
+The regular aliases (--n0ct-base, --n0ct-surface, --n0ct-text-primary, and so on) always follow Starlight's active color scheme. Both naming styles are available in CSS and the commonly-used mode-qualified roles are also registered as Tailwind tokens, for example bg-n0ct-dark-surface.
+
+## Dedicated code palettes
+
+Code syntax colors are configured separately from the documentation UI palette. Each mode accepts its own codePalette. Values are literal hex colors so Expressive Code can generate independent Shiki themes with predictable contrast.
 
 ~~~js
 theme: {
   colors: {
     dark: {
-      semantic: {
-        success: { foreground: '#06D6A0' },
-        warning: { foreground: '#FFD166' },
-        danger: { foreground: '#FF4D6D' },
-        info: { foreground: '#FF9F1C' },
+      codePalette: {
+        background: '#0D1020',
+        foreground: '#E6EAF8',
+        comment: '#A3AED1',
+        keyword: '#FF8DD6',
+        string: '#9FE6B8',
+        number: '#FFD18A',
+        function: '#79DDF8',
+        type: '#BDAAFF',
+        variable: '#E8ECFA',
+        tag: '#72DCEB',
+        attribute: '#F6A8D8',
+        punctuation: '#C0CBE5',
+        invalid: '#FF829A',
+      },
+    },
+    light: {
+      codePalette: {
+        background: '#F3F1F8',
+        foreground: '#29253D',
+        comment: '#68627F',
+        keyword: '#92247E',
+        string: '#08764D',
+        number: '#875400',
+        function: '#00688F',
+        type: '#5D3BA5',
+        variable: '#29253D',
+        tag: '#006F88',
+        attribute: '#92266B',
+        punctuation: '#514B64',
+        invalid: '#B42345',
       },
     },
   },
 }
 ~~~
 
-For granular control, use overrides under either mode to adjust brand roles, surfaces, text, borders, interaction states, highlights and code-block details. Unset values are derived from the palette.
-
-The generated shade ramps are available as Tailwind classes such as bg-n0ct-primary-500, text-n0ct-text-primary, and border-n0ct-border.
-
+You can omit any field and N0ctane will use the built-in mode default. The previous overrides.code API remains available and takes precedence for detailed cursor, selection, line-number, diff, and tab controls.
 
 ## Fine-grained role overrides
 
-Place these under either mode's overrides object. Every field is optional; unset values are derived from the palette.
+Place these under either mode's overrides object. Every field is optional.
 
 | Group | Available roles |
 |---|---|
@@ -95,61 +134,31 @@ Place these under either mode's overrides object. Every field is optional; unset
 | highlight | background, text, border, selectionBackground, selectionText |
 | code | background, foreground, cursor, selectionBackground, lineHighlight, lineNumber, lineNumberActive, diffAdded, diffRemoved, tabs |
 
-The code group also accepts nested controls:
-- diffAdded and diffRemoved: foreground, background, border, text
-- tabs: background, activeBackground, foreground, activeForeground, border
+The code override group also accepts:
+- diffAdded and diffRemoved: foreground, background, border, text.
+- tabs: background, activeBackground, foreground, activeForeground, border.
 
-For example:
+## Semantic status colors
+
+Statuses can be overridden independently in each mode:
 
 ~~~js
 theme: {
   colors: {
-    dark: {
-      overrides: {
-        surfaces: {
-          base: '#0C0B17',
-          surface: '#17152A',
-          elevated: '#211E39',
-          code: '#0E1020',
-        },
-        text: {
-          primary: '#F0EDFF',
-          secondary: '#D0CBE7',
-          muted: '#9690B4',
-          highlight: '#FFFFFF',
-        },
-        borders: {
-          default: '#37314F',
-          focus: '#4F91E8',
-        },
-        highlight: {
-          background: '#30264C',
-          text: '#F5F0FF',
-        },
-        code: {
-          diffAdded: { background: '#173D32', foreground: '#B9F3D9' },
-          diffRemoved: { background: '#4B2634', foreground: '#FFD0DA' },
-        },
-      },
+    light: {
       semantic: {
-        success: { foreground: '#53D6A4', background: '#15382F', border: '#286B57' },
-        warning: { foreground: '#F2C66D', background: '#3B301C', border: '#6B5328' },
-        danger: { foreground: '#FF8499', background: '#45202B', border: '#783849' },
-        info: { foreground: '#82C8F0', background: '#1B3044', border: '#315C7B' },
+        success: { foreground: '#087F5B' },
+        warning: { foreground: '#875400' },
+        danger: { foreground: '#B42345' },
+        info: { foreground: '#A85A00' },
       },
     },
   },
 }
 ~~~
 
-## Layout
+## Layout and effects
 
-The defaults use a 55rem reading width, a 17rem sidebar and a 3.25rem native Starlight header. Override theme.contentWidth and theme.sidebarWidth to change the layout.
+The defaults use a 55rem reading width and a 17rem sidebar. Override theme.contentWidth and theme.sidebarWidth to change layout. Glow strength accepts subtle, balanced, or strong; the default is balanced.
 
-## Code blocks
-
-Standard fenced Markdown code blocks are supported, with :::code-tabs for tabbed variants. The theme does not provide a custom Code component. Code frames use one restrained border, no decorative macOS dots, and a consistently placed copy control. Diff additions and deletions use separate semantic green/red states.
-
-## Background and accessibility
-
-The ambient gradient is fixed to the viewport rather than scrolling with the document. Glow strength is configurable as subtle, balanced, or strong. Focus states remain visible and animations respect prefers-reduced-motion.
+The background glow is fixed to the viewport rather than scrolling with the document. Focus states remain visible and animations respect prefers-reduced-motion.

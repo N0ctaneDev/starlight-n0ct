@@ -1,0 +1,18 @@
+---
+title: A role-based palette that reads well in both modes
+description: Why UI colors and syntax colors need their own semantic systems.
+date: 2026-11-17
+authors: [team]
+tags: [Design, Accessibility, Theme]
+excerpt: A short look at the difference between brand identity, semantic UI roles, and syntax highlighting.
+---
+
+A theme palette should describe what a color does, not what hue it happens to be.
+
+N0ctane maps its identity into roles such as primary, secondary, accent, and highlight. It also keeps surfaces, text, borders, and status states separate. This gives components a stable contract even when a project changes its brand colors.
+
+Light and dark modes are configured independently. A light interface needs readable text, subdued surfaces, and darker accent text; it should not be a simple inversion of the dark palette.
+
+Code is a separate environment. Syntax colors sit on a dedicated editor canvas and need enough contrast for comments, keywords, strings, functions, types, and punctuation to remain distinct. N0ctane 0.2.0 exposes a codePalette for each mode so those decisions are explicit.
+
+Explore the [theme reference](/reference/theme/) for the configuration shape and the [showcase](/showcase/) to compare the palettes.

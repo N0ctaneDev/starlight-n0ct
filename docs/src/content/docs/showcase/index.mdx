@@ -1,0 +1,135 @@
+---
+title: Showcase
+description: A live tour of N0ctane components, syntax themes, integrations, and design tokens.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
+import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
+import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
+import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
+import FileTree from '@n0ctanedev/starlight-n0ct/components/docs/FileTree.astro';
+import Kbd from '@n0ctanedev/starlight-n0ct/components/docs/Kbd.astro';
+import Steps from '@n0ctanedev/starlight-n0ct/components/docs/Steps.astro';
+
+The demo site uses the same configuration and components available to package consumers. This page is intentionally packed with examples so you can inspect the theme in both color modes.
+
+## Component system
+
+<Badge tone="pink">Primary</Badge> <Badge tone="cyan">Accent</Badge> <Badge tone="success">Stable</Badge> <Badge tone="warning">Preview</Badge> <Badge tone="danger">Deprecated</Badge>
+
+<Callout tone="note" title="Note">Callouts support note, tip, warning, danger, and info tones.</Callout>
+<Callout tone="tip" title="Tip">Use the semantic tone that describes the message, not the hue you want it to have.</Callout>
+<Callout tone="warning" title="Caution">Warnings and important notices remain readable in both light and dark themes.</Callout>
+
+<CardGrid stagger>
+  <Card title="Native Starlight card" icon="pencil">
+    Standard Starlight cards inherit the N0ctane surface, border, and hover treatment.
+  </Card>
+  <Card title="Interactive integrations" icon="puzzle">
+    Blog, versioning, image zoom, keyboard hints, LLM actions, and scroll-to-top are active in this demo.
+  </Card>
+  <Card title="Role-based colors" icon="palette">
+    Brand colors are mapped into primary, secondary, accent, highlight, and semantic roles.
+  </Card>
+</CardGrid>
+
+<DocGrid columns={2}>
+  <DocCard title="Getting started" eyebrow="Docs" description="Install and configure the package." href="/getting-started/" />
+  <DocCard title="Theme reference" eyebrow="Tokens" description="Read about role tokens and syntax palettes." href="/reference/theme/" />
+</DocGrid>
+
+## Steps
+
+<Steps>
+  1. Install N0ctane with your package manager.
+  2. Add the n0ctane() helper to your Starlight config.
+  3. Configure your theme and integrations in n0ct.config.mjs.
+</Steps>
+
+## File tree
+
+<FileTree>
+- project/
+  - docs/
+    - src/
+      - content/
+        - docs/
+          - blog/
+          - showcase/
+          - reference/
+      - icons/
+  - src/
+    - components/
+    - styles/
+  - n0ct.config.mjs
+  - astro.config.mjs
+</FileTree>
+
+## Keyboard hints
+
+Use <Kbd>Ctrl</Kbd> + <Kbd>K</Kbd> for the search palette, <Kbd>Esc</Kbd> to dismiss a dialog, and <Kbd>⌘</Kbd> + <Kbd>K</Kbd> on macOS.
+
+## Code frames and macOS-style terminal title bars
+
+~~~bash title="Terminal" frame="terminal"
+$ npm run docs:build
+$ npm run check:ci
+~~~
+
+The syntax palette is independent for each mode. Switch between dark and light themes to compare the token colors below.
+
+## Code tabs
+
+:::code-tabs{sync="n0ct-showcase-languages"}
+
+~~~js label="JavaScript"
+const site = 'N0ctane';
+console.log('Welcome to ' + site);
+~~~
+
+~~~ts label="TypeScript"
+const site: string = 'N0ctane';
+console.log('Welcome to ' + site);
+~~~
+
+~~~py label="Python"
+site = 'N0ctane'
+print('Welcome to ' + site)
+~~~
+
+:::
+
+## Color tokens
+
+The active aliases (for example, --n0ct-base and --n0ct-surface) follow the selected mode. Mode-qualified tokens remain fixed and can be used when a component needs to reference a specific palette:
+
+~~~css
+.card {
+  background: var(--n0ct-dark-surface);
+  color: var(--n0ct-light-text-primary);
+}
+~~~
+
+<div class="grid grid-cols-2 gap-3">
+  <div class="rounded-xl border border-n0ct-border bg-n0ct-surface p-4">
+    <p class="text-sm text-n0ct-text-muted">Surface role</p>
+    <p class="font-semibold text-n0ct-text-primary">Theme-aware panel</p>
+  </div>
+  <div class="rounded-xl border border-n0ct-accent-500/40 bg-n0ct-surface-elevated p-4">
+    <p class="text-sm text-n0ct-text-muted">Accent role</p>
+    <p class="font-semibold text-n0ct-text-accent">Interactive highlight</p>
+  </div>
+</div>
+
+## Image zoom
+
+Click the image to open the image zoom viewer. The demo's imageZoom integration is enabled.
+
+![N0ctOS visual identity](/n0ctos-logo.png)
+
+## Blog and versioning
+
+- Visit the [blog](/blog/) to see author profiles, tags, excerpts, featured posts, and reading metrics.
+- Use the version selector to switch between the current v0.2.0 docs and the archived v0.1.4 snapshot.
+- The [integrations guide](/guides/integrations/) lists all bundled features active in this demo.

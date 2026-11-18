@@ -5,7 +5,6 @@ description: Reusable N0ctane components, native Starlight elements, and express
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
-import Command from '@n0ctanedev/starlight-n0ct/components/docs/Command.astro';
 import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
 import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
 import FileTree from '@n0ctanedev/starlight-n0ct/components/docs/FileTree.astro';
@@ -13,7 +12,7 @@ import Kbd from '@n0ctanedev/starlight-n0ct/components/docs/Kbd.astro';
 import Steps from '@n0ctanedev/starlight-n0ct/components/docs/Steps.astro';
 import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
 
-N0ctane keeps native Starlight semantics and adds a small set of reusable components. The semantic palette adapts by mode: purple-led in dark mode and blue-led in light mode, with independent role overrides.
+N0ctane keeps native Starlight semantics and adds a small set of reusable components. Component details and a broader visual tour are available in the [showcase](/showcase/).
 
 ## Callouts
 
@@ -23,22 +22,24 @@ N0ctane keeps native Starlight semantics and adds a small set of reusable compon
 <Callout tone="danger">An important warning for potentially destructive actions.</Callout>
 <Callout tone="info">An informational callout.</Callout>
 
-The existing `type` prop remains supported; `tone` takes precedence when both are provided.
+The type prop remains supported for compatibility; tone takes precedence when both are provided.
 
 ## Badges
 
 <Badge>Default</Badge> <Badge tone="pink">Primary</Badge> <Badge tone="cyan">Accent</Badge> <Badge tone="success">Success</Badge> <Badge tone="warning">Warning</Badge> <Badge tone="danger">Danger</Badge>
 
-```mdx
+Badges use a larger inline-flex hit area and align to the vertical center of surrounding text.
+
+~~~mdx
 import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
 
 <Badge tone="success">Stable</Badge>
-```
+~~~
 
 ## Link cards
 
 <DocGrid columns={2}>
-  <DocCard title="Getting started" eyebrow="Learn" description="A linked card with the reference's subtle chain watermark." href="/getting-started/" />
+  <DocCard title="Getting started" eyebrow="Learn" description="A linked card with a subtle chain watermark." href="/getting-started/" />
   <DocCard title="Configuration" eyebrow="Reference" description="A static card can hold extra content without navigating." />
 </DocGrid>
 
@@ -46,10 +47,10 @@ import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
 
 <CardGrid>
   <Card title="Native card" icon="open-book">
-    Native Starlight cards keep their standard MDX API and receive the N0ctane gradient surface.
+    Native Starlight cards keep their standard MDX API and receive the N0ctane surface and gradient styling.
   </Card>
   <Card title="Another native card" icon="setting">
-    Use the built-in Card and CardGrid components when their standard semantics fit.
+    Use built-in Card and CardGrid components when their standard semantics fit.
   </Card>
 </CardGrid>
 
@@ -58,21 +59,21 @@ import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
 <Steps>
   1. Install the dependencies:
 
-     ```sh
+     ~~~sh
      npm install
-     ```
+     ~~~
 
   2. Start the development server:
 
-     ```sh
+     ~~~sh
      npm run dev
-     ```
+     ~~~
 
   3. Build the production site:
 
-     ```sh
+     ~~~sh
      npm run build
-     ```
+     ~~~
 </Steps>
 
 ## File tree
@@ -81,11 +82,13 @@ import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
 - src/
   - components/
     - docs/
-      - **Badge.astro**
-      - Command.astro
+      - Badge.astro
+      - Callout.astro
       - DocCard.astro
-    - Header.astro
-    - Sidebar.astro
+      - DocGrid.astro
+      - FileTree.astro
+      - Kbd.astro
+      - Steps.astro
   - styles/
     - components.css
     - interface.css
@@ -95,70 +98,64 @@ import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
 - package.json
 </FileTree>
 
-## Commands and keyboard keys
+## Keyboard hints
 
-<Command command="npx astro dev --host 0.0.0.0" />
-Use <Kbd>Ctrl</Kbd> + <Kbd>K</Kbd> to open the command palette.
+Use <Kbd>Ctrl</Kbd> + <Kbd>K</Kbd> to open the command palette. The starlight-kbd integration selects the right keyboard convention for macOS, Windows, and Linux.
 
-## Code frames and terminal blocks
+## Code frames
 
-Code fences keep Expressive Code syntax highlighting inside a single restrained frame. Terminal fences use a minimal title strip without decorative window dots.
+Standard fenced Markdown code blocks use the N0ctane syntax palette. Terminal fences receive a compact title bar with macOS-style dots. The additional copy button in the title bar is disabled to keep the frame uncluttered.
 
-```bash title="Build the documentation"
-$ npm run build
-```
+~~~bash title="Build the documentation" frame="terminal"
+npm run build
+~~~
 
 ## Editor tabs
 
-Use `:::code-tabs` and a shared `sync` key to remember the selected language across blocks.
+The :::code-tabs directive combines variants into one interactive code frame. Keep only fenced code blocks between the directive markers.
 
-:::code-tabs{sync="n0ct-example"}
+:::code-tabs{sync="n0ct-package-manager"}
 
-```js label="JavaScript"
-const greeting = 'Hello, N0ctane';
-console.log(greeting);
-```
+~~~bash label="npm"
+npm install @n0ctanedev/starlight-n0ct
+~~~
 
-```ts label="TypeScript"
-const greeting: string = 'Hello, N0ctane';
-console.log(greeting);
-```
+~~~bash label="pnpm"
+pnpm add @n0ctanedev/starlight-n0ct
+~~~
 
-```py label="Python"
-greeting = 'Hello, N0ctane'
-print(greeting)
-```
+~~~bash label="yarn"
+yarn add @n0ctanedev/starlight-n0ct
+~~~
 
 :::
 
 ## Diff highlighting
 
-The `diff` fence language marks removed rows in red and added rows in green. Changed words are highlighted when a removed line is paired with its replacement.
+The diff language marks removed rows in red and added rows in green.
 
-```diff lang="ts" title="src/config.ts"
+~~~diff title="theme config"
+- glow: 'subtle'
++ glow: 'balanced'
+~~~
+
+## Focus and line highlighting
+
+Use Expressive Code attributes to focus a small range of lines without changing the code itself.
+
+~~~ts title="src/config.ts" {2-3}
 export default {
-  title: 'N0ctOS',
-- theme: { glow: 'subtle' },
-+ theme: { glow: 'balanced' },
+  theme: {
+    glow: 'balanced',
+    contentWidth: '58rem',
+  },
 };
-```
-
-## Inline code markers
-
-Add `[!code --]` or `[!code ++]` to a language comment to mark a removed or added line. The marker is rendered as a red or green row rather than shown as source text.
-
-```ts title="version.ts"
-const currentVersion = '0.1.3';
-// [!code --]
-const nextVersion = '0.1.3';
-// [!code ++]
-const nextVersion = '0.1.4';
-```
+~~~
 
 ## Tailwind utilities
 
-Tailwind v4 is enabled by the theme. The bundled design tokens are available as utilities without a separate Vite setup in your site's Astro config.
+Tailwind v4 is enabled by the theme. Its role-based tokens are available without additional Vite setup.
 
 <div class="rounded-xl border border-n0ct-accent-500/40 bg-n0ct-surface p-4 text-n0ct-text-primary">
-  This panel uses Tailwind utilities from the N0ctane token palette.
+  This panel uses Tailwind utilities from the N0ctane palette.
 </div>
