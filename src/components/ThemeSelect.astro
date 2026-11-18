@@ -1,6 +1,9 @@
 ---
+import KbdPicker from 'starlight-kbd/components/KbdPicker.astro';
 ---
-<button class="n0ct-theme-toggle" type="button" data-mode="auto" aria-label="Color theme: Auto. Activate to switch to Light." title="Color theme: Auto">
+<div class="n0ct-theme-controls">
+  <KbdPicker />
+  <button class="n0ct-theme-toggle" type="button" data-mode="auto" aria-label="Color theme: Auto. Activate to switch to Light." title="Color theme: Auto">
   <svg class="n0ct-theme-toggle__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
     <g class="icon-auto" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
       <rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M8 10l2.5 3 2-2 3.5 4"/>
@@ -11,7 +14,8 @@
     <path class="icon-dark" d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
   <span class="n0ct-sr-only" data-theme-announcement>Theme: Auto</span>
-</button>
+  </button>
+</div>
 <script>
   type ThemeMode = 'auto' | 'light' | 'dark';
   const modes: ThemeMode[] = ['auto', 'light', 'dark'];
@@ -72,6 +76,17 @@
   setTheme(getSavedMode());
 </script>
 <style>
+  .n0ct-theme-controls { display:flex; align-items:center; gap:.4rem; }
+  :global(starlight-kbd-picker) { display:inline-flex; align-items:center; }
+  :global(starlight-kbd-picker label) {
+    height:2.35rem; padding-inline:.45rem; gap:.3rem;
+    border:1px solid var(--n0ct-border); border-radius:.72rem;
+    color:var(--n0ct-text-secondary); background:var(--n0ct-surface-navigation);
+    transition:border-color .18s ease, color .18s ease, background-color .18s ease;
+  }
+  :global(starlight-kbd-picker label:hover) { border-color:var(--n0ct-accent-500); color:var(--n0ct-text-primary); }
+  :global(starlight-kbd-picker select) { color:inherit; font-size:.78rem; }
+  :global(starlight-kbd-picker select:focus-visible) { outline:2px solid var(--n0ct-accent-500); outline-offset:3px; }
   .n0ct-theme-toggle {
     display:grid; place-items:center; width:2.35rem; height:2.35rem;
     border:1px solid var(--sl-color-hairline); border-radius:.72rem;
