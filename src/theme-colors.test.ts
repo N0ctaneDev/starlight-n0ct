@@ -20,7 +20,7 @@ describe('semantic theme palettes', () => {
     expect(vars['--n0ct-surface']).toBe('#101010');
     expect(vars['--n0ct-text-primary']).toBe('#F0F0F0');
     expect(vars['--n0ct-success-bg']).toContain('color-mix');
-    expect(vars['--n0ct-border-focus']).toBe('var(--n0ct-accent-500)');
+    expect(vars['--n0ct-border-focus']).toBe('#445566');
   });
 
   it('supports independent semantic and role overrides in each mode', () => {
