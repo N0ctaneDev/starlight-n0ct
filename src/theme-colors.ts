@@ -108,7 +108,7 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
     text: normalizeHex(supplied.text ?? DEFAULTS[mode].text, 'theme.colors.' + mode + '.palette.text'),
     secondary: normalizeHex(supplied.secondary ?? mixHex(supplied.primary ?? DEFAULTS[mode].primary, supplied.accent ?? DEFAULTS[mode].accent, 0.5), 'theme.colors.' + mode + '.palette.secondary'),
     highlight: normalizeHex(supplied.highlight ?? mixHex(supplied.accent ?? DEFAULTS[mode].accent, paletteSurface, dark ? 0.78 : 0.88), 'theme.colors.' + mode + '.palette.highlight'),
-    highlightText: normalizeHex(supplied.highlightText ?? contrastText(supplied.highlight ?? mixHex(supplied.accent ?? DEFAULTS[mode].accent, surface, dark ? 0.78 : 0.88)), 'theme.colors.' + mode + '.palette.highlightText'),
+    highlightText: normalizeHex(supplied.highlightText ?? contrastText(supplied.highlight ?? mixHex(supplied.accent ?? DEFAULTS[mode].accent, paletteSurface, dark ? 0.78 : 0.88)), 'theme.colors.' + mode + '.palette.highlightText'),
     background: normalizeHex(supplied.background ?? mixHex(paletteSurface, dark ? '#070812' : '#F8F7FC', dark ? 0.28 : 0.04), 'theme.colors.' + mode + '.palette.background'),
   };
   checkObject(input?.semantic, 'theme.colors.' + mode + '.semantic');
