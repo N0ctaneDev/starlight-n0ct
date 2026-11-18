@@ -33,7 +33,7 @@ const hasCurrent = (entry: Entry): boolean =>
             <summary>
               {parsed.icon && <Icon name={parsed.icon} class="n0ct-sidebar-icon" />}
               <span class="n0ct-sidebar-label">{parsed.text}</span>
-              {entry.badge && <span class:list={['n0ct-sidebar-badge', \`n0ct-badge--\${entry.badge.variant ?? 'default'}\`, entry.badge.class]}>{entry.badge.text}</span>}
+              {entry.badge && <span class:list={['n0ct-sidebar-badge', `n0ct-badge--${entry.badge.variant ?? 'default'}`, entry.badge.class]}>{entry.badge.text}</span>}
               <svg class="n0ct-sidebar-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
             </summary>
             <SidebarRestorePoint />
@@ -47,7 +47,7 @@ const hasCurrent = (entry: Entry): boolean =>
         <a href={entry.href} aria-current={entry.isCurrent ? 'page' : undefined} {...entry.attrs}>
           {parsed.icon && <Icon name={parsed.icon} class="n0ct-sidebar-icon" />}
           <span class="n0ct-sidebar-label">{parsed.text}</span>
-          {entry.badge && <span class:list={['n0ct-sidebar-badge', \`n0ct-badge--\${entry.badge.variant ?? 'default'}\`, entry.badge.class]}>{entry.badge.text}</span>}
+          {entry.badge && <span class:list={['n0ct-sidebar-badge', `n0ct-badge--${entry.badge.variant ?? 'default'}`, entry.badge.class]}>{entry.badge.text}</span>}
         </a>
       </li>
     );
