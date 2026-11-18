@@ -1,3 +1,6 @@
 ---
+import { FileTree as NativeFileTree } from '@astrojs/starlight/components';
 ---
-<div class="noct-file-tree"><slot /></div>
+<div class="noct-file-tree">
+  <NativeFileTree><slot /></NativeFileTree>
+</div>
