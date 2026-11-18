@@ -106,8 +106,12 @@ export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
           }));
         }
 
-        for (const warning of validateN0ctThemeColors(config.theme?.colors)) logger.warn(warning);
-        logger.info('N0ctane palette, snapshot components, and runtime settings are ready.');
+        for (const [themeId, theme] of Object.entries(themeSet.themes)) {
+          for (const warning of validateN0ctThemeColors(theme.colors)) {
+            logger.warn('Theme "' + themeId + '": ' + warning);
+          }
+        }
+        logger.info('N0ctane named palettes, snapshot components, and runtime settings are ready.');
       },
     },
   };
