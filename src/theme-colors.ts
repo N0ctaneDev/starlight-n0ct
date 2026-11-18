@@ -613,7 +613,7 @@ export function generateN0ctThemeSetCss(input?: N0ctThemeConfig): string {
   const themeSet = resolveN0ctThemeConfig(input);
   const declarations = (variables: Record<string, string>) => Object.entries(variables)
     .map(([name, value]) => name + ': ' + value + ';')
-    .join('\\n  ');
+    .join('\n  ');
   const active = (variables: Record<string, string>) => Object.fromEntries(
     Object.entries(variables).filter(([name]) => !/^--n0ct-(?:dark|light)-/.test(name)),
   );
@@ -630,23 +630,23 @@ export function generateN0ctThemeSetCss(input?: N0ctThemeConfig): string {
     const themeScope = ':root[data-n0ct-theme="' + id + '"]';
 
     blocks.push(
-      themeScope + ' { color-scheme: dark;\\n  ' +
-      declarations({ ...qualified(dark, light), ...active(dark) }) + '\\n}',
-      themeScope + '[data-theme="dark"] { color-scheme: dark;\\n  ' +
-      declarations(active(dark)) + '\\n}',
-      themeScope + '[data-theme="light"] { color-scheme: light;\\n  ' +
-      declarations(active(light)) + '\\n}',
+      themeScope + ' { color-scheme: dark;\n  ' +
+      declarations({ ...qualified(dark, light), ...active(dark) }) + '\n}',
+      themeScope + '[data-theme="dark"] { color-scheme: dark;\n  ' +
+      declarations(active(dark)) + '\n}',
+      themeScope + '[data-theme="light"] { color-scheme: light;\n  ' +
+      declarations(active(light)) + '\n}',
     );
   }
 
   const fallback = resolveN0ctThemeColors(themeSet.themes[themeSet.defaultTheme]!.colors);
   blocks.unshift(
-    ':root { color-scheme: dark;\\n  ' +
+    ':root { color-scheme: dark;\n  ' +
     declarations({
       ...qualified(fallback.dark.variables, fallback.light.variables),
       ...active(fallback.dark.variables),
-    }) + '\\n}',
+    }) + '\n}',
   );
 
-  return blocks.join('\\n\\n') + '\\n';
+  return blocks.join('\n\n') + '\n';
 }
