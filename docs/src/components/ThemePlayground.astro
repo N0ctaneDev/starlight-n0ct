@@ -6,7 +6,7 @@ import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
 import FileTree from '@n0ctanedev/starlight-n0ct/components/docs/FileTree.astro';
 import Kbd from '@n0ctanedev/starlight-n0ct/components/docs/Kbd.astro';
 import Steps from '@n0ctanedev/starlight-n0ct/components/docs/Steps.astro';
-import { resolveN0ctThemeColors } from '@n0ctanedev/starlight-n0ct';
+import { resolveN0ctThemeColors } from '@n0ctanedev/starlight-n0ct/theme-playground';
 
 const configuredTheme = (Astro.locals as any).n0ctane?.theme ?? {};
 const configuredThemes = Array.isArray(configuredTheme.themes) ? configuredTheme.themes : [];
