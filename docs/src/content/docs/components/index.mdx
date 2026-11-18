@@ -8,10 +8,9 @@ import Badge from '@n0ctanedev/starlight-n0ct/components/docs/Badge.astro';
 import Command from '@n0ctanedev/starlight-n0ct/components/docs/Command.astro';
 import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
 import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
-import FileTree from '@n0ctanedev/starlight-n0ct/components/docs/FileTree.astro';
+import { FileTree } from '@astrojs/starlight/components';
 import Kbd from '@n0ctanedev/starlight-n0ct/components/docs/Kbd.astro';
 import Steps from '@n0ctanedev/starlight-n0ct/components/docs/Steps.astro';
-import Step from '@n0ctanedev/starlight-n0ct/components/docs/Step.astro';
 import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
 
 N0ctane keeps native Starlight semantics and adds a small set of reusable components. Every component uses the same pink–purple–blue–cyan identity in dark and light mode.
@@ -159,6 +158,6 @@ const nextVersion = '0.1.4';
 
 Tailwind v4 is enabled by the theme. The bundled design tokens are available as utilities without a separate Vite setup in your site's Astro config.
 
-<div class="rounded-xl border border-noct-cyan-500/40 bg-noct-bg-surface p-4 text-noct-text-primary">
+<div class="rounded-xl border border-n0ct-accent-500/40 bg-n0ct-surface p-4 text-noct-text-primary">
   This panel uses Tailwind utilities from the N0ctane token palette.
 </div>
