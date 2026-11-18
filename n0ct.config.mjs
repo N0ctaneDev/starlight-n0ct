@@ -101,6 +101,7 @@ const config = {
     },
   },
   starlight: {
+    components: { ThemeSelect: './src/components/ThemeSelect.astro' },
     lastUpdated: true,
     editLink: { baseUrl: 'https://github.com/n0ctanedev/starlight-n0ct/edit/main/docs/' },
   },
