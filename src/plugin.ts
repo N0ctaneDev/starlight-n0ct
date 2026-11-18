@@ -29,8 +29,12 @@ function tokenStyles(config: N0ctConfig) {
 
   const glow = theme.glow ?? 'balanced';
   const glowStrength = glow === 'subtle' ? '12%' : glow === 'strong' ? '34%' : '22%';
+  const backgroundGlow = glow === 'subtle' ? '4%' : glow === 'strong' ? '11%' : '7%';
+  const accentGlow = glow === 'subtle' ? '2%' : glow === 'strong' ? '7%' : '5%';
   const layout = [
     '--n0ct-glow-strength: ' + glowStrength + ';',
+    '--n0ct-glow-background-strength: ' + backgroundGlow + ';',
+    '--n0ct-glow-accent-strength: ' + accentGlow + ';',
     ...(theme.contentWidth ? ['--sl-content-width: ' + theme.contentWidth + ';'] : []),
     ...(theme.sidebarWidth ? ['--sl-sidebar-width: ' + theme.sidebarWidth + ';'] : []),
   ];
