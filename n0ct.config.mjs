@@ -26,7 +26,7 @@ const config = {
     announcement: {
       announcements: [{ id: 'n0ctane-v020-preview', content: 'N0ctane v0.2.0 preview — explore the theme, code blocks, blog, and versioned docs.' }],
     },
-    kbd: { globalPicker: false },
+    kbd: { globalPicker: true },
     llmsTxt: {},
     scrollToTop: { smoothScroll: true },
     llmActions: {},
@@ -37,7 +37,7 @@ const config = {
       exclude: ({ link }) => /(?:^|\/)blog(?:\/|$)/.test(link.split(/[?#]/, 1)[0] ?? link),
     },
     blog: {
-      navigation: 'none',
+      navigation: 'header-start',
       metrics: { readingTime: true, words: 'rounded' },
       authors: {
         team: {
