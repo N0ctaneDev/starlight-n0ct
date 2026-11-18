@@ -33,6 +33,7 @@ const playgroundThemes = sourceThemes.map((theme: {
       dark: pickMainColors(resolved.dark.variables),
       light: pickMainColors(resolved.light.variables),
     },
+    sourceColors: theme.colors ?? {},
   };
 });
 const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 'n0ctane';
@@ -179,6 +180,10 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
     id: string;
     label: string;
     colors: { dark: Palette; light: Palette };
+    sourceColors: {
+      dark?: { palette?: Partial<Palette>; [key: string]: unknown };
+      light?: { palette?: Partial<Palette>; [key: string]: unknown };
+    };
   };
 
   document.querySelectorAll<HTMLElement>('[data-n0ct-theme-playground]').forEach((playground) => {
@@ -211,13 +216,24 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
       return style;
     };
 
+    const getFullThemeColors = (theme: PlaygroundTheme) => ({
+      dark: {
+        ...theme.sourceColors.dark,
+        palette: { ...theme.sourceColors.dark?.palette, ...theme.colors.dark },
+      },
+      light: {
+        ...theme.sourceColors.light,
+        palette: { ...theme.sourceColors.light?.palette, ...theme.colors.light },
+      },
+    });
+
     const currentConfig = () => ({
       theme: {
         defaultTheme: selectedTheme,
         themes: {
           [selectedTheme]: {
             label: themeLabel(),
-            colors: getTheme().colors,
+            colors: getFullThemeColors(getTheme()),
           },
         },
       },
@@ -245,11 +261,7 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
     };
 
     const applyPreview = () => {
-      const theme = getTheme();
-      const colors = {
-        dark: { palette: { ...theme.colors.dark } },
-        light: { palette: { ...theme.colors.light } },
-      };
+      const colors = getFullThemeColors(getTheme());
       const css = generateN0ctThemeCss(colors as never)
         .replaceAll(':root', ':root[data-n0ct-playground]');
       getThemeStyle().textContent = css;
@@ -292,8 +304,9 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
     playground.querySelector('[data-playground-reset]')?.addEventListener('click', () => {
       const original = originalThemes.find((theme) => theme.id === selectedTheme) ?? originalThemes[0]!;
       getTheme().colors = JSON.parse(JSON.stringify(original.colors)) as PlaygroundTheme['colors'];
+      getTheme().sourceColors = JSON.parse(JSON.stringify(original.sourceColors)) as PlaygroundTheme['sourceColors'];
       clearPreview();
-      refresh();
+      syncInputs();
     });
 
     playground.querySelector('[data-playground-copy]')?.addEventListener('click', async () => {
@@ -309,9 +322,14 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
     window.addEventListener('n0ct:theme-change', (event) => {
       const detail = (event as CustomEvent<{ mode?: Mode; theme?: string }>).detail;
       if (detail.mode === 'light' || detail.mode === 'dark') selectedMode = detail.mode;
-      if (detail.theme && themes.some((theme) => theme.id === detail.theme)) selectedTheme = detail.theme;
+      if (detail.theme && themes.some((theme) => theme.id === detail.theme) && detail.theme !== selectedTheme) {
+        selectedTheme = detail.theme;
+        clearPreview();
+      }
       syncInputs();
     });
+
+    document.addEventListener('astro:before-preparation', clearPreview);
 
     const selected = document.documentElement.dataset.n0ctTheme;
     if (selected && themes.some((theme) => theme.id === selected)) selectedTheme = selected;
