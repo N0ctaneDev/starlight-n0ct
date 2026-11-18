@@ -184,7 +184,7 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
         notation: {},
         lineStates: {},
         wordDiff: {},
-        shellCopy: {},
+        shellCopy: false,
         codeTabs: { control: 'tabs' },
       })]),
     ],
