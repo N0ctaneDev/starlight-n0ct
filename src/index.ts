@@ -133,13 +133,19 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
       success: 'var(--n0ct-success)',
     },
   };
+  const advancedFrames = typeof advancedExpressiveCode.frames === 'object' && advancedExpressiveCode.frames !== null
+    ? advancedExpressiveCode.frames
+    : {};
   const advancedStyleOverrides = advancedExpressiveCode.styleOverrides ?? {};
+  const advancedStyleFrames = typeof advancedStyleOverrides.frames === 'object' && advancedStyleOverrides.frames !== null
+    ? advancedStyleOverrides.frames
+    : {};
   const expressiveCode = (advanced.expressiveCode === false ? false : {
     ...advancedExpressiveCode,
     themes: advancedExpressiveCode.themes ?? createN0ctaneCodeThemes(config.theme?.colors),
     useStarlightDarkModeSwitch: advancedExpressiveCode.useStarlightDarkModeSwitch ?? true,
     frames: {
-      ...(advancedExpressiveCode.frames ?? {}),
+      ...advancedFrames,
       showCopyToClipboardButton: false,
     },
     styleOverrides: {
@@ -147,7 +153,7 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
       ...advancedStyleOverrides,
       frames: {
         ...defaultStyleOverrides.frames,
-        ...(advancedStyleOverrides.frames ?? {}),
+        ...advancedStyleFrames,
       },
     },
   }) as StarlightUserConfig['expressiveCode'];
