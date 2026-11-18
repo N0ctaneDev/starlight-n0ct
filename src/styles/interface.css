@@ -148,7 +148,7 @@ starlight-version-select {
   margin: .25rem .65rem .8rem;
 }
 
-starlight-version-select label {
+ .sidebar-pane starlight-version-select label {
   display: flex;
   min-width: 0;
   align-items: center;
@@ -161,13 +161,13 @@ starlight-version-select label {
   transition: border-color .16s ease, background-color .16s ease;
 }
 
-starlight-version-select label:hover {
+ .sidebar-pane starlight-version-select label:hover {
   border-color: var(--n0ct-border-focus);
   color: var(--n0ct-text-primary) !important;
   background: var(--n0ct-interactive-hover);
 }
 
-starlight-version-select select {
+ .sidebar-pane starlight-version-select select {
   width: 100%;
   min-width: 0;
   padding-block: .62rem;
@@ -176,7 +176,7 @@ starlight-version-select select {
   font: 600 .82rem var(--sl-font);
 }
 
-starlight-version-select option {
+ .sidebar-pane starlight-version-select option {
   color: var(--n0ct-text-primary);
   background: var(--n0ct-surface-overlay);
 }
