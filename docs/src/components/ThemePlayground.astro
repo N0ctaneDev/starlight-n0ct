@@ -1,0 +1,555 @@
+---
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
+import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
+import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
+import FileTree from '@n0ctanedev/starlight-n0ct/components/docs/FileTree.astro';
+import Kbd from '@n0ctanedev/starlight-n0ct/components/docs/Kbd.astro';
+import Steps from '@n0ctanedev/starlight-n0ct/components/docs/Steps.astro';
+import { resolveN0ctThemeColors } from '@n0ctanedev/starlight-n0ct';
+
+const configuredTheme = (Astro.locals as any).n0ctane?.theme ?? {};
+const configuredThemes = Array.isArray(configuredTheme.themes) ? configuredTheme.themes : [];
+const sourceThemes = configuredThemes.length
+  ? configuredThemes
+  : [{ id: 'n0ctane', label: 'N0ctane', colors: {} }];
+
+const playgroundThemes = sourceThemes.map((theme: {
+  id: string;
+  label: string;
+  colors?: Record<string, unknown>;
+}) => {
+  const resolved = resolveN0ctThemeColors(theme.colors as never);
+  const pickMainColors = (variables: Record<string, string>) => ({
+    primary: variables['--n0ct-primary-500'],
+    accent: variables['--n0ct-accent-500'],
+    surface: variables['--n0ct-surface'],
+    text: variables['--n0ct-text-primary'],
+  });
+  return {
+    id: theme.id,
+    label: theme.label,
+    colors: {
+      dark: pickMainColors(resolved.dark.variables),
+      light: pickMainColors(resolved.light.variables),
+    },
+  };
+});
+const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 'n0ctane';
+---
+<section
+  class="n0ct-theme-playground"
+  data-n0ct-theme-playground
+  data-themes={JSON.stringify(playgroundThemes)}
+  data-default-theme={defaultTheme}
+>
+  <div class="n0ct-playground-toolbar">
+    <div class="n0ct-playground-heading">
+      <span class="n0ct-playground-eyebrow">Interactive designer</span>
+      <h3>Build a palette</h3>
+      <p>Change the four core colors and watch the current documentation page update. Fine-grained semantic overrides and syntax colors stay separate.</p>
+    </div>
+    <div class="n0ct-playground-actions">
+      <button type="button" class="n0ct-playground-button n0ct-playground-button--quiet" data-playground-reset>Reset palette</button>
+      <button type="button" class="n0ct-playground-button" data-playground-copy>Copy config</button>
+    </div>
+  </div>
+
+  <div class="n0ct-playground-controls">
+    <label class="n0ct-playground-field">
+      <span>Palette</span>
+      <select data-playground-theme>
+        {playgroundThemes.map((theme: { id: string; label: string }) => (
+          <option value={theme.id} selected={theme.id === defaultTheme}>{theme.label}</option>
+        ))}
+      </select>
+    </label>
+    <label class="n0ct-playground-field">
+      <span>Edit appearance</span>
+      <select data-playground-mode>
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+      </select>
+    </label>
+    {(['primary', 'accent', 'surface', 'text'] as const).map((role) => (
+      <label class="n0ct-playground-color" data-color-field={role}>
+        <input type="color" data-color-input={role} aria-label={role + ' color'} />
+        <span><strong>{role}</strong><small data-color-value={role}></small></span>
+      </label>
+    ))}
+  </div>
+
+  <div class="n0ct-playground-status" role="status" aria-live="polite" data-playground-status>
+    Editing {playgroundThemes.find((theme: { id: string }) => theme.id === defaultTheme)?.label ?? 'N0ctane'} · Dark palette
+  </div>
+
+  <details class="n0ct-playground-code">
+    <summary>View generated configuration</summary>
+    <pre><code data-playground-config></code></pre>
+  </details>
+
+  <div class="n0ct-playground-preview">
+    <div class="n0ct-playground-preview-heading">
+      <div>
+        <span class="n0ct-playground-eyebrow">Live component preview</span>
+        <h3>Interface surfaces</h3>
+      </div>
+      <span class="n0ct-playground-preview-mode" data-preview-mode>Dark · N0ctane</span>
+    </div>
+
+    <CardGrid>
+      <Card title="Surface card" icon="pencil">
+        A native Starlight card using the active page palette, with a readable neutral surface and primary focus color.
+      </Card>
+      <Card title="Interactive state" icon="mouse-pointer-click">
+        Hover, focus, and select states derive from the accent and highlight roles.
+      </Card>
+      <Card title="Semantic feedback" icon="shield-check">
+        Status tones remain distinct from the main brand colors.
+      </Card>
+    </CardGrid>
+
+    <div class="n0ct-playground-preview-grid">
+      <div>
+        <Callout tone="tip" title="Palette-aware callout">
+          Callouts use semantic status roles while retaining the active surface and text colors.
+        </Callout>
+        <Callout tone="warning" title="Warning state">
+          Warning and danger colors are intentionally not tied to the primary brand hue.
+        </Callout>
+      </div>
+      <div class="n0ct-playground-sample-panel">
+        <span class="n0ct-playground-eyebrow">Controls</span>
+        <div class="n0ct-playground-button-row">
+          <button class="n0ct-playground-button" type="button">Primary action</button>
+          <button class="n0ct-playground-button n0ct-playground-button--quiet" type="button">Secondary</button>
+        </div>
+        <label class="n0ct-playground-field">
+          <span>Text field</span>
+          <input type="text" value="Palette-aware input" aria-label="Palette-aware input" />
+        </label>
+        <p class="n0ct-playground-sample-copy">Keyboard hint: <Kbd>Ctrl</Kbd> + <Kbd>K</Kbd></p>
+        <p class="n0ct-playground-sample-copy"><a href="#named-themes">Accent link with a visible underline</a></p>
+      </div>
+    </div>
+
+    <DocGrid columns={2}>
+      <DocCard title="Documentation card" eyebrow="Surface" description="A reusable navigation card with accent text and a subtle glow." />
+      <DocCard title="Another surface" eyebrow="Highlight" description="The card and its supporting text follow the selected palette." />
+    </DocGrid>
+
+    <Steps>
+      1. Change the primary or accent color to update the brand identity.
+      2. Adjust the surface and text colors to tune the page contrast.
+      3. Switch to Light to edit the independent light palette.
+    </Steps>
+
+    <div class="n0ct-playground-sample-panel">
+      <span class="n0ct-playground-eyebrow">File tree</span>
+      <FileTree>
+- project/
+  - src/
+    - components/
+    - styles/
+  - n0ct.config.mjs
+  - astro.config.mjs
+      </FileTree>
+    </div>
+
+    <div class="n0ct-playground-sample-panel">
+      <span class="n0ct-playground-eyebrow">Code surface</span>
+      <pre class="n0ct-playground-code-sample"><code><span class="n0ct-code-comment">// Palette-aware code sample</span>
+<span class="n0ct-code-keyword">const</span> theme = {
+  primary: <span class="n0ct-code-string">'#F25CFF'</span>,
+  accent: <span class="n0ct-code-string">'#00E5FF'</span>,
+  surface: <span class="n0ct-code-string">'#131626'</span>,
+};
+<span class="n0ct-code-keyword">export default</span> theme;</code></pre>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { generateN0ctThemeCss } from '@n0ctanedev/starlight-n0ct';
+
+  type Mode = 'dark' | 'light';
+  type Role = 'primary' | 'accent' | 'surface' | 'text';
+  type Palette = Record<Role, string>;
+  type PlaygroundTheme = {
+    id: string;
+    label: string;
+    colors: { dark: Palette; light: Palette };
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-n0ct-theme-playground]').forEach((playground) => {
+    if (playground.dataset.initialized === 'true') return;
+    playground.dataset.initialized = 'true';
+
+    const themes = JSON.parse(playground.dataset.themes ?? '[]') as PlaygroundTheme[];
+    if (!themes.length) return;
+
+    const originalThemes = JSON.parse(JSON.stringify(themes)) as PlaygroundTheme[];
+    const themeSelect = playground.querySelector<HTMLSelectElement>('[data-playground-theme]');
+    const modeSelect = playground.querySelector<HTMLSelectElement>('[data-playground-mode]');
+    const inputs = Array.from(playground.querySelectorAll<HTMLInputElement>('[data-color-input]'));
+    const configOutput = playground.querySelector<HTMLElement>('[data-playground-config]');
+    const status = playground.querySelector<HTMLElement>('[data-playground-status]');
+    const previewMode = playground.querySelector<HTMLElement>('[data-preview-mode]');
+    const styleId = 'n0ct-theme-playground-preview';
+    let selectedTheme = playground.dataset.defaultTheme ?? themes[0]!.id;
+    let selectedMode: Mode = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+
+    const getTheme = () => themes.find((theme) => theme.id === selectedTheme) ?? themes[0]!;
+    const themeLabel = () => getTheme().label || getTheme().id;
+    const getThemeStyle = () => {
+      let style = document.getElementById(styleId) as HTMLStyleElement | null;
+      if (!style) {
+        style = document.createElement('style');
+        style.id = styleId;
+        document.head.appendChild(style);
+      }
+      return style;
+    };
+
+    const currentConfig = () => ({
+      theme: {
+        defaultTheme: selectedTheme,
+        themes: {
+          [selectedTheme]: {
+            label: themeLabel(),
+            colors: getTheme().colors,
+          },
+        },
+      },
+    });
+
+    const renderConfig = () => {
+      if (!configOutput) return;
+      configOutput.textContent =
+        'theme: ' + JSON.stringify(currentConfig().theme, null, 2).replace(/^/gm, '  ').trimStart();
+    };
+
+    const syncInputs = () => {
+      const palette = getTheme().colors[selectedMode];
+      inputs.forEach((input) => {
+        const role = input.dataset.colorInput as Role;
+        input.value = palette[role];
+        const value = playground.querySelector<HTMLElement>('[data-color-value="' + role + '"]');
+        if (value) value.textContent = palette[role].toUpperCase();
+      });
+      if (themeSelect) themeSelect.value = selectedTheme;
+      if (modeSelect) modeSelect.value = selectedMode;
+      if (previewMode) previewMode.textContent = selectedMode[0]!.toUpperCase() + selectedMode.slice(1) + ' · ' + themeLabel();
+      if (status) status.textContent = 'Editing ' + themeLabel() + ' · ' + selectedMode[0]!.toUpperCase() + selectedMode.slice(1) + ' palette';
+      renderConfig();
+    };
+
+    const applyPreview = () => {
+      const theme = getTheme();
+      const colors = {
+        dark: { palette: { ...theme.colors.dark } },
+        light: { palette: { ...theme.colors.light } },
+      };
+      const css = generateN0ctThemeCss(colors as never)
+        .replaceAll(':root', ':root[data-n0ct-playground]');
+      getThemeStyle().textContent = css;
+      document.documentElement.dataset.n0ctPlayground = 'true';
+      renderConfig();
+    };
+
+    const clearPreview = () => {
+      document.getElementById(styleId)?.remove();
+      delete document.documentElement.dataset.n0ctPlayground;
+    };
+
+    const refresh = () => {
+      syncInputs();
+      applyPreview();
+    };
+
+    themeSelect?.addEventListener('change', () => {
+      selectedTheme = themes.some((theme) => theme.id === themeSelect.value)
+        ? themeSelect.value
+        : themes[0]!.id;
+      window.dispatchEvent(new CustomEvent('n0ct-theme:set-theme', { detail: selectedTheme }));
+      refresh();
+    });
+
+    modeSelect?.addEventListener('change', () => {
+      selectedMode = modeSelect.value === 'light' ? 'light' : 'dark';
+      window.dispatchEvent(new CustomEvent('n0ct-theme:set-mode', { detail: selectedMode }));
+      refresh();
+    });
+
+    inputs.forEach((input) => input.addEventListener('input', () => {
+      const role = input.dataset.colorInput as Role;
+      getTheme().colors[selectedMode][role] = input.value.toUpperCase();
+      const value = playground.querySelector<HTMLElement>('[data-color-value="' + role + '"]');
+      if (value) value.textContent = input.value.toUpperCase();
+      applyPreview();
+    }));
+
+    playground.querySelector('[data-playground-reset]')?.addEventListener('click', () => {
+      const original = originalThemes.find((theme) => theme.id === selectedTheme) ?? originalThemes[0]!;
+      getTheme().colors = JSON.parse(JSON.stringify(original.colors)) as PlaygroundTheme['colors'];
+      clearPreview();
+      refresh();
+    });
+
+    playground.querySelector('[data-playground-copy]')?.addEventListener('click', async () => {
+      const configText = 'export default ' + JSON.stringify(currentConfig(), null, 2) + ';';
+      try {
+        await navigator.clipboard.writeText(configText);
+        if (status) status.textContent = 'Copied the ' + themeLabel() + ' theme configuration.';
+      } catch {
+        if (status) status.textContent = 'Clipboard unavailable. Open “View generated configuration” and copy it manually.';
+      }
+    });
+
+    window.addEventListener('n0ct:theme-change', (event) => {
+      const detail = (event as CustomEvent<{ mode?: Mode; theme?: string }>).detail;
+      if (detail.mode === 'light' || detail.mode === 'dark') selectedMode = detail.mode;
+      if (detail.theme && themes.some((theme) => theme.id === detail.theme)) selectedTheme = detail.theme;
+      syncInputs();
+    });
+
+    const selected = document.documentElement.dataset.n0ctTheme;
+    if (selected && themes.some((theme) => theme.id === selected)) selectedTheme = selected;
+    refresh();
+  });
+</script>
+
+<style>
+  .n0ct-theme-playground {
+    margin-block: 1.5rem 2rem;
+    padding: clamp(0.85rem, 2vw, 1.25rem);
+    border: 1px solid var(--n0ct-border);
+    border-radius: var(--n0ct-radius-lg);
+    background:
+      linear-gradient(145deg, color-mix(in srgb, var(--n0ct-secondary-500) 5%, transparent), transparent 60%),
+      var(--n0ct-surface);
+    box-shadow: var(--n0ct-shadow-soft);
+  }
+
+  .n0ct-playground-toolbar,
+  .n0ct-playground-preview-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .n0ct-playground-heading h3,
+  .n0ct-playground-preview-heading h3 {
+    margin: 0.12rem 0 0.35rem;
+    color: var(--n0ct-text-primary);
+    font-size: 1.15rem;
+  }
+
+  .n0ct-playground-heading p {
+    max-width: 44rem;
+    margin: 0;
+    color: var(--n0ct-text-muted);
+    font-size: 0.86rem;
+    line-height: 1.55;
+  }
+
+  .n0ct-playground-eyebrow {
+    color: var(--n0ct-text-accent);
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .n0ct-playground-actions,
+  .n0ct-playground-button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .n0ct-playground-button {
+    min-height: 2.2rem;
+    padding: 0.48rem 0.8rem;
+    border: 1px solid var(--n0ct-border-focus);
+    border-radius: var(--n0ct-radius-sm);
+    color: var(--n0ct-text-on-accent);
+    background: var(--n0ct-accent-500);
+    font-size: 0.79rem;
+    font-weight: 730;
+    cursor: pointer;
+    transition: transform 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+  }
+
+  .n0ct-playground-button:hover {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--n0ct-accent-500) 14%, transparent);
+    transform: translateY(-1px);
+  }
+
+  .n0ct-playground-button--quiet {
+    border-color: var(--n0ct-border);
+    color: var(--n0ct-text-primary);
+    background: var(--n0ct-surface-elevated);
+  }
+
+  .n0ct-playground-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+    margin-block: 1.1rem 0.5rem;
+    padding-block: 1rem;
+    border-block: 1px solid var(--n0ct-border);
+  }
+
+  .n0ct-playground-field {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.32rem;
+    color: var(--n0ct-text-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .n0ct-playground-field select,
+  .n0ct-playground-field input[type="text"] {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 2.35rem;
+    padding: 0.45rem 0.6rem;
+    border: 1px solid var(--n0ct-border);
+    border-radius: var(--n0ct-radius-sm);
+    color: var(--n0ct-text-primary);
+    background: var(--n0ct-surface-elevated);
+    font: inherit;
+  }
+
+  .n0ct-playground-color {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.55rem;
+    border: 1px solid var(--n0ct-border);
+    border-radius: var(--n0ct-radius-sm);
+    color: var(--n0ct-text-primary);
+    background: var(--n0ct-surface-elevated);
+    cursor: pointer;
+  }
+
+  .n0ct-playground-color input {
+    flex: 0 0 auto;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0.35rem;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .n0ct-playground-color span { display: grid; min-width: 0; gap: 0.1rem; }
+  .n0ct-playground-color strong { font-size: 0.77rem; text-transform: capitalize; }
+  .n0ct-playground-color small { color: var(--n0ct-text-muted); font: 0.65rem var(--sl-font-mono); }
+
+  .n0ct-playground-status {
+    min-height: 1.2rem;
+    color: var(--n0ct-text-muted);
+    font-size: 0.72rem;
+  }
+
+  .n0ct-playground-code {
+    margin-block: 0.7rem 1rem;
+    border: 1px solid var(--n0ct-border);
+    border-radius: var(--n0ct-radius-sm);
+    background: var(--n0ct-surface-code);
+  }
+
+  .n0ct-playground-code summary {
+    padding: 0.55rem 0.7rem;
+    color: var(--n0ct-text-secondary);
+    font-size: 0.76rem;
+    cursor: pointer;
+  }
+
+  .n0ct-playground-code pre {
+    max-height: 17rem;
+    margin: 0;
+    padding: 0.8rem;
+    overflow: auto;
+    color: var(--n0ct-code-foreground);
+    background: transparent;
+    font: 0.68rem/1.5 var(--sl-font-mono);
+  }
+
+  .n0ct-playground-preview {
+    display: grid;
+    gap: 0.8rem;
+    padding-block-start: 0.4rem;
+  }
+
+  .n0ct-playground-preview-heading {
+    align-items: center;
+  }
+
+  .n0ct-playground-preview-mode {
+    padding: 0.3rem 0.55rem;
+    border: 1px solid var(--n0ct-border);
+    border-radius: 999px;
+    color: var(--n0ct-text-muted);
+    font-size: 0.67rem;
+    white-space: nowrap;
+  }
+
+  .n0ct-playground-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 0.75rem;
+  }
+
+  .n0ct-playground-sample-panel {
+    display: grid;
+    min-width: 0;
+    align-content: start;
+    gap: 0.65rem;
+    padding: 0.9rem;
+    border: 1px solid var(--n0ct-border);
+    border-radius: var(--n0ct-radius-md);
+    background: var(--n0ct-surface-elevated);
+  }
+
+  .n0ct-playground-sample-copy {
+    margin: 0;
+    color: var(--n0ct-text-secondary);
+    font-size: 0.82rem;
+  }
+
+  .n0ct-playground-code-sample {
+    margin: 0;
+    padding: 0.8rem;
+    overflow-x: auto;
+    border: 1px solid var(--n0ct-border);
+    border-radius: var(--n0ct-radius-sm);
+    color: var(--n0ct-code-foreground);
+    background: var(--n0ct-code-background);
+    font: 0.72rem/1.6 var(--sl-font-mono);
+  }
+
+  .n0ct-code-comment { color: var(--n0ct-code-syntax-comment); }
+  .n0ct-code-keyword { color: var(--n0ct-code-syntax-keyword); }
+  .n0ct-code-string { color: var(--n0ct-code-syntax-string); }
+
+  @media (min-width: 48rem) {
+    .n0ct-playground-controls {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 38rem) {
+    .n0ct-playground-toolbar { flex-direction: column; }
+    .n0ct-playground-preview-grid { grid-template-columns: 1fr; }
+    .n0ct-playground-actions { width: 100%; }
+  }
+</style>
