@@ -24,7 +24,7 @@ const config = {
   integrations: {
     basePath: {},
     announcement: {
-      announcements: [{ content: 'N0ctane v0.2.0 preview — explore the theme, code blocks, blog, and versioned docs.' }],
+      announcements: [{ id: 'n0ctane-v020-preview', content: 'N0ctane v0.2.0 preview — explore the theme, code blocks, blog, and versioned docs.' }],
     },
     kbd: {},
     llmsTxt: {},
