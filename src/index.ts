@@ -170,12 +170,15 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     components: { ...themeComponents, ...(advanced.components ?? {}) },
     expressiveCode,
     plugins: [
-      // Sidebar Topics must run before Blog's route middleware: ordinary docs
-      // get a topic sidebar first, Blog then adds its mobile link; generated Blog
-      // routes are auto-excluded so Blog can install its own sidebar.
+      // Establish N0ctane's topic sidebar before versioning snapshots it.
       ...createN0ctSidebarTopics(config.sidebar, config.integrations),
-      ...createN0ctIntegrations(config.integrations),
       createN0ctanePlugin(config),
+      // Run version middleware before Blog. Blog routes have their own sidebar
+      // tree and must not be passed through Starlight Versions' docs sidebar
+      // resolver. On ordinary docs pages, Blog leaves the versioned sidebar
+      // untouched.
+      ...createN0ctVersioning(config.versioning),
+      ...createN0ctIntegrations(config.integrations),
       ...(advancedPlugins ?? []),
       ...(advanced.expressiveCode === false ? [] : [codeblocks({
         notation: {},
@@ -184,9 +187,6 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
         shellCopy: {},
         codeTabs: { control: 'tabs' },
       })]),
-      // Run last so versioned sidebars wrap the final configured sidebar and
-      // upstream component overrides are applied after the other built-ins.
-      ...createN0ctVersioning(config.versioning),
     ],
   };
 }
