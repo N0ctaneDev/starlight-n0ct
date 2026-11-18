@@ -265,12 +265,12 @@ export function generateN0ctThemeCss(input?: N0ctThemeColors): string {
   const resolved = resolveN0ctThemeColors(input);
   const declarations = (variables: Record<string, string>) => Object.entries(variables)
     .map(([name, value]) => name + ': ' + value + ';')
-    .join('\\n  ');
+     .join('\n  ');
   return [
     ':root { color-scheme: dark;\\n  ' + declarations(resolved.dark.variables) + '\\n}',
     ':root[data-theme="dark"] { color-scheme: dark;\\n  ' + declarations(resolved.dark.variables) + '\\n}',
     ':root[data-theme="light"] { color-scheme: light;\\n  ' + declarations(resolved.light.variables) + '\\n}',
-  ].join('\\n\\n') + '\\n';
+  ].join('\n\n') + '\n';
 }
 
 export function validateN0ctThemeColors(input?: N0ctThemeColors): string[] {

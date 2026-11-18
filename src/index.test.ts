@@ -3,13 +3,12 @@ import { normalizeN0ctConfig, topicToSidebar } from './config.js';
 import { n0ctane } from './index.js';
 
 describe('N0ctane configuration expansion', () => {
-  it('installs the configurable header and code-block plugin by default', () => {
+  it('keeps the native Starlight header and installs code-block enhancements by default', () => {
     const config = n0ctane({ title: 'Docs', integrations: { blog: false } });
-    expect(config.components?.Header).toContain('Header.astro');
     expect(config.plugins?.some((plugin) => plugin.name === 'starlight-codeblocks')).toBe(true);
   });
 
-  it('allows an advanced Starlight Header override to take precedence', () => {
+  it('allows an advanced Starlight header override to take precedence', () => {
     const config = n0ctane({
       title: 'Docs',
       integrations: { blog: false },

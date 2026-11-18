@@ -6,7 +6,6 @@ import { normalizeN0ctConfig } from './config.js';
 import { createN0ctanePlugin } from './plugin.js';
 import { createN0ctSidebarTopics } from './sidebar-topics.js';
 import { createN0ctaneCodeThemes } from './code-themes.js';
-import { resolveN0ctThemeColors } from './theme-colors.js';
 import type { N0ctConfig, N0ctaneOptions } from './types.js';
 
 export type {
@@ -84,9 +83,8 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     Sidebar: component('Sidebar'),
   };
 
-  const resolvedTheme = resolveN0ctThemeColors(config.theme?.colors);
   const expressiveCode = (advanced.expressiveCode === false ? false : {
-    themes: createN0ctaneCodeThemes(resolvedTheme),
+    themes: createN0ctaneCodeThemes(),
     useStarlightDarkModeSwitch: true,
     styleOverrides: {
       borderRadius: '0.65rem',
