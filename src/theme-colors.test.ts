@@ -19,6 +19,10 @@ describe('semantic theme palettes', () => {
     expect(theme.light.variables['--n0ct-surface-code']).toBe('#F3F1F8');
     expect(theme.light.variables['--n0ct-border']).toBe('#DED9E9');
     expect(theme.light.variables['--n0ct-info']).toBe('#A85A00');
+    expect(theme.dark.variables['--n0ct-dark-base']).toBe(theme.dark.variables['--n0ct-base']);
+    expect(theme.dark.variables['--n0ct-dark-surface']).toBe(theme.dark.variables['--n0ct-surface']);
+    expect(theme.light.variables['--n0ct-light-base']).toBe(theme.light.variables['--n0ct-base']);
+    expect(theme.light.variables['--n0ct-light-surface']).toBe(theme.light.variables['--n0ct-surface']);
   });
 
   it('derives semantic role variables from four core palette colors', () => {
@@ -106,6 +110,19 @@ describe('semantic theme palettes', () => {
     expect(light.colors['editor.background']).toBe('#F3F1F8');
     expect(light.colors['editor.foreground']).toBe('#121212');
     expect(String(dark.colors['editor.background'])).not.toContain('var(');
+  });
+
+  it('supports independent dark and light code syntax palettes', () => {
+    const [dark, light] = createN0ctaneCodeThemes({
+      dark: { codePalette: { keyword: '#FF8DD6', string: '#9FE6B8' } },
+      light: { codePalette: { keyword: '#92247E', string: '#08764D' } },
+    });
+    const darkKeyword = dark.tokenColors.find((entry) => entry.scope.includes('keyword'));
+    const lightKeyword = light.tokenColors.find((entry) => entry.scope.includes('keyword'));
+    expect(darkKeyword?.settings.foreground).toBe('#FF8DD6');
+    expect(lightKeyword?.settings.foreground).toBe('#92247E');
+    expect(String(dark.colors['editor.background'])).toMatch(/^#[\da-f]{6}$/i);
+    expect(String(light.colors['editor.background'])).toMatch(/^#[\da-f]{6}$/i);
   });
 
   it('warns when the configured text contrast is below WCAG AA guidance', () => {

@@ -8,6 +8,16 @@
 @import '@fontsource/space-mono/700.css';
 
 @theme {
+  --color-n0ct-dark-base: var(--n0ct-dark-base);
+  --color-n0ct-dark-surface: var(--n0ct-dark-surface);
+  --color-n0ct-dark-primary: var(--n0ct-dark-primary);
+  --color-n0ct-dark-accent: var(--n0ct-dark-accent);
+  --color-n0ct-dark-text-primary: var(--n0ct-dark-text-primary);
+  --color-n0ct-light-base: var(--n0ct-light-base);
+  --color-n0ct-light-surface: var(--n0ct-light-surface);
+  --color-n0ct-light-primary: var(--n0ct-light-primary);
+  --color-n0ct-light-accent: var(--n0ct-light-accent);
+  --color-n0ct-light-text-primary: var(--n0ct-light-text-primary);
   --font-sans: 'Space Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'Space Mono', ui-monospace, monospace;
 

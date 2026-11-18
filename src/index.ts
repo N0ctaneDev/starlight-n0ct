@@ -33,6 +33,7 @@ export type {
   N0ctThemeSemantic,
   N0ctThemeSemanticColors,
   N0ctThemeCodeOverrides,
+  N0ctThemeCodePalette,
   N0ctThemeConfig,
 } from './types.js';
 
@@ -89,52 +90,66 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     Sidebar: component(config.versioning ? 'VersionedSidebar' : 'Sidebar'),
   };
 
+  const advancedExpressiveCode = typeof advanced.expressiveCode === 'object' && advanced.expressiveCode !== null
+    ? advanced.expressiveCode
+    : {};
+  const defaultStyleOverrides = {
+    borderRadius: '0.72rem',
+    borderColor: 'var(--n0ct-border)',
+    borderWidth: '1px',
+    codeBackground: 'var(--n0ct-code-background)',
+    codeForeground: 'var(--n0ct-code-foreground)',
+    codeSelectionBackground: 'var(--n0ct-code-selection-background)',
+    codeFontFamily: "'Space Mono', monospace",
+    codeFontSize: '0.84rem',
+    codeLineHeight: '1.7',
+    codePaddingInline: '1.1rem',
+    focusBorder: 'var(--n0ct-border-focus)',
+    frames: {
+      shadowColor: 'transparent',
+      frameBoxShadowCssValue: 'none',
+      terminalIcon: 'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2754%27 height=%2714%27 viewBox=%270 0 54 14%27%3E%3Ccircle cx=%277%27 cy=%277%27 r=%276%27 fill=%27%23FF5F57%27/%3E%3Ccircle cx=%2727%27 cy=%277%27 r=%276%27 fill=%27%23FEBC2E%27/%3E%3Ccircle cx=%2747%27 cy=%277%27 r=%276%27 fill=%27%2328C840%27/%3E%3C/svg%3E")',
+      terminalTitlebarDotsOpacity: '1',
+      terminalTitlebarBackground: 'var(--n0ct-surface-elevated)',
+      terminalTitlebarForeground: 'var(--n0ct-text-primary)',
+      terminalTitlebarBorderBottomColor: 'var(--n0ct-border)',
+      terminalBackground: 'var(--n0ct-code-background)',
+      editorBackground: 'var(--n0ct-code-background)',
+      editorActiveTabBackground: 'var(--n0ct-code-tabs-active-bg)',
+      editorActiveTabForeground: 'var(--n0ct-code-tabs-active-text)',
+      editorTabBarBackground: 'var(--n0ct-code-tabs-bg)',
+      editorTabBarBorderColor: 'var(--n0ct-code-tabs-border)',
+    },
+    codeblocksWordDiff: {
+      ins: 'var(--n0ct-code-diff-added-border)',
+      del: 'var(--n0ct-code-diff-removed-border)',
+      insBackground: 'var(--n0ct-code-diff-added-bg)',
+      delBackground: 'var(--n0ct-code-diff-removed-bg)',
+    },
+    codeblocksLineStates: {
+      error: 'var(--n0ct-danger)',
+      warning: 'var(--n0ct-warning)',
+      info: 'var(--n0ct-info)',
+      success: 'var(--n0ct-success)',
+    },
+  };
+  const advancedStyleOverrides = advancedExpressiveCode.styleOverrides ?? {};
   const expressiveCode = (advanced.expressiveCode === false ? false : {
-    themes: createN0ctaneCodeThemes(config.theme?.colors),
-    useStarlightDarkModeSwitch: true,
+    ...advancedExpressiveCode,
+    themes: advancedExpressiveCode.themes ?? createN0ctaneCodeThemes(config.theme?.colors),
+    useStarlightDarkModeSwitch: advancedExpressiveCode.useStarlightDarkModeSwitch ?? true,
+    frames: {
+      ...(advancedExpressiveCode.frames ?? {}),
+      showCopyToClipboardButton: false,
+    },
     styleOverrides: {
-      borderRadius: '0.65rem',
-      borderColor: 'var(--n0ct-border)',
-      borderWidth: '1px',
-      codeBackground: 'var(--n0ct-code-background)',
-      codeForeground: 'var(--n0ct-code-foreground)',
-      codeSelectionBackground: 'var(--n0ct-code-selection-background)',
-      codeFontFamily: "'Space Mono', monospace",
-      codeFontSize: '0.84rem',
-      codeLineHeight: '1.65',
-      codePaddingInline: '1rem',
-      focusBorder: 'var(--n0ct-border-focus)',
+      ...defaultStyleOverrides,
+      ...advancedStyleOverrides,
       frames: {
-        shadowColor: 'transparent',
-        frameBoxShadowCssValue: 'none',
-        terminalIcon: 'none',
-        terminalTitlebarDotsOpacity: '0',
-        terminalTitlebarBackground: 'var(--n0ct-surface-elevated)',
-        terminalTitlebarForeground: 'var(--n0ct-text-primary)',
-        terminalTitlebarBorderBottomColor: 'var(--n0ct-border)',
-        terminalBackground: 'var(--n0ct-code-background)',
-        editorBackground: 'var(--n0ct-code-background)',
-        editorActiveTabBackground: 'var(--n0ct-code-tabs-active-bg)',
-        editorActiveTabForeground: 'var(--n0ct-code-tabs-active-text)',
-        editorTabBarBackground: 'var(--n0ct-code-tabs-bg)',
-        editorTabBarBorderColor: 'var(--n0ct-code-tabs-border)',
-      },
-      codeblocksWordDiff: {
-        ins: 'var(--n0ct-code-diff-added-border)',
-        del: 'var(--n0ct-code-diff-removed-border)',
-        insBackground: 'var(--n0ct-code-diff-added-bg)',
-        delBackground: 'var(--n0ct-code-diff-removed-bg)',
-      },
-      codeblocksLineStates: {
-        error: 'var(--n0ct-danger)',
-        warning: 'var(--n0ct-warning)',
-        info: 'var(--n0ct-info)',
-        success: 'var(--n0ct-success)',
+        ...defaultStyleOverrides.frames,
+        ...(advancedStyleOverrides.frames ?? {}),
       },
     },
-    ...(typeof advanced.expressiveCode === 'object' && advanced.expressiveCode !== null
-      ? advanced.expressiveCode
-      : {}),
   }) as StarlightUserConfig['expressiveCode'];
 
   return {
