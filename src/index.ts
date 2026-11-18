@@ -84,7 +84,7 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
   };
 
   const expressiveCode = (advanced.expressiveCode === false ? false : {
-    themes: createN0ctaneCodeThemes(),
+    themes: createN0ctaneCodeThemes(config.theme?.colors),
     useStarlightDarkModeSwitch: true,
     styleOverrides: {
       borderRadius: '0.65rem',
