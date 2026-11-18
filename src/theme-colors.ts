@@ -326,11 +326,7 @@ function resolveMode(mode: Mode, input?: N0ctThemeMode): N0ctResolvedThemeMode {
     ? dark ? mixColor(surface, base, 0.38) : mixColor(surface, base, 0.32)
     : defaults.sidebar);
   const codeBackground = normalizeHex(
-    overrides.code?.background ?? codePalette.background ?? overrides.surfaces?.code ?? (
-      hasCustomSurface
-        ? mixN0ctHex(base, surface, dark ? 0.22 : 0.44)
-        : defaults.code
-    ),
+    overrides.code?.background ?? codePalette.background ?? overrides.surfaces?.code ?? defaults.code,
     'theme.colors.' + mode + '.codePalette.background',
   );
 
