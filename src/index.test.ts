@@ -73,7 +73,7 @@ describe('N0ctane configuration expansion', () => {
       integrations: { blog: false },
     });
 
-    expect(list.components?.Sidebar).toBeUndefined();
+    expect(list.components?.Sidebar).toContain('Sidebar.astro');
     expect(dropdown.components?.Sidebar).toContain('Sidebar.astro');
   });
 

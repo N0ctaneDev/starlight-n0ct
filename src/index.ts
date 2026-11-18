@@ -80,7 +80,7 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     // Keep the snapshot's native Starlight header composition; customize only its title and theme control.
     SiteTitle: component(hasBlogHeaderStart ? 'BlogSiteTitle' : 'SiteTitle'),
     Footer: component('Footer'),
-    ...(sidebarTopicDisplay !== 'list' ? { Sidebar: component('Sidebar') } : {}),
+    Sidebar: component('Sidebar'),
   };
 
   const expressiveCode = (advanced.expressiveCode === false ? false : {
