@@ -101,7 +101,8 @@ describe('semantic theme palettes', () => {
     expect(dark.colors['editor.lineHighlightBackground']).toBe('#111213');
     expect(dark.colors['editorLineNumber.foreground']).toBe('#777777');
     expect(dark.colors['editorLineNumber.activeForeground']).toBe('#EEEEEE');
-    expect(dark.colors['terminal.ansiGreen']).toBe('#43C995');
+    expect(dark.colors['terminal.ansiGreen']).toBe('#06D6A0');
+    expect(light.colors['terminal.ansiGreen']).toBe('#087F5B');
     expect(light.colors['editor.background']).toBe('#FFFFFF');
     expect(light.colors['editor.foreground']).toBe('#121212');
     expect(String(dark.colors['editor.background'])).not.toContain('var(');
