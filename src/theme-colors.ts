@@ -274,18 +274,18 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
     'text-subtle': textSubtle,
     'text-inverse': textInverse,
     'text-accent': textAccent,
-    'text-highlight': highlightText,
-    'text-on-accent': contrastText(accent),
+    'text-highlight': overrides.text?.highlight ?? highlightText,
+    'text-on-accent': overrides.text?.onAccent ?? contrastText(accent),
   };
   for (const [key, value] of Object.entries(textRoles)) declare(vars, key, value);
 
   const defaultBorders = DEFAULT_BORDERS[mode];
   const hasCustomBorders = hasCustomSurface || hasCustomText;
   const borderRoles: Record<string, string> = {
-    'border-subtle': hasCustomBorders ? mix(textPrimary, base, dark ? 0.91 : 0.90) : defaultBorders.subtle,
-    border: hasCustomBorders ? mix(textPrimary, base, dark ? 0.80 : 0.83) : defaultBorders.default,
-    'border-strong': hasCustomBorders ? mix(textPrimary, base, dark ? 0.65 : 0.70) : defaultBorders.strong,
-    'border-focus': accent,
+    'border-subtle': overrides.borders?.subtle ?? (hasCustomBorders ? mix(textPrimary, base, dark ? 0.91 : 0.90) : defaultBorders.subtle),
+    border: overrides.borders?.default ?? (hasCustomBorders ? mix(textPrimary, base, dark ? 0.80 : 0.83) : defaultBorders.default),
+    'border-strong': overrides.borders?.strong ?? (hasCustomBorders ? mix(textPrimary, base, dark ? 0.65 : 0.70) : defaultBorders.strong),
+    'border-focus': overrides.borders?.focus ?? accent,
   };
   for (const [key, value] of Object.entries(borderRoles)) declare(vars, key, value);
 
@@ -322,7 +322,7 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
   const codeOverrides = overrides.code ?? {};
   declare(vars, 'code-background', codeOverrides.background ?? vars['--n0ct-surface-code']!);
   declare(vars, 'code-foreground', codeOverrides.foreground ?? vars['--n0ct-text-primary']!);
-  declare(vars, 'code-cursor', codeOverrides.cursor ?? vars['--n0ct-text-accent']!);
+  declare(vars, 'code-cursor', codeOverrides.cursor ?? vars['--n0ct-accent-500']!);
   declare(vars, 'code-selection-background', codeOverrides.selectionBackground ?? vars['--n0ct-selection-background']!);
   declare(vars, 'code-line-highlight', codeOverrides.lineHighlight ?? mix(vars['--n0ct-code-background'] ?? vars['--n0ct-surface-code']!, accent, dark ? 0.12 : 0.06));
   declare(vars, 'code-line-number', codeOverrides.lineNumber ?? vars['--n0ct-text-subtle']!);

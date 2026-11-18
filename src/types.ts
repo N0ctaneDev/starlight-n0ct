@@ -106,9 +106,9 @@ export type N0ctNormalizedSidebarItem = N0ctExpandedSidebarGroup | N0ctNativeSid
 export type N0ctThemeSemantic = 'success' | 'warning' | 'danger' | 'info';
 
 export interface N0ctThemePalette {
-  /** Main brand color: purple-led in dark mode, blue-led in light mode by default. */
+  /** Main brand color. The defaults preserve the original N0ctane primary hue in each mode. */
   primary?: string;
-  /** Interactive color for links, controls, focus and active states. */
+  /** Interactive color for focus, active controls and hover states. */
   accent?: string;
   /** Main card and panel surface color. */
   surface?: string;

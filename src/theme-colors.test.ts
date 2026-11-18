@@ -11,8 +11,14 @@ describe('semantic theme palettes', () => {
     expect(theme.light.variables['--n0ct-secondary-500']).toBe('#7540CE');
     expect(theme.dark.variables['--n0ct-accent-500']).toBe('#00E5FF');
     expect(theme.dark.variables['--n0ct-highlight']).toBe('#2A85FF');
+    expect(theme.dark.variables['--n0ct-surface-code']).toBe('#0D1020');
+    expect(theme.dark.variables['--n0ct-border']).toBe('#282C42');
+    expect(theme.dark.variables['--n0ct-success']).toBe('#06D6A0');
     expect(theme.light.variables['--n0ct-accent-500']).toBe('#00AFC2');
     expect(theme.light.variables['--n0ct-highlight']).toBe('#286DCE');
+    expect(theme.light.variables['--n0ct-surface-code']).toBe('#F3F1F8');
+    expect(theme.light.variables['--n0ct-border']).toBe('#DED9E9');
+    expect(theme.light.variables['--n0ct-info']).toBe('#A85A00');
   });
 
   it('derives semantic role variables from four core palette colors', () => {
@@ -37,7 +43,8 @@ describe('semantic theme palettes', () => {
       dark: {
         semantic: { success: { foreground: '#12AB78', background: '#102A22' } },
         overrides: {
-          text: { primary: '#FAFAFA', muted: '#A0A0A0' },
+          text: { primary: '#FAFAFA', muted: '#A0A0A0', highlight: '#FFFFFF', onAccent: '#080A15' },
+          borders: { default: '#333333', focus: '#AABBCC' },
           code: { diffAdded: { background: '#15382D', text: '#C7FFE9' } },
         },
       },
@@ -46,6 +53,10 @@ describe('semantic theme palettes', () => {
     expect(theme.dark.variables['--n0ct-success']).toBe('#12AB78');
     expect(theme.dark.variables['--n0ct-success-bg']).toBe('#102A22');
     expect(theme.dark.variables['--n0ct-text-primary']).toBe('#FAFAFA');
+    expect(theme.dark.variables['--n0ct-text-highlight']).toBe('#FFFFFF');
+    expect(theme.dark.variables['--n0ct-text-on-accent']).toBe('#080A15');
+    expect(theme.dark.variables['--n0ct-border']).toBe('#333333');
+    expect(theme.dark.variables['--n0ct-border-focus']).toBe('#AABBCC');
     expect(theme.dark.variables['--n0ct-code-diff-added-bg']).toBe('#15382D');
     expect(theme.dark.variables['--n0ct-code-diff-added-text']).toBe('#C7FFE9');
     expect(theme.light.variables['--n0ct-base']).toBe('#FDFBFF');

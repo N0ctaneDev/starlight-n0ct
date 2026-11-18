@@ -3,7 +3,7 @@
 A role-based dark/light theme and integration bundle for [Astro Starlight](https://starlight.astro.build/), based on the N0ctOS visual identity.
 
 - Space Grotesk Variable and Space Mono.
-- Role-based dark and light palettes, with purple-dark and blue-light defaults.
+- Role-based dark and light palettes that preserve the original N0ctane four-color identity.
 - A single icon button cycles **Auto → Light → Dark**.
 - Ion-inspired icon syntax for sidebar labels and footer icons, powered by `astro-icon`.
 - Ion-inspired spacing, recursive sidebar navigation and footer links.
