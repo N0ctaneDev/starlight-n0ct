@@ -322,6 +322,20 @@
   color: var(--n0ct-text-secondary) !important;
 }
 
+/* Expressive Code applies terminalIcon as a CSS mask, so the mask itself
+   stays monochrome. A horizontal fill colors the three masked dots separately. */
+.expressive-code .frame.is-terminal .header::before {
+  background: linear-gradient(
+    90deg,
+    #FF5F57 0%,
+    #FF5F57 33.333%,
+    #FEBC2E 33.333%,
+    #FEBC2E 66.666%,
+    #28C840 66.666%,
+    #28C840 100%
+  ) !important;
+}
+
 .expressive-code .frame .copy,
 .expressive-code .frame .copy button,
 .expressive-code .frame button[aria-label*='Copy'],
