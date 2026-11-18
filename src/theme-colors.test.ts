@@ -3,12 +3,16 @@ import { generateN0ctThemeCss, resolveN0ctThemeColors, validateN0ctThemeColors }
 import { createN0ctaneCodeThemes } from './code-themes.js';
 
 describe('semantic theme palettes', () => {
-  it('provides purple-dark and blue-light defaults', () => {
+  it('preserves the original four-color N0ctane palette in both modes', () => {
     const theme = resolveN0ctThemeColors();
-    expect(theme.dark.variables['--n0ct-primary-500']).toBe('#8C42FF');
-    expect(theme.light.variables['--n0ct-primary-500']).toBe('#286DCE');
-    expect(theme.dark.variables['--n0ct-accent-500']).toBe('#2A85FF');
-    expect(theme.light.variables['--n0ct-accent-500']).toBe('#7540CE');
+    expect(theme.dark.variables['--n0ct-primary-500']).toBe('#F25CFF');
+    expect(theme.dark.variables['--n0ct-secondary-500']).toBe('#8C42FF');
+    expect(theme.light.variables['--n0ct-primary-500']).toBe('#C92FCF');
+    expect(theme.light.variables['--n0ct-secondary-500']).toBe('#7540CE');
+    expect(theme.dark.variables['--n0ct-accent-500']).toBe('#00E5FF');
+    expect(theme.dark.variables['--n0ct-highlight']).toBe('#2A85FF');
+    expect(theme.light.variables['--n0ct-accent-500']).toBe('#00AFC2');
+    expect(theme.light.variables['--n0ct-highlight']).toBe('#286DCE');
   });
 
   it('derives semantic role variables from four core palette colors', () => {

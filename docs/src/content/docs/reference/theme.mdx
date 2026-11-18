@@ -9,7 +9,7 @@ The theme uses **Space Grotesk Variable** for interface and body text and **Spac
 
 ## Color system
 
-The theme is role-based rather than hue-named. It derives complete shade ramps from three brand seeds and maps them to surfaces, text, borders, interaction states, highlights and semantic statuses.
+The theme is role-based rather than hue-named. It keeps the original N0ctane four-color identity while exposing stable roles: the original pink is primary, violet is secondary, cyan is accent, and blue is highlight. Dark and light values are tuned independently; complete shade ramps are generated for the three brand seeds.
 
 | Role | Purpose |
 |---|---|
@@ -24,7 +24,7 @@ The theme is role-based rather than hue-named. It derives complete shade ramps f
 | highlight | Selected or emphasized content |
 | success, warning, danger, info | Semantic status colors |
 
-Dark and light modes are configured independently. Defaults are purple-dark and blue-light, with blue/purple accents. Each mode accepts four core palette colors (primary, accent, surface, text) plus optional secondary, highlight, highlightText, and background. Omit the optional values and they are derived from your four core colors, so a minimal palette still generates a complete theme.
+Dark and light modes are configured independently. Each mode accepts four core palette colors (primary, accent, surface, text) plus optional secondary, highlight, highlightText, and background. The default values preserve the original palette in both modes. Omit optional values and they are derived from the core colors.
 
 ## Configuration
 
@@ -33,18 +33,26 @@ theme: {
   colors: {
     dark: {
       palette: {
-        primary: '#7650C8',
-        accent: '#3478D4',
-        surface: '#151525',
-        text: '#E9EAF5',
+        primary: '#F25CFF',
+        secondary: '#8C42FF',
+        accent: '#00E5FF',
+        surface: '#131626',
+        text: '#E6EAF8',
+        highlight: '#2A85FF',
+        highlightText: '#080A15',
+        background: '#0B0D17',
       },
     },
     light: {
       palette: {
-        primary: '#286DCE',
-        accent: '#7540CE',
+        primary: '#C92FCF',
+        secondary: '#7540CE',
+        accent: '#00AFC2',
         surface: '#FFFFFF',
         text: '#191629',
+        highlight: '#286DCE',
+        highlightText: '#FFFFFF',
+        background: '#F8F7FC',
       },
     },
   },
@@ -58,10 +66,10 @@ theme: {
   colors: {
     dark: {
       semantic: {
-        success: { foreground: '#48C99A' },
-        warning: { foreground: '#E8B95B' },
-        danger: { foreground: '#EC7189' },
-        info: { foreground: '#70BCEB' },
+        success: { foreground: '#06D6A0' },
+        warning: { foreground: '#FFD166' },
+        danger: { foreground: '#FF4D6D' },
+        info: { foreground: '#FF9F1C' },
       },
     },
   },

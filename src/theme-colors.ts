@@ -8,33 +8,70 @@ export interface N0ctResolvedTheme {
   light: N0ctResolvedThemeMode;
 }
 
-const DEFAULTS: Record<'dark' | 'light', Required<Pick<N0ctThemePalette, 'primary' | 'accent' | 'surface' | 'text'>>> = {
+type N0ctDefaultPalette = Required<N0ctThemePalette>;
+
+const DEFAULTS: Record<'dark' | 'light', N0ctDefaultPalette> = {
   dark: {
-    primary: '#8C42FF',
-    accent: '#2A85FF',
+    primary: '#F25CFF',
+    secondary: '#8C42FF',
+    accent: '#00E5FF',
     surface: '#131626',
     text: '#E6EAF8',
+    highlight: '#2A85FF',
+    highlightText: '#080A15',
+    background: '#0B0D17',
   },
   light: {
-    primary: '#286DCE',
-    accent: '#7540CE',
+    primary: '#C92FCF',
+    secondary: '#7540CE',
+    accent: '#00AFC2',
     surface: '#FFFFFF',
     text: '#191629',
+    highlight: '#286DCE',
+    highlightText: '#FFFFFF',
+    background: '#F8F7FC',
   },
 };
 
+const DEFAULT_SURFACES = {
+  dark: {
+    void: '#080A15',
+    elevated: '#1D2135',
+    navigation: '#131626',
+    sidebar: '#131626',
+    code: '#0D1020',
+  },
+  light: {
+    void: '#FFFFFF',
+    elevated: '#F1EEF8',
+    navigation: '#FFFFFF',
+    sidebar: '#F2EFF8',
+    code: '#F3F1F8',
+  },
+} as const;
+
+const DEFAULT_TEXT = {
+  dark: { secondary: '#C1C8E3', muted: '#7B88B8', subtle: '#59627F', inverse: '#080A15' },
+  light: { secondary: '#48445E', muted: '#716B89', subtle: '#A7A1B7', inverse: '#FFFFFF' },
+} as const;
+
+const DEFAULT_BORDERS = {
+  dark: { subtle: '#282C42', default: '#282C42', strong: '#59627F' },
+  light: { subtle: '#DED9E9', default: '#DED9E9', strong: '#A7A1B7' },
+} as const;
+
 const SEMANTIC_DEFAULTS = {
   dark: {
-    success: '#43C995',
-    warning: '#E8B95B',
-    danger: '#EC7189',
-    info: '#6DB9EA',
+    success: '#06D6A0',
+    warning: '#FFD166',
+    danger: '#FF4D6D',
+    info: '#FF9F1C',
   },
   light: {
     success: '#087F5B',
     warning: '#956000',
     danger: '#C12D4B',
-    info: '#2867B1',
+    info: '#A85A00',
   },
 } as const;
 
@@ -100,27 +137,72 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
   const dark = mode === 'dark';
   const supplied = input?.palette ?? {};
   const overrides = input?.overrides ?? {};
-  const paletteSurface = normalizeHex(supplied.surface ?? DEFAULTS[mode].surface, 'theme.colors.' + mode + '.palette.surface');
-  const palette: Required<N0ctThemePalette> = {
-    primary: normalizeHex(supplied.primary ?? DEFAULTS[mode].primary, 'theme.colors.' + mode + '.palette.primary'),
-    accent: normalizeHex(supplied.accent ?? DEFAULTS[mode].accent, 'theme.colors.' + mode + '.palette.accent'),
-    surface: paletteSurface,
-    text: normalizeHex(supplied.text ?? DEFAULTS[mode].text, 'theme.colors.' + mode + '.palette.text'),
-    secondary: normalizeHex(supplied.secondary ?? mixHex(supplied.primary ?? DEFAULTS[mode].primary, supplied.accent ?? DEFAULTS[mode].accent, 0.5), 'theme.colors.' + mode + '.palette.secondary'),
-    highlight: normalizeHex(supplied.highlight ?? mixHex(supplied.accent ?? DEFAULTS[mode].accent, paletteSurface, dark ? 0.78 : 0.88), 'theme.colors.' + mode + '.palette.highlight'),
-    highlightText: normalizeHex(supplied.highlightText ?? contrastText(supplied.highlight ?? mixHex(supplied.accent ?? DEFAULTS[mode].accent, paletteSurface, dark ? 0.78 : 0.88)), 'theme.colors.' + mode + '.palette.highlightText'),
-    background: normalizeHex(supplied.background ?? mixHex(paletteSurface, dark ? '#070812' : '#F8F7FC', dark ? 0.28 : 0.04), 'theme.colors.' + mode + '.palette.background'),
-  };
+  checkObject(supplied, 'theme.colors.' + mode + '.palette');
   checkObject(input?.semantic, 'theme.colors.' + mode + '.semantic');
   checkObject(overrides, 'theme.colors.' + mode + '.overrides');
 
+  const pageSurface = normalizeHex(supplied.surface ?? DEFAULTS[mode].surface, 'theme.colors.' + mode + '.palette.surface');
+  const suppliedPrimary = supplied.primary ?? DEFAULTS[mode].primary;
+  const suppliedAccent = supplied.accent ?? DEFAULTS[mode].accent;
+  const palette: N0ctDefaultPalette = {
+    ...DEFAULTS[mode],
+    ...supplied,
+    primary: normalizeHex(suppliedPrimary, 'theme.colors.' + mode + '.palette.primary'),
+    secondary: normalizeHex(
+      supplied.secondary ?? (supplied.primary !== undefined || supplied.accent !== undefined
+        ? mixHex(suppliedPrimary, suppliedAccent, 0.5)
+        : DEFAULTS[mode].secondary),
+      'theme.colors.' + mode + '.palette.secondary',
+    ),
+    accent: normalizeHex(suppliedAccent, 'theme.colors.' + mode + '.palette.accent'),
+    surface: pageSurface,
+    text: normalizeHex(supplied.text ?? DEFAULTS[mode].text, 'theme.colors.' + mode + '.palette.text'),
+    highlight: normalizeHex(
+      supplied.highlight ?? (supplied.accent !== undefined || supplied.surface !== undefined
+        ? mixHex(suppliedAccent, pageSurface, dark ? 0.78 : 0.88)
+        : DEFAULTS[mode].highlight),
+      'theme.colors.' + mode + '.palette.highlight',
+    ),
+    highlightText: normalizeHex(
+      supplied.highlightText ?? (supplied.highlight !== undefined
+        ? contrastText(supplied.highlight)
+        : supplied.accent !== undefined || supplied.surface !== undefined
+          ? contrastText(mixHex(suppliedAccent, pageSurface, dark ? 0.78 : 0.88))
+          : DEFAULTS[mode].highlightText),
+      'theme.colors.' + mode + '.palette.highlightText',
+    ),
+    background: normalizeHex(
+      supplied.background ?? (supplied.surface !== undefined
+        ? mixHex(pageSurface, dark ? '#070812' : '#F8F7FC', dark ? 0.28 : 0.04)
+        : DEFAULTS[mode].background),
+      'theme.colors.' + mode + '.palette.background',
+    ),
+  };
+
   const primary = normalizeHex(overrides.brand?.primary ?? palette.primary, 'theme.colors.' + mode + '.overrides.brand.primary');
   const accent = normalizeHex(overrides.brand?.accent ?? palette.accent, 'theme.colors.' + mode + '.overrides.brand.accent');
+  const secondary = normalizeHex(
+    overrides.brand?.secondary ?? (supplied.secondary !== undefined
+      ? palette.secondary
+      : overrides.brand?.primary !== undefined || overrides.brand?.accent !== undefined
+        ? mixHex(primary, accent, 0.5)
+        : palette.secondary),
+    'theme.colors.' + mode + '.overrides.brand.secondary',
+  );
   const surface = normalizeHex(overrides.surfaces?.surface ?? palette.surface, 'theme.colors.' + mode + '.overrides.surfaces.surface');
   const textPrimary = normalizeHex(overrides.text?.primary ?? palette.text, 'theme.colors.' + mode + '.overrides.text.primary');
-  const secondary = normalizeHex(overrides.brand?.secondary ?? (supplied.secondary ?? mixHex(primary, accent, 0.5)), 'theme.colors.' + mode + '.overrides.brand.secondary');
-  const highlight = normalizeHex(overrides.highlight?.background ?? overrides.brand?.highlight ?? (supplied.highlight ?? mixHex(accent, surface, dark ? 0.78 : 0.88)), 'theme.colors.' + mode + '.overrides.highlight.background');
-  const highlightText = normalizeHex(overrides.highlight?.text ?? overrides.brand?.highlightText ?? (supplied.highlightText ?? contrastText(highlight)), 'theme.colors.' + mode + '.overrides.highlight.text');
+  const highlight = normalizeHex(
+    overrides.highlight?.background ?? overrides.brand?.highlight ?? palette.highlight,
+    'theme.colors.' + mode + '.overrides.highlight.background',
+  );
+  const highlightText = normalizeHex(
+    overrides.highlight?.text ?? overrides.brand?.highlightText ?? (
+      overrides.highlight?.background !== undefined || overrides.brand?.highlight !== undefined
+        ? contrastText(highlight)
+        : palette.highlightText
+    ),
+    'theme.colors.' + mode + '.overrides.highlight.text',
+  );
 
   const vars: Record<string, string> = {};
   for (const [family, seed] of Object.entries({ primary, secondary, accent })) {
@@ -134,36 +216,75 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
   }
 
   const base = normalizeHex(overrides.surfaces?.base ?? palette.background, 'theme.colors.' + mode + '.overrides.surfaces.base');
-  const baseVoid = dark ? mix(base, '#000000', 0.34) : '#FFFFFF';
-  const elevated = dark ? mix(surface, '#FFFFFF', 0.075) : mix(surface, '#111827', 0.035);
-  const sunken = dark ? mix(base, '#000000', 0.12) : mix(base, surface, 0.46);
-  const overlay = dark ? mix(elevated, base, 0.22) : mix(elevated, '#FFFFFF', 0.38);
-  const navigation = dark ? mix(surface, base, 0.3) : mix(surface, base, 0.22);
-  const sidebar = dark ? mix(surface, base, 0.38) : mix(surface, base, 0.32);
-  const code = dark ? mix(base, surface, 0.22) : mix(base, surface, 0.44);
+  const hasCustomSurface = supplied.surface !== undefined || supplied.background !== undefined
+    || overrides.surfaces?.base !== undefined || overrides.surfaces?.surface !== undefined;
+  const hasCustomText = supplied.text !== undefined || overrides.text?.primary !== undefined;
+  const defaultSurfaces = DEFAULT_SURFACES[mode];
+
+  const baseVoid = overrides.surfaces?.void ?? (hasCustomSurface
+    ? dark ? mix(base, '#000000', 0.34) : '#FFFFFF'
+    : defaultSurfaces.void);
+  const elevated = overrides.surfaces?.elevated ?? (hasCustomSurface
+    ? dark ? mix(surface, '#FFFFFF', 0.075) : mix(surface, '#111827', 0.035)
+    : defaultSurfaces.elevated);
+  const sunken = overrides.surfaces?.sunken ?? (dark ? mix(base, '#000000', 0.12) : mix(base, surface, 0.46));
+  const overlay = overrides.surfaces?.overlay ?? (hasCustomSurface
+    ? dark ? mix(elevated, base, 0.22) : mix(elevated, '#FFFFFF', 0.38)
+    : dark ? mix(elevated, base, 0.22) : '#FFFFFF');
+  const navigation = overrides.surfaces?.navigation ?? (hasCustomSurface
+    ? dark ? mix(surface, base, 0.3) : mix(surface, base, 0.22)
+    : defaultSurfaces.navigation);
+  const sidebar = overrides.surfaces?.sidebar ?? (hasCustomSurface
+    ? dark ? mix(surface, base, 0.38) : mix(surface, base, 0.32)
+    : defaultSurfaces.sidebar);
+  const code = overrides.code?.background ?? overrides.surfaces?.code ?? (hasCustomSurface
+    ? dark ? mix(base, surface, 0.22) : mix(base, surface, 0.44)
+    : defaultSurfaces.code);
   const surfaceRoles: Record<string, string> = {
-    'base-void': baseVoid, base, surface: surface, 'surface-elevated': elevated,
-    'surface-sunken': sunken, 'surface-overlay': overlay, 'surface-navigation': navigation,
-    'surface-sidebar': sidebar, 'surface-code': code,
+    'base-void': baseVoid,
+    base,
+    surface,
+    'surface-elevated': elevated,
+    'surface-sunken': sunken,
+    'surface-overlay': overlay,
+    'surface-navigation': navigation,
+    'surface-sidebar': sidebar,
+    'surface-code': code,
   };
   for (const [key, value] of Object.entries(surfaceRoles)) declare(vars, key, value);
 
+  const defaultText = DEFAULT_TEXT[mode];
+  const textSecondary = overrides.text?.secondary ?? (hasCustomText
+    ? mix(textPrimary, base, dark ? 0.12 : 0.10)
+    : defaultText.secondary);
+  const textMuted = overrides.text?.muted ?? (hasCustomText
+    ? mix(textPrimary, base, dark ? 0.29 : 0.30)
+    : defaultText.muted);
+  const textSubtle = overrides.text?.subtle ?? (hasCustomText
+    ? mix(textPrimary, base, dark ? 0.46 : 0.48)
+    : defaultText.subtle);
+  const textAccent = overrides.text?.accent ?? (dark
+    ? mix(primary, '#FFFFFF', 0.18)
+    : mix(primary, '#000000', 0.27));
+  const textInverse = overrides.text?.inverse ?? (hasCustomSurface ? contrastText(surface) : defaultText.inverse);
   const textRoles: Record<string, string> = {
     'text-primary': textPrimary,
-    'text-secondary': mix(textPrimary, base, dark ? 0.12 : 0.10),
-    'text-muted': mix(textPrimary, base, dark ? 0.29 : 0.30),
-    'text-subtle': mix(textPrimary, base, dark ? 0.46 : 0.48),
-    'text-inverse': contrastText(surface),
-    'text-accent': dark ? mix(accent, '#FFFFFF', 0.18) : accent,
+    'text-secondary': textSecondary,
+    'text-muted': textMuted,
+    'text-subtle': textSubtle,
+    'text-inverse': textInverse,
+    'text-accent': textAccent,
     'text-highlight': highlightText,
     'text-on-accent': contrastText(accent),
   };
   for (const [key, value] of Object.entries(textRoles)) declare(vars, key, value);
 
+  const defaultBorders = DEFAULT_BORDERS[mode];
+  const hasCustomBorders = hasCustomSurface || hasCustomText;
   const borderRoles: Record<string, string> = {
-    'border-subtle': mix(textPrimary, base, dark ? 0.91 : 0.90),
-    border: mix(textPrimary, base, dark ? 0.80 : 0.83),
-    'border-strong': mix(textPrimary, base, dark ? 0.65 : 0.70),
+    'border-subtle': hasCustomBorders ? mix(textPrimary, base, dark ? 0.91 : 0.90) : defaultBorders.subtle,
+    border: hasCustomBorders ? mix(textPrimary, base, dark ? 0.80 : 0.83) : defaultBorders.default,
+    'border-strong': hasCustomBorders ? mix(textPrimary, base, dark ? 0.65 : 0.70) : defaultBorders.strong,
     'border-focus': accent,
   };
   for (const [key, value] of Object.entries(borderRoles)) declare(vars, key, value);
@@ -175,8 +296,8 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
   declare(vars, 'highlight', highlight);
   declare(vars, 'highlight-text', highlightText);
   declare(vars, 'highlight-border', mix(highlight, surface, 0.48));
-  declare(vars, 'selection-background', mix(accent, surface, dark ? 0.38 : 0.82));
-  declare(vars, 'selection-text', dark ? '#FFFFFF' : '#101827');
+  declare(vars, 'selection-background', vars['--n0ct-primary-300']!);
+  declare(vars, 'selection-text', defaultSurfaces.void);
 
   for (const semantic of ['success', 'warning', 'danger', 'info'] as const) {
     const config = input?.semantic?.[semantic] ?? {};
@@ -189,20 +310,6 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
     declare(vars, semantic + '-border', border);
   }
 
-  const surfaceOverrides = overrides.surfaces ?? {};
-  for (const [key, value] of Object.entries(surfaceOverrides)) {
-    if (!value) continue;
-    const target = key === 'void' ? 'base-void' : key === 'base' ? 'base' : key === 'elevated' ? 'surface-elevated' : key === 'sunken' ? 'surface-sunken' : key === 'overlay' ? 'surface-overlay' : key === 'navigation' ? 'surface-navigation' : key === 'sidebar' ? 'surface-sidebar' : key === 'code' ? 'surface-code' : 'surface';
-    declare(vars, target, value);
-  }
-  for (const [key, value] of Object.entries(overrides.text ?? {})) {
-    if (!value) continue;
-    declare(vars, 'text-' + (key === 'onAccent' ? 'on-accent' : key), value);
-  }
-  for (const [key, value] of Object.entries(overrides.borders ?? {})) {
-    if (!value) continue;
-    declare(vars, key === 'default' ? 'border' : 'border-' + key, value);
-  }
   for (const [key, value] of Object.entries(overrides.interactive ?? {})) {
     if (value) declare(vars, 'interactive-' + key, value);
   }
@@ -236,8 +343,8 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
 
   declare(vars, 'gradient-monochrome', 'linear-gradient(125deg, var(--n0ct-primary-300), var(--n0ct-primary-500) 56%, var(--n0ct-primary-700))');
   declare(vars, 'gradient-accent', 'linear-gradient(125deg, var(--n0ct-accent-400), var(--n0ct-accent-600))');
-  declare(vars, 'gradient-brand', 'linear-gradient(120deg, var(--n0ct-primary-500) 0%, var(--n0ct-primary-400) 56%, var(--n0ct-accent-500) 100%)');
-  declare(vars, 'gradient-brand-soft', 'linear-gradient(120deg, color-mix(in srgb, var(--n0ct-primary-500) 12%, transparent), color-mix(in srgb, var(--n0ct-accent-500) 8%, transparent))');
+  declare(vars, 'gradient-brand', 'linear-gradient(125deg, var(--n0ct-primary-500) 0%, var(--n0ct-secondary-500) 38%, var(--n0ct-highlight) 70%, var(--n0ct-accent-500) 100%)');
+  declare(vars, 'gradient-brand-soft', 'linear-gradient(125deg, color-mix(in srgb, var(--n0ct-primary-500) 18%, transparent), color-mix(in srgb, var(--n0ct-secondary-500) 12%, transparent) 45%, color-mix(in srgb, var(--n0ct-accent-500) 11%, transparent))');
 
   declare(vars, 'nav-glass', mix(navigation, base, 0.12));
   declare(vars, 'file-selected-bg', vars['--n0ct-highlight']!);
@@ -253,9 +360,9 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
     '--sl-color-gray-6': vars['--n0ct-surface-elevated']!,
     '--sl-color-gray-7': vars['--n0ct-base']!,
     '--sl-color-black': vars['--n0ct-base-void']!,
-    '--sl-color-accent-low': vars['--n0ct-accent-900']!,
-    '--sl-color-accent': vars['--n0ct-accent-500']!,
-    '--sl-color-accent-high': vars['--n0ct-accent-100']!,
+    '--sl-color-accent-low': vars['--n0ct-primary-900']!,
+    '--sl-color-accent': vars['--n0ct-primary-500']!,
+    '--sl-color-accent-high': vars['--n0ct-primary-100']!,
     '--sl-color-text-accent': vars['--n0ct-text-accent']!,
     '--sl-color-bg': vars['--n0ct-base']!,
     '--sl-color-bg-nav': vars['--n0ct-surface-navigation']!,
@@ -268,7 +375,6 @@ function resolveMode(mode: 'dark' | 'light', input?: N0ctThemeMode): N0ctResolve
   Object.assign(vars, starlight);
   return { variables: vars };
 }
-
 export function resolveN0ctThemeColors(input?: N0ctThemeColors): N0ctResolvedTheme {
   return { dark: resolveMode('dark', input?.dark), light: resolveMode('light', input?.light) };
 }

@@ -17,16 +17,16 @@ type Palette = {
 
 const defaults: Record<Mode, Palette> = {
   dark: {
-    primary: '#8C42FF', secondary: '#6653BD', accent: '#2A85FF',
-    surface: '#131626', background: '#0B0D17', text: '#E6EAF8',
-    muted: '#7B88B8', success: '#43C995', warning: '#E8B95B',
-    danger: '#EC7189', info: '#6DB9EA',
+    primary: '#F25CFF', secondary: '#8C42FF', accent: '#00E5FF',
+    surface: '#0D1020', background: '#0B0D17', text: '#E6EAF8',
+    muted: '#7B88B8', success: '#06D6A0', warning: '#FFD166',
+    danger: '#FF4D6D', info: '#FF9F1C',
   },
   light: {
-    primary: '#286DCE', secondary: '#4B79C8', accent: '#7540CE',
-    surface: '#FFFFFF', background: '#F8F7FC', text: '#191629',
+    primary: '#C92FCF', secondary: '#7540CE', accent: '#00AFC2',
+    surface: '#F3F1F8', background: '#F8F7FC', text: '#191629',
     muted: '#716B89', success: '#087F5B', warning: '#956000',
-    danger: '#C12D4B', info: '#2867B1',
+    danger: '#C12D4B', info: '#A85A00',
   },
 };
 
@@ -47,19 +47,28 @@ function palette(mode: Mode, config?: N0ctThemeMode): Palette {
   const semantic = config?.semantic ?? {};
   const overrides = config?.overrides ?? {};
   const dark = mode === 'dark';
+  const pageSurfaceDefault = dark ? '#131626' : '#FFFFFF';
+  const pageSurface = overrides.surfaces?.surface ?? p.surface ?? pageSurfaceDefault;
+  const isDefaultPageSurface = pageSurface === pageSurfaceDefault;
+  const codeSurface = overrides.code?.background ?? overrides.surfaces?.code
+    ?? (isDefaultPageSurface ? defaultsForMode.surface : mixHex(pageSurface, dark ? '#000000' : '#111827', dark ? .28 : .04));
   const primary = overrides.brand?.primary ?? p.primary ?? defaultsForMode.primary;
   const accent = overrides.brand?.accent ?? p.accent ?? defaultsForMode.accent;
-  const surface = overrides.code?.background ?? overrides.surfaces?.code ?? overrides.surfaces?.surface ?? p.surface ?? defaultsForMode.surface;
-  const background = overrides.surfaces?.base ?? p.background ?? mixHex(surface, dark ? '#070812' : '#F8F7FC', dark ? .28 : .04);
   const text = overrides.code?.foreground ?? overrides.text?.primary ?? p.text ?? defaultsForMode.text;
+  const background = overrides.surfaces?.base ?? p.background ?? defaultsForMode.background;
+  const customText = p.text !== undefined || overrides.text?.primary !== undefined;
   return {
     primary,
-    secondary: overrides.brand?.secondary ?? p.secondary ?? mixHex(primary, accent, .5),
+    secondary: overrides.brand?.secondary ?? p.secondary ?? (
+      p.primary !== undefined || p.accent !== undefined
+        ? mixHex(primary, accent, .5)
+        : defaultsForMode.secondary
+    ),
     accent,
-    surface,
+    surface: codeSurface,
     background,
     text,
-    muted: overrides.text?.muted ?? mixHex(text, background, dark ? .29 : .30),
+    muted: overrides.text?.muted ?? (customText ? mixHex(text, background, dark ? .29 : .30) : defaultsForMode.muted),
     success: semantic.success?.foreground ?? defaultsForMode.success,
     warning: semantic.warning?.foreground ?? defaultsForMode.warning,
     danger: semantic.danger?.foreground ?? defaultsForMode.danger,
