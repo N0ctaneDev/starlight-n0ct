@@ -1,0 +1,12 @@
+---
+export interface Props {
+  title?: string;
+  tone?: 'note' | 'tip' | 'warning' | 'danger' | 'info';
+}
+const { title, tone = 'note' } = Astro.props;
+const defaultTitles = { note: 'Note', tip: 'Tip', warning: 'Warning', danger: 'Important', info: 'Info' };
+---
+<aside class="noct-callout" data-tone={tone} role={tone === 'danger' ? 'alert' : 'note'}>
+  <p class="noct-callout-title">{title ?? defaultTitles[tone]}</p>
+  <div class="noct-callout-content"><slot /></div>
+</aside>

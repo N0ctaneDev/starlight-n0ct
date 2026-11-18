@@ -1,7 +1,6 @@
 ---
 export interface Props { columns?: 2 | 3 | 4 }
 const { columns } = Astro.props;
+const gridStyle = columns ? `--noct-grid-columns: ${columns}` : undefined;
 ---
-<div class="noct-doc-grid" data-columns={columns}>
-  <slot />
-</div>
+<div class="noct-doc-grid" style={gridStyle} data-columns={columns}><slot /></div>
