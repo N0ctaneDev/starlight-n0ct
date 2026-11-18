@@ -270,6 +270,11 @@
   font-family: var(--font-mono);
   font-size: .75rem;
 }
+.expressive-code .title-bar {
+  border: 0 !important;
+  border-block-end: 1px solid var(--n0ct-border) !important;
+  background: var(--n0ct-surface-elevated) !important;
+}
 .expressive-code .copy button {
   display: grid;
   width: 1.9rem;
