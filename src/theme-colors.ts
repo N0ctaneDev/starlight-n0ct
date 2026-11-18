@@ -267,9 +267,9 @@ export function generateN0ctThemeCss(input?: N0ctThemeColors): string {
     .map(([name, value]) => name + ': ' + value + ';')
      .join('\n  ');
   return [
-    ':root { color-scheme: dark;\\n  ' + declarations(resolved.dark.variables) + '\\n}',
-    ':root[data-theme="dark"] { color-scheme: dark;\\n  ' + declarations(resolved.dark.variables) + '\\n}',
-    ':root[data-theme="light"] { color-scheme: light;\\n  ' + declarations(resolved.light.variables) + '\\n}',
+    ':root { color-scheme: dark;\n  ' + declarations(resolved.dark.variables) + '\n}',
+    ':root[data-theme="dark"] { color-scheme: dark;\n  ' + declarations(resolved.dark.variables) + '\n}',
+    ':root[data-theme="light"] { color-scheme: light;\n  ' + declarations(resolved.light.variables) + '\n}',
   ].join('\n\n') + '\n';
 }
 

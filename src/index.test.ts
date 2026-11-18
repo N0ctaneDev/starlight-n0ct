@@ -99,7 +99,7 @@ describe('N0ctane configuration expansion', () => {
       integrations: { blog: false },
     });
 
-    expect(collapsible.components?.Sidebar).toBeUndefined();
+    expect(collapsible.components?.Sidebar).toContain('Sidebar.astro');
     const dropdown = n0ctane({
       title: 'Docs',
       sidebar: { topicDisplay: 'dropdown', topics: ['guides'] },
