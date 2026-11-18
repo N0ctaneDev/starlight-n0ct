@@ -81,6 +81,7 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
   const themeComponents = {
     // Blog and Versions both override ThemeSelect. The composed N0ctane
     // variants render their public components alongside the N0ctane toggle.
+    // Intentional override: starlight-versions normally places VersionSelect in the header; VersionedSidebar renders its public selector in the sidebar instead.
     ThemeSelect: component(hasBlogHeaderEnd ? 'BlogThemeSelect' : 'ThemeSelect'),
     // Keep the snapshot's native Starlight header composition; customize only its title and theme control.
     SiteTitle: component(hasBlogHeaderStart ? 'BlogSiteTitle' : 'SiteTitle'),
