@@ -5,6 +5,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { N0ctConfig } from './types.js';
+import { generateN0ctThemeCss, validateN0ctThemeColors } from './theme-colors.js';
 import { createRemarkCodeFilenamesIntegration } from './remark-code-filenames.js';
 
 const isHex = (value: string) => /^#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/i.test(value);
@@ -15,33 +16,26 @@ const safeLength = (value: string) => {
 
 function tokenStyles(config: N0ctConfig) {
   const theme = config.theme ?? {};
-  for (const [key, value] of Object.entries({ accent: theme.accent, darkAccent: theme.darkAccent, lightAccent: theme.lightAccent })) {
-    if (value !== undefined && !isHex(value)) {
-      throw new Error(`Invalid n0ct.config.mjs theme.${key}: expected a hex color such as #8B5CF6.`);
-    }
-  }
-  for (const [key, value] of Object.entries({ contentWidth: theme.contentWidth, sidebarWidth: theme.sidebarWidth })) {
+  for (const [key, value] of Object.entries({
+    contentWidth: theme.contentWidth,
+    sidebarWidth: theme.sidebarWidth,
+  })) {
     if (value !== undefined && !safeLength(value)) {
-      throw new Error(`Invalid n0ct.config.mjs theme.${key}: use a positive CSS length in px, rem, em, vw, vh, or %.`);
+      throw new Error('Invalid n0ct.config.mjs theme.' + key + ': use a positive CSS length in px, rem, em, vh, vw, or %.');
     }
   }
   if (theme.glow !== undefined && !['subtle', 'balanced', 'strong'].includes(theme.glow)) {
     throw new Error('Invalid n0ct.config.mjs theme.glow: use subtle, balanced, or strong.');
   }
-  const declarations: string[] = [];
+
   const glow = theme.glow ?? 'balanced';
-  const glowStrength = glow === 'subtle' ? '12%' : glow === 'strong' ? '38%' : '24%';
-  declarations.push(`--n0ct-glow-strength: ${glowStrength};`);
-  if (theme.contentWidth && safeLength(theme.contentWidth)) declarations.push(`--sl-content-width: ${theme.contentWidth};`);
-  if (theme.sidebarWidth && safeLength(theme.sidebarWidth)) declarations.push(`--sl-sidebar-width: ${theme.sidebarWidth};`);
-  if (theme.accent && isHex(theme.accent)) declarations.push(`--n0ct-accent: ${theme.accent}; --sl-color-accent: ${theme.accent};`);
-  const darkAccent = theme.darkAccent ?? theme.accent;
-  const lightAccent = theme.lightAccent ?? theme.accent;
-  return [
-    declarations.length ? `:root { ${declarations.join(' ')} }` : '',
-    darkAccent && isHex(darkAccent) ? `:root[data-theme="dark"] { --sl-color-accent: ${darkAccent}; }` : '',
-    lightAccent && isHex(lightAccent) ? `:root[data-theme="light"] { --sl-color-accent: ${lightAccent}; }` : '',
-  ].filter(Boolean).join('\n');
+  const glowStrength = glow === 'subtle' ? '12%' : glow === 'strong' ? '34%' : '22%';
+  const layout = [
+    '--n0ct-glow-strength: ' + glowStrength + ';',
+    ...(theme.contentWidth ? ['--sl-content-width: ' + theme.contentWidth + ';'] : []),
+    ...(theme.sidebarWidth ? ['--sl-sidebar-width: ' + theme.sidebarWidth + ';'] : []),
+  ];
+  return generateN0ctThemeCss(theme.colors) + '\n:root { ' + layout.join(' ') + ' }\n';
 }
 
 export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
@@ -102,7 +96,8 @@ export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
           }));
         }
 
-        logger.info('N0ctane theme components, icon support, and runtime settings are ready.');
+        for (const warning of validateN0ctThemeColors(config.theme?.colors)) logger.warn(warning);
+        logger.info('N0ctane palette, snapshot components, and runtime settings are ready.');
       },
     },
   };

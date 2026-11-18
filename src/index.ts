@@ -5,7 +5,8 @@ import { createN0ctIntegrations, createN0ctVersioning } from './integrations.js'
 import { normalizeN0ctConfig } from './config.js';
 import { createN0ctanePlugin } from './plugin.js';
 import { createN0ctSidebarTopics } from './sidebar-topics.js';
-import { n0ctaneDarkCodeTheme, n0ctaneLightCodeTheme } from './code-themes.js';
+import { createN0ctaneCodeThemes } from './code-themes.js';
+import { resolveN0ctThemeColors } from './theme-colors.js';
 import type { N0ctConfig, N0ctaneOptions } from './types.js';
 
 export type {
@@ -20,14 +21,12 @@ export type {
   N0ctSidebarTopicsPluginOptions,
   N0ctVersioningConfig,
   N0ctPluginOptions,
-  N0ctNavControl,
-  N0ctNavPosition,
-  N0ctNavbarLink,
-  N0ctNavbarConfig,
 } from './types.js';
 export { normalizeN0ctConfig, topicToSidebar } from './config.js';
 export { createN0ctIntegrations, createN0ctVersioning } from './integrations.js';
 export { createN0ctSidebarTopics } from './sidebar-topics.js';
+export { resolveN0ctThemeColors, generateN0ctThemeCss, validateN0ctThemeColors } from './theme-colors.js';
+export type { N0ctThemeColors, N0ctThemeMode, N0ctThemePalette, N0ctThemeOverrides, N0ctThemeSemanticColors, N0ctThemeConfig } from './types.js';
 
 /**
  * Expand the intentionally small `n0ct.config.mjs` API into a complete
@@ -68,10 +67,10 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
   const hasBlogHeaderEnd = blogEnabled && blogNavigation === 'header-end';
 
   const defaultCss = fileURLToPath(new URL('./styles/theme.css', import.meta.url));
-  const referenceCss = fileURLToPath(new URL('./styles/reference.css', import.meta.url));
+  const interfaceCss = fileURLToPath(new URL('./styles/interface.css', import.meta.url));
+  const componentsCss = fileURLToPath(new URL('./styles/components.css', import.meta.url));
   const component = (name: string) => fileURLToPath(new URL(`./components/${name}.astro`, import.meta.url));
   const themeComponents = {
-    Header: component('Header'),
     // Blog and Versions both override ThemeSelect. The composed N0ctane
     // variants render their public components alongside the N0ctane toggle.
     ThemeSelect: component(
@@ -83,18 +82,16 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     // N0ctane's title rather than dropping the upstream Blog link.
     SiteTitle: component(hasBlogHeaderStart ? 'BlogSiteTitle' : 'SiteTitle'),
     Footer: component('Footer'),
-    // List mode uses Sidebar Topics' own component override. Only dropdown
-    // needs a theme wrapper to insert its alternate topic selector. Native
-    // collapsible mode leaves Starlight's default Sidebar untouched.
-    ...(sidebarTopicDisplay === 'dropdown' ? { Sidebar: component('Sidebar') } : {}),
+    Sidebar: component('Sidebar'),
   };
 
+  const resolvedTheme = resolveN0ctThemeColors(config.theme?.colors);
   const expressiveCode = (advanced.expressiveCode === false ? false : {
-    themes: [n0ctaneDarkCodeTheme, n0ctaneLightCodeTheme],
+    themes: createN0ctaneCodeThemes(resolvedTheme),
     useStarlightDarkModeSwitch: true,
     styleOverrides: {
-      borderRadius: '0.75rem',
-      frames: { shadowColor: '#09111f55' },
+      borderRadius: '0.65rem',
+      frames: { shadowColor: 'transparent' },
     },
     ...(typeof advanced.expressiveCode === 'object' && advanced.expressiveCode !== null
       ? advanced.expressiveCode
@@ -109,7 +106,7 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     ...(!usesSidebarTopicsPlugin
       ? { sidebar: advancedSidebar ?? (normalizedSidebar as StarlightUserConfig['sidebar']) }
       : {}),
-    customCss: [defaultCss, referenceCss, ...(advanced.customCss ?? [])],
+    customCss: [defaultCss, interfaceCss, componentsCss, ...(advanced.customCss ?? [])],
     components: { ...themeComponents, ...(advanced.components ?? {}) },
     expressiveCode,
     plugins: [
