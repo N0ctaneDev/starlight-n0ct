@@ -63,11 +63,29 @@ describe('semantic theme palettes', () => {
 
   it('builds literal Expressive Code colors from the active palette', () => {
     const [dark, light] = createN0ctaneCodeThemes({
-      dark: { palette: { primary: '#112233', accent: '#445566', surface: '#101010', text: '#F0F0F0' } },
+      dark: {
+        palette: { primary: '#112233', accent: '#445566', surface: '#101010', text: '#F0F0F0' },
+        overrides: {
+          code: {
+            background: '#090A0B',
+            foreground: '#EFEFEF',
+            cursor: '#ABCDEF',
+            selectionBackground: '#123456',
+            lineHighlight: '#111213',
+            lineNumber: '#777777',
+            lineNumberActive: '#EEEEEE',
+          },
+        },
+      },
       light: { palette: { primary: '#123456', accent: '#654321', surface: '#FFFFFF', text: '#121212' } },
     });
-    expect(dark.colors['editor.background']).toBe('#101010');
-    expect(dark.colors['editor.foreground']).toBe('#F0F0F0');
+    expect(dark.colors['editor.background']).toBe('#090A0B');
+    expect(dark.colors['editor.foreground']).toBe('#EFEFEF');
+    expect(dark.colors['editorCursor.foreground']).toBe('#ABCDEF');
+    expect(dark.colors['editor.selectionBackground']).toBe('#123456');
+    expect(dark.colors['editor.lineHighlightBackground']).toBe('#111213');
+    expect(dark.colors['editorLineNumber.foreground']).toBe('#777777');
+    expect(dark.colors['editorLineNumber.activeForeground']).toBe('#EEEEEE');
     expect(dark.colors['terminal.ansiGreen']).toBe('#43C995');
     expect(light.colors['editor.background']).toBe('#FFFFFF');
     expect(light.colors['editor.foreground']).toBe('#121212');
