@@ -88,7 +88,23 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     useStarlightDarkModeSwitch: true,
     styleOverrides: {
       borderRadius: '0.65rem',
-      frames: { shadowColor: 'transparent', terminalIcon: 'none', terminalTitlebarDotsOpacity: '0' },
+      frames: {
+        shadowColor: 'transparent',
+        terminalIcon: 'none',
+        terminalTitlebarDotsOpacity: '0',
+      },
+      codeblocksWordDiff: {
+        ins: 'var(--n0ct-code-diff-added-border)',
+        del: 'var(--n0ct-code-diff-removed-border)',
+        insBackground: 'var(--n0ct-code-diff-added-bg)',
+        delBackground: 'var(--n0ct-code-diff-removed-bg)',
+      },
+      codeblocksLineStates: {
+        error: 'var(--n0ct-danger)',
+        warning: 'var(--n0ct-warning)',
+        info: 'var(--n0ct-info)',
+        success: 'var(--n0ct-success)',
+      },
     },
     ...(typeof advanced.expressiveCode === 'object' && advanced.expressiveCode !== null
       ? advanced.expressiveCode
