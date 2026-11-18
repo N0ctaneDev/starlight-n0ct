@@ -9,7 +9,30 @@ const themes = Array.isArray(themeSettings.themes) && themeSettings.themes.lengt
   class="n0ct-theme-control"
   data-n0ct-theme-control
   data-default-theme={defaultTheme}
+  data-available-themes={themes.map((theme: { id: string }) => theme.id).join(',')}
 >
+  <script is:inline>
+    (() => {
+      const control = document.currentScript?.closest('[data-n0ct-theme-control]');
+      if (!control) return;
+      const root = document.documentElement;
+      const allowedThemes = (control.getAttribute('data-available-themes') || '').split(',').filter(Boolean);
+      const fallbackTheme = control.getAttribute('data-default-theme') || allowedThemes[0] || 'n0ctane';
+      let preferences = null;
+      let legacyMode = null;
+      try {
+        preferences = JSON.parse(localStorage.getItem('n0ct-theme-preferences') || 'null');
+        legacyMode = localStorage.getItem('starlight-theme');
+      } catch {}
+      const mode = preferences?.mode === 'light' || (!preferences && legacyMode === 'light') ? 'light' : 'dark';
+      const theme = typeof preferences?.theme === 'string' && allowedThemes.includes(preferences.theme)
+        ? preferences.theme
+        : fallbackTheme;
+      root.dataset.theme = mode;
+      root.dataset.n0ctTheme = theme;
+      root.dataset.n0ctCodeTheme = theme + '-' + mode;
+    })();
+  </script>
   <button
     class="n0ct-theme-mode"
     type="button"
@@ -156,6 +179,23 @@ const themes = Array.isArray(themeSettings.themes) && themeSettings.themes.lengt
 
   if (!themeWindow.__n0ctThemePreferencesBound) {
     themeWindow.__n0ctThemePreferencesBound = true;
+
+    document.addEventListener('pointerdown', (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      if (target?.closest('[data-n0ct-theme-menu]')) return;
+      document.querySelectorAll<HTMLDetailsElement>('[data-n0ct-theme-menu]').forEach((menu) => {
+        menu.open = false;
+      });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      document.querySelectorAll<HTMLDetailsElement>('[data-n0ct-theme-menu]').forEach((menu) => {
+        if (!menu.open) return;
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      });
+    });
 
     document.addEventListener('click', (event) => {
       const target = event.target instanceof Element ? event.target : null;
