@@ -57,6 +57,10 @@ const config = {
     glow: 'balanced',
     contentWidth: '55rem',
     sidebarWidth: '17rem',
+    colors: {
+      dark: { palette: { primary: '#F25CFF', secondary: '#8C42FF', accent: '#00E5FF', surface: '#131626', text: '#E6EAF8', highlight: '#2A85FF', highlightText: '#080A15', background: '#0B0D17' } },
+      light: { palette: { primary: '#C92FCF', secondary: '#7540CE', accent: '#00AFC2', surface: '#FFFFFF', text: '#191629', highlight: '#286DCE', highlightText: '#FFFFFF', background: '#F8F7FC' } },
+    },
   },
 };
 

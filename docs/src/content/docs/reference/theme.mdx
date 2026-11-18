@@ -1,47 +1,155 @@
 ---
 title: Theme reference
-description: Typography, palette, layout, code frames and accessibility.
+description: Semantic color roles, typography, layout and code styling.
 ---
 
 ## Typography
 
-N0ctane keeps its existing font pairing:
+The theme uses **Space Grotesk Variable** for interface and body text and **Space Mono** for code.
 
-- **Space Grotesk Variable** for interface and body text.
-- **Space Mono** for code and monospaced content.
+## Color system
 
-The fonts are bundled as package dependencies. Tailwind's `font-sans` and `font-mono` utilities use this same pairing.
+The theme is role-based rather than hue-named. It keeps the original N0ctane four-color identity while exposing stable roles: the original pink is primary, violet is secondary, cyan is accent, and blue is highlight. Dark and light values are tuned independently; complete shade ramps are generated for the three brand seeds.
 
-## Palette
+| Role | Purpose |
+|---|---|
+| primary | Main brand identity, links and monochrome gradient |
+| secondary | Supporting brand color |
+| accent | Focus, active controls and interactive highlights |
+| base | Main page background |
+| surface | Cards, panels and content surfaces |
+| text.primary | Main readable text |
+| text.secondary | Body text |
+| text.muted | Supporting and metadata text |
+| highlight | Selected or emphasized content |
+| success, warning, danger, info | Semantic status colors |
 
-Dark and light modes have independently tuned surfaces and contrast values. The brand gradient remains pink → purple → blue → cyan in both modes.
+Dark and light modes are configured independently. Each mode accepts four core palette colors (primary, accent, surface, text) plus optional secondary, highlight, highlightText, and background. The default values preserve the original palette in both modes. Omit optional values and they are derived from the core colors.
 
-| Token | Dark | Light |
-|---|---|---|
-| Pink 500 | `#F25CFF` | `#C92FCF` |
-| Cyan 500 | `#00E5FF` | `#00AFC2` |
-| Purple 500 | `#8C42FF` | `#7540CE` |
-| Blue 500 | `#2A85FF` | `#286DCE` |
-| Base background | `#0B0D17` | `#F8F7FC` |
-| Surface | `#131626` | `#FFFFFF` |
-| Elevated surface | `#1D2135` | `#F1EEF8` |
-| Border | `#282C42` | `#DED9E9` |
-| Primary text | `#E6EAF8` | `#191629` |
-| Secondary text | `#C1C8E3` | `#48445E` |
-| Muted text | `#7B88B8` | `#716B89` |
+## Configuration
 
-Semantic colors are success `#06D6A0`, warning `#FFD166`, error `#FF4D6D`, and info `#FF9F1C` in dark mode. Light mode uses darker variants for readable contrast.
+~~~js
+theme: {
+  colors: {
+    dark: {
+      palette: {
+        primary: '#F25CFF',
+        secondary: '#8C42FF',
+        accent: '#00E5FF',
+        surface: '#131626',
+        text: '#E6EAF8',
+        highlight: '#2A85FF',
+        highlightText: '#080A15',
+        background: '#0B0D17',
+      },
+    },
+    light: {
+      palette: {
+        primary: '#C92FCF',
+        secondary: '#7540CE',
+        accent: '#00AFC2',
+        surface: '#FFFFFF',
+        text: '#191629',
+        highlight: '#286DCE',
+        highlightText: '#FFFFFF',
+        background: '#F8F7FC',
+      },
+    },
+  },
+}
+~~~
 
-The theme exposes matching Tailwind colors such as `bg-noct-bg-surface`, `text-noct-text-primary`, `text-noct-pink-500`, and `border-noct-cyan-500/40`.
+Semantic statuses can be overridden independently in each mode:
+
+~~~js
+theme: {
+  colors: {
+    dark: {
+      semantic: {
+        success: { foreground: '#06D6A0' },
+        warning: { foreground: '#FFD166' },
+        danger: { foreground: '#FF4D6D' },
+        info: { foreground: '#FF9F1C' },
+      },
+    },
+  },
+}
+~~~
+
+For granular control, use overrides under either mode to adjust brand roles, surfaces, text, borders, interaction states, highlights and code-block details. Unset values are derived from the palette.
+
+The generated shade ramps are available as Tailwind classes such as bg-n0ct-primary-500, text-n0ct-text-primary, and border-n0ct-border.
+
+
+## Fine-grained role overrides
+
+Place these under either mode's overrides object. Every field is optional; unset values are derived from the palette.
+
+| Group | Available roles |
+|---|---|
+| brand | primary, secondary, accent, highlight, highlightText |
+| surfaces | void, base, surface, elevated, sunken, overlay, navigation, sidebar, code |
+| text | primary, secondary, muted, subtle, inverse, accent, highlight, onAccent |
+| borders | subtle, default, strong, focus |
+| interactive | hover, active, selected |
+| highlight | background, text, border, selectionBackground, selectionText |
+| code | background, foreground, cursor, selectionBackground, lineHighlight, lineNumber, lineNumberActive, diffAdded, diffRemoved, tabs |
+
+The code group also accepts nested controls:
+- diffAdded and diffRemoved: foreground, background, border, text
+- tabs: background, activeBackground, foreground, activeForeground, border
+
+For example:
+
+~~~js
+theme: {
+  colors: {
+    dark: {
+      overrides: {
+        surfaces: {
+          base: '#0C0B17',
+          surface: '#17152A',
+          elevated: '#211E39',
+          code: '#0E1020',
+        },
+        text: {
+          primary: '#F0EDFF',
+          secondary: '#D0CBE7',
+          muted: '#9690B4',
+          highlight: '#FFFFFF',
+        },
+        borders: {
+          default: '#37314F',
+          focus: '#4F91E8',
+        },
+        highlight: {
+          background: '#30264C',
+          text: '#F5F0FF',
+        },
+        code: {
+          diffAdded: { background: '#173D32', foreground: '#B9F3D9' },
+          diffRemoved: { background: '#4B2634', foreground: '#FFD0DA' },
+        },
+      },
+      semantic: {
+        success: { foreground: '#53D6A4', background: '#15382F', border: '#286B57' },
+        warning: { foreground: '#F2C66D', background: '#3B301C', border: '#6B5328' },
+        danger: { foreground: '#FF8499', background: '#45202B', border: '#783849' },
+        info: { foreground: '#82C8F0', background: '#1B3044', border: '#315C7B' },
+      },
+    },
+  },
+}
+~~~
 
 ## Layout
 
-The reference layout starts with a `52rem` reading column, an `18rem` sidebar, and a `3.25rem` navbar. Use the existing `theme.contentWidth` and `theme.sidebarWidth` options to adjust the content and sidebar widths.
+The defaults use a 55rem reading width, a 17rem sidebar and a 3.25rem native Starlight header. Override theme.contentWidth and theme.sidebarWidth to change the layout.
 
 ## Code blocks
 
-Expressive Code keeps the current N0ctane dark/light syntax themes. Frames use a matching title bar and copy control. Shell-language fences add a terminal title strip; synchronized `:::code-tabs` persist the selected language; diff fences show deleted lines in red and inserted lines in green. The inline `[!code --]` and `[!code ++]` markers use the same deleted/inserted row styles.
+Standard fenced Markdown code blocks are supported, with :::code-tabs for tabbed variants. The theme does not provide a custom Code component. Code frames use one restrained border, no decorative macOS dots, and a consistently placed copy control. Diff additions and deletions use separate semantic green/red states.
 
-## Motion and contrast
+## Background and accessibility
 
-Ambient background color is deliberately subtle. Glow is reserved for selected navigation and interactive states. Transitions respect `prefers-reduced-motion: reduce`.
+The ambient gradient is fixed to the viewport rather than scrolling with the document. Glow strength is configurable as subtle, balanced, or strong. Focus states remain visible and animations respect prefers-reduced-motion.

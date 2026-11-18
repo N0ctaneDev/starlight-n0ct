@@ -1,0 +1,429 @@
+/* Shared brand utilities from the original N0ctane theme. */
+.noct-gradient-text {
+  color: transparent;
+  background: var(--n0ct-gradient-brand);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+.noct-shimmer {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-image: linear-gradient(115deg, transparent 0%, color-mix(in srgb, var(--n0ct-primary-500) 9%, transparent) 36%, color-mix(in srgb, var(--n0ct-accent-500) 8%, transparent) 54%, transparent 76%);
+  background-size: 220% 100%;
+  transition: background-position 360ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+.noct-shimmer:hover { background-position: 100% 0; }
+.noct-glow-hover { transition: box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease; }
+.noct-glow-hover:hover {
+  border-color: color-mix(in srgb, var(--n0ct-accent-500) 44%, var(--n0ct-border));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--n0ct-primary-500) 12%, transparent), 0 10px 28px color-mix(in srgb, var(--n0ct-primary-500) 10%, transparent);
+  transform: translateY(-1px);
+}
+
+/* Original compact callout geometry and left-accent treatment. */
+.noct-callout {
+  --callout-accent: var(--n0ct-accent-500);
+  margin-block: .8rem;
+  padding: .58rem .72rem;
+  border: 1px solid var(--n0ct-border);
+  border-inline-start: 3px solid var(--callout-accent);
+  border-radius: var(--n0ct-radius-md);
+  background: linear-gradient(125deg, color-mix(in srgb, var(--callout-accent) 8%, transparent), transparent 62%), var(--n0ct-surface);
+  box-shadow: 0 5px 18px rgb(0 0 0 / .07);
+  font-size: .88rem;
+  line-height: 1.55;
+}
+.noct-callout[data-tone='tip'] { --callout-accent: var(--n0ct-success); }
+.noct-callout[data-tone='warning'] { --callout-accent: var(--n0ct-warning); }
+.noct-callout[data-tone='danger'] { --callout-accent: var(--n0ct-danger); }
+.noct-callout[data-tone='info'] { --callout-accent: var(--n0ct-info); }
+.noct-callout-title {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin: 0 0 .22rem;
+  color: var(--n0ct-text-primary);
+  font-size: .86rem;
+  font-weight: 680;
+}
+.noct-callout-content > :first-child { margin-top: 0; }
+.noct-callout-content > :last-child { margin-bottom: 0; }
+.noct-callout-content p { margin-block: .25rem; }
+
+/* Original linked/static cards and their animated chain watermark. */
+.noct-doc-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--noct-grid-columns, auto-fit), minmax(min(100%, 15rem), 1fr));
+  gap: .85rem;
+  margin-block: 1.2rem;
+}
+.noct-doc-grid[data-columns='2'] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.noct-doc-grid[data-columns='3'] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.noct-doc-grid[data-columns='4'] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.noct-doc-card {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 8rem;
+  flex-direction: column;
+  gap: .42rem;
+  padding: .95rem 1rem;
+  overflow: hidden;
+  border: 1px solid var(--n0ct-border);
+  border-radius: var(--n0ct-radius-lg);
+  color: var(--n0ct-text-secondary);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--n0ct-primary-500) 6%, transparent), transparent 58%), var(--n0ct-surface);
+  text-decoration: none;
+  isolation: isolate;
+}
+.noct-doc-card:hover { color: var(--n0ct-text-primary); text-decoration: none; }
+.noct-doc-card-title { position: relative; z-index: 1; color: var(--n0ct-text-primary); font-size: 1rem; font-weight: 650; }
+.noct-doc-card-description { position: relative; z-index: 1; max-width: 90%; color: var(--n0ct-text-muted); font-size: .9rem; line-height: 1.55; }
+.noct-doc-card-eyebrow { position: relative; z-index: 1; color: var(--n0ct-text-accent); font-family: var(--font-mono); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; }
+.noct-doc-card-chain {
+  position: absolute;
+  z-index: 0;
+  inset: auto .55rem .05rem auto;
+  width: clamp(4.8rem, 8vw, 6.8rem);
+  height: clamp(4.8rem, 8vw, 6.8rem);
+  color: var(--n0ct-primary-500);
+  opacity: .045;
+  transform: translate(.3rem, .3rem) rotate(-18deg) scale(.92);
+  transition: opacity 260ms ease, transform 360ms cubic-bezier(.2,.7,.2,1), filter 260ms ease;
+  pointer-events: none;
+}
+.noct-doc-card-chain path { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.noct-doc-card:hover .noct-doc-card-chain,
+.noct-doc-card:focus-visible .noct-doc-card-chain {
+  opacity: .28;
+  transform: translate(-.15rem, -.12rem) rotate(-5deg) scale(1);
+  filter: drop-shadow(0 0 13px color-mix(in srgb, var(--n0ct-primary-500) 48%, transparent));
+}
+
+/* Native Starlight Card and CardGrid receive the same brand surface as N0ctane's cards. */
+.sl-markdown-content .sl-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: .8rem;
+  margin-block: 1.25rem;
+}
+.sl-markdown-content .sl-link-card {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--n0ct-border) !important;
+  border-radius: var(--n0ct-radius-lg) !important;
+  color: var(--n0ct-text-secondary) !important;
+  background:
+    linear-gradient(120deg, color-mix(in srgb, var(--n0ct-primary-500) 10%, transparent), transparent 52%),
+    linear-gradient(320deg, color-mix(in srgb, var(--n0ct-accent-500) 9%, transparent), transparent 58%),
+    var(--n0ct-surface) !important;
+  box-shadow: var(--n0ct-shadow-soft);
+  text-decoration: none !important;
+  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+.sl-markdown-content .sl-link-card::before {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 2px;
+  background: var(--n0ct-gradient-brand);
+  opacity: .72;
+  content: '';
+}
+.sl-markdown-content .sl-link-card:hover,
+.sl-markdown-content .sl-link-card:focus-visible {
+  border-color: color-mix(in srgb, var(--n0ct-primary-500) 52%, var(--n0ct-border)) !important;
+  color: var(--n0ct-text-primary) !important;
+  box-shadow: var(--n0ct-shadow-float), 0 0 1.3rem color-mix(in srgb, var(--n0ct-primary-500) 12%, transparent);
+  transform: translateY(-2px);
+}
+.sl-markdown-content .sl-link-card .title {
+  color: var(--n0ct-text-primary);
+  font-weight: 680;
+  letter-spacing: -.015em;
+}
+.sl-markdown-content .sl-link-card .description {
+  color: var(--n0ct-text-muted);
+  font-size: .9rem;
+  line-height: 1.5;
+}
+
+/* Badges keep the original tone API, with more breathing room and a quiet outline. */
+.noct-badge {
+  display: inline-flex;
+  min-height: 1.5rem;
+  align-items: center;
+  padding: .16rem .58rem;
+  border: 1px solid var(--n0ct-border);
+  border-radius: 999px;
+  color: var(--n0ct-text-secondary);
+  background: var(--n0ct-surface-elevated);
+  font-size: .76rem;
+  font-weight: 650;
+  line-height: 1.2;
+  vertical-align: middle;
+}
+.noct-badge[data-tone='pink'] { color: var(--n0ct-primary-400); border-color: color-mix(in srgb, var(--n0ct-primary-500) 34%, var(--n0ct-border)); }
+.noct-badge[data-tone='cyan'] { color: var(--n0ct-accent-400); border-color: color-mix(in srgb, var(--n0ct-accent-500) 34%, var(--n0ct-border)); }
+.noct-badge[data-tone='success'] { color: var(--n0ct-success); border-color: color-mix(in srgb, var(--n0ct-success) 34%, var(--n0ct-border)); background: var(--n0ct-success-bg); }
+.noct-badge[data-tone='warning'] { color: var(--n0ct-warning); border-color: color-mix(in srgb, var(--n0ct-warning) 34%, var(--n0ct-border)); background: var(--n0ct-warning-bg); }
+.noct-badge[data-tone='danger'] { color: var(--n0ct-danger); border-color: color-mix(in srgb, var(--n0ct-danger) 34%, var(--n0ct-border)); background: var(--n0ct-danger-bg); }
+
+/* Native Starlight Steps and the original N0ctane Steps wrapper share styling. */
+.sl-markdown-content .sl-steps,
+.sl-markdown-content ol.noct-steps {
+  display: grid;
+  gap: .7rem;
+  margin-block: 1.35rem;
+  padding: 1.15rem 1.2rem .8rem;
+  border: 1px solid var(--n0ct-border);
+  border-radius: var(--n0ct-radius-lg);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--n0ct-primary-500) 8%, transparent), transparent 56%),
+    linear-gradient(315deg, color-mix(in srgb, var(--n0ct-accent-500) 6%, transparent), transparent 56%),
+    var(--n0ct-surface);
+  box-shadow: var(--n0ct-shadow-soft);
+}
+.sl-markdown-content .sl-steps > li,
+.sl-markdown-content ol.noct-steps > li {
+  min-height: 1.6rem;
+  padding-inline-start: 2.65rem;
+  padding-block-end: .35rem;
+}
+.sl-markdown-content .sl-steps > li::before,
+.sl-markdown-content ol.noct-steps > li::before {
+  color: var(--n0ct-text-on-accent);
+  background: var(--n0ct-gradient-monochrome);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--n0ct-primary-500) 9%, transparent);
+}
+.sl-markdown-content .sl-steps > li::after,
+.sl-markdown-content ol.noct-steps > li::after {
+  background: color-mix(in srgb, var(--n0ct-primary-500) 28%, var(--n0ct-border));
+}
+.sl-markdown-content .sl-steps > li:last-child::after,
+.sl-markdown-content ol.noct-steps > li:last-child::after { display: none; }
+
+/* Original command and key wrappers. */
+.noct-command {
+  position: relative;
+  margin-block: 1rem;
+  padding: 1rem 4.6rem 1rem 1rem;
+  overflow-x: auto;
+  border: 1px solid var(--n0ct-border);
+  border-radius: var(--n0ct-radius-md);
+  background: var(--n0ct-surface-code);
+  color: var(--n0ct-text-accent);
+}
+.noct-command pre { margin: 0; background: transparent; }
+.noct-command code { color: inherit; font-family: var(--font-mono); font-size: .88rem; white-space: pre; }
+.noct-command-copy {
+  position: absolute;
+  inset: .55rem .55rem auto auto;
+  padding: .32rem .55rem;
+  border: 1px solid var(--n0ct-border);
+  border-radius: var(--n0ct-radius-xs);
+  color: var(--n0ct-text-secondary);
+  background: var(--n0ct-surface-elevated);
+  font-size: .72rem;
+  cursor: pointer;
+}
+.noct-command-copy:hover,
+.noct-command-copy[data-copied='true'] { color: var(--n0ct-text-primary); border-color: var(--n0ct-border-focus); }
+.noct-kbd {
+  display: inline-block;
+  padding: .1rem .38rem;
+  border: 1px solid var(--n0ct-border);
+  border-bottom-width: 2px;
+  border-radius: var(--n0ct-radius-xs);
+  color: var(--n0ct-text-primary);
+  background: var(--n0ct-surface-elevated);
+  font-family: var(--font-mono);
+  font-size: .78em;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+.noct-file-tree { max-width: 100%; }
+
+/* Native Starlight FileTree keeps the real parser, icons, and open/close behavior. */
+.sl-markdown-content starlight-file-tree {
+  --x-space: 1.4rem;
+  --y-space: .16rem;
+  --y-pad: .08rem;
+  display: block;
+  max-width: 100%;
+  margin-block: 1rem;
+  padding: .95rem 1.05rem;
+  overflow-x: auto;
+  border: 1px solid var(--n0ct-border);
+  border-radius: var(--n0ct-radius-md);
+  color: var(--n0ct-text-secondary);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--n0ct-primary-500) 7%, transparent), transparent 58%), var(--n0ct-surface-code);
+  box-shadow: var(--n0ct-shadow-soft);
+  font-family: var(--font-mono);
+  font-size: .82rem;
+}
+.sl-markdown-content starlight-file-tree :is(button, summary) { border-radius: var(--n0ct-radius-xs); color: var(--n0ct-text-primary); }
+.sl-markdown-content starlight-file-tree :is(button, summary):hover,
+.sl-markdown-content starlight-file-tree :is(button, summary):focus-visible {
+  color: var(--n0ct-text-accent);
+  background: color-mix(in srgb, var(--n0ct-accent-500) 8%, transparent);
+  outline: none;
+}
+.sl-markdown-content starlight-file-tree ul { border-inline-start-color: color-mix(in srgb, var(--n0ct-accent-500) 24%, var(--n0ct-border)); }
+.sl-markdown-content starlight-file-tree .directory > details { background: transparent; }
+.sl-markdown-content starlight-file-tree .directory > details > summary { color: var(--n0ct-text-primary); }
+.sl-markdown-content starlight-file-tree .directory > details > summary:hover { color: var(--n0ct-text-accent); }
+.sl-markdown-content starlight-file-tree .file { color: var(--n0ct-text-secondary); }
+.sl-markdown-content starlight-file-tree .tree-entry { max-width: calc(100% - .5rem); }
+.sl-markdown-content starlight-file-tree .empty,
+.sl-markdown-content starlight-file-tree .comment { color: var(--n0ct-text-muted); }
+.sl-markdown-content starlight-file-tree .highlight {
+  border: 1px solid var(--n0ct-highlight-border);
+  border-radius: var(--n0ct-radius-xs);
+  color: var(--n0ct-highlight-text) !important;
+  background: var(--n0ct-highlight) !important;
+  box-shadow: none;
+  text-shadow: none;
+}
+.sl-markdown-content starlight-file-tree .highlight :is(*, svg) { color: var(--n0ct-highlight-text) !important; text-shadow: none !important; }
+.sl-markdown-content starlight-file-tree svg { fill: var(--n0ct-text-muted); }
+.sl-markdown-content starlight-file-tree .highlight svg { fill: currentColor; }
+
+/* One restrained Expressive Code frame, a normal header, and a correctly placed copy control. */
+.expressive-code {
+  --ec-codeBg: var(--n0ct-code-background);
+  margin-block: 1.15rem;
+}
+.expressive-code figure.frame {
+  overflow: hidden;
+  border: 1px solid var(--n0ct-border) !important;
+  border-radius: var(--n0ct-radius-md) !important;
+  background: var(--n0ct-code-background) !important;
+  box-shadow: var(--n0ct-shadow-soft);
+}
+.expressive-code figure.frame > .header {
+  min-height: 2.2rem;
+  align-items: center;
+  border: 0 !important;
+  border-block-end: 1px solid var(--n0ct-border) !important;
+  background: var(--n0ct-surface-elevated) !important;
+}
+.expressive-code .header .title {
+  display: inline-flex;
+  min-height: 2.2rem;
+  align-items: center;
+  padding-inline: .8rem;
+  color: var(--n0ct-text-secondary) !important;
+  font-family: var(--font-mono);
+  font-size: .75rem;
+}
+.expressive-code .title-bar {
+  border: 0 !important;
+  border-block-end: 1px solid var(--n0ct-border) !important;
+  background: var(--n0ct-surface-elevated) !important;
+}
+.expressive-code .copy button {
+  display: grid;
+  width: 1.9rem;
+  height: 1.9rem;
+  place-items: center;
+  border: 1px solid transparent !important;
+  border-radius: var(--n0ct-radius-xs) !important;
+  color: var(--n0ct-text-muted) !important;
+  background: transparent !important;
+}
+.expressive-code .copy button:hover {
+  border-color: var(--n0ct-border) !important;
+  color: var(--n0ct-text-accent) !important;
+  background: var(--n0ct-interactive-hover) !important;
+}
+.expressive-code .frame pre { background: var(--n0ct-code-background) !important; }
+.expressive-code .ec-tab-bar {
+  border-block-end: 1px solid var(--n0ct-code-tabs-border) !important;
+  background: var(--n0ct-code-tabs-bg) !important;
+}
+.expressive-code .ec-tab {
+  padding-inline: .8rem;
+  color: var(--n0ct-code-tabs-text);
+  border-color: transparent;
+}
+.expressive-code .ec-tab[aria-selected='true'] {
+  color: var(--n0ct-code-tabs-active-text);
+  border-color: var(--n0ct-accent-500);
+  background: var(--n0ct-code-tabs-active-bg);
+}
+
+/* Diff classes exist both on rows and inline spans depending on fence/plugin version. */
+.expressive-code .ec-line.ins,
+.expressive-code .ec-line.scb-state-ins,
+.expressive-code .ec-line:has(.diff.add),
+.expressive-code .ec-line:has(.diff.added) {
+  background-color: color-mix(in srgb, var(--n0ct-code-diff-added-bg) 36%, transparent) !important;
+}
+.expressive-code .ec-line.del,
+.expressive-code .ec-line.scb-state-del,
+.expressive-code .ec-line:has(.diff.remove),
+.expressive-code .ec-line:has(.diff.removed) {
+  background-color: color-mix(in srgb, var(--n0ct-code-diff-removed-bg) 36%, transparent) !important;
+}
+.expressive-code .ec-line.ins .code,
+.expressive-code .ec-line.scb-state-ins .code,
+.expressive-code .ec-line:has(.diff.add) .code,
+.expressive-code .ec-line:has(.diff.added) .code { box-shadow: inset 3px 0 0 var(--n0ct-code-diff-added-border) !important; }
+.expressive-code .ec-line.del .code,
+.expressive-code .ec-line.scb-state-del .code,
+.expressive-code .ec-line:has(.diff.remove) .code,
+.expressive-code .ec-line:has(.diff.removed) .code { box-shadow: inset 3px 0 0 var(--n0ct-code-diff-removed-border) !important; }
+.expressive-code .diff.add,
+.expressive-code .diff.added,
+.expressive-code .codeblocks-worddiff-ins,
+.expressive-code .scb-worddiff-ins {
+  color: var(--n0ct-code-diff-added-text) !important;
+  background: color-mix(in srgb, var(--n0ct-code-diff-added-bg) 52%, transparent) !important;
+}
+.expressive-code .diff.remove,
+.expressive-code .diff.removed,
+.expressive-code .codeblocks-worddiff-del,
+.expressive-code .scb-worddiff-del {
+  color: var(--n0ct-code-diff-removed-text) !important;
+  background: color-mix(in srgb, var(--n0ct-code-diff-removed-bg) 52%, transparent) !important;
+  text-decoration-color: currentColor;
+}
+.expressive-code .ec-line.mark .code,
+.expressive-code .ec-line.scb-state-mark .code {
+  background: color-mix(in srgb, var(--n0ct-highlight) 18%, transparent) !important;
+}
+
+/* Inline code and standard Starlight asides. */
+.sl-markdown-content :not(pre) > code {
+  padding: .13em .38em;
+  border: 1px solid var(--n0ct-border);
+  border-radius: var(--n0ct-radius-xs);
+  color: var(--n0ct-text-accent);
+  background: color-mix(in srgb, var(--n0ct-accent-500) 8%, var(--n0ct-base));
+}
+.sl-markdown-content .starlight-aside {
+  border-width: 1px 1px 1px 3px;
+  border-radius: var(--n0ct-radius-md);
+  background: color-mix(in srgb, var(--sl-color-asides-text-accent) 6%, var(--n0ct-base));
+}
+
+@media (max-width: 42rem) {
+  .noct-doc-grid,
+  .noct-doc-grid[data-columns='2'],
+  .noct-doc-grid[data-columns='3'],
+  .noct-doc-grid[data-columns='4'] { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .noct-shimmer:hover { animation: noct-sheen 850ms ease both; }
+  .noct-doc-card-chain { will-change: opacity, transform; }
+}
+@keyframes noct-sheen { from { background-position: 0% 0; } to { background-position: 100% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .noct-shimmer, .noct-doc-card-chain, .noct-glow-hover {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}

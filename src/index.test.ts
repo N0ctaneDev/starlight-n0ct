@@ -3,13 +3,12 @@ import { normalizeN0ctConfig, topicToSidebar } from './config.js';
 import { n0ctane } from './index.js';
 
 describe('N0ctane configuration expansion', () => {
-  it('installs the configurable header and code-block plugin by default', () => {
+  it('keeps the native Starlight header and installs code-block enhancements by default', () => {
     const config = n0ctane({ title: 'Docs', integrations: { blog: false } });
-    expect(config.components?.Header).toContain('Header.astro');
     expect(config.plugins?.some((plugin) => plugin.name === 'starlight-codeblocks')).toBe(true);
   });
 
-  it('allows an advanced Starlight Header override to take precedence', () => {
+  it('allows an advanced Starlight header override to take precedence', () => {
     const config = n0ctane({
       title: 'Docs',
       integrations: { blog: false },
@@ -26,39 +25,6 @@ describe('N0ctane configuration expansion', () => {
     });
     expect(config.expressiveCode).toBe(false);
     expect(config.plugins?.some((plugin) => plugin.name === 'starlight-codeblocks')).toBe(false);
-  });
-
-  it('validates navbar dimensions, placements, and link destinations', () => {
-    expect(() => normalizeN0ctConfig({
-      title: 'Docs',
-      navbar: { height: '0' },
-    })).toThrow(/navbar.height/);
-    expect(() => normalizeN0ctConfig({
-      title: 'Docs',
-      navbar: { placements: { search: 'middle' as never } },
-    })).toThrow(/navbar.placements/);
-    expect(() => normalizeN0ctConfig({
-      title: 'Docs',
-      navbar: { links: [{ label: 'Unsafe', href: 'javascript:alert(1)' }] },
-    })).toThrow(/URL scheme/);
-    expect(() => normalizeN0ctConfig({
-      title: 'Docs',
-      navbar: { links: [{ label: 'Empty' }] },
-    })).toThrow(/needs an href or dropdown items/);
-  });
-
-  it('accepts valid navbar links and dropdown entries', () => {
-    expect(() => normalizeN0ctConfig({
-      title: 'Docs',
-      navbar: {
-        height: '3.5rem',
-        placements: { brand: 'left', search: 'center', menuToggle: 'right' },
-        links: [
-          { label: 'Guides', href: '/guides/', position: 'left' },
-          { label: 'Community', items: [{ label: 'GitHub', href: 'https://github.com/example', external: true }] },
-        ],
-      },
-    })).not.toThrow();
   });
 
   it('leaves the Starlight default sidebar untouched when topics are omitted', () => {
@@ -88,7 +54,7 @@ describe('N0ctane configuration expansion', () => {
     })).toThrow(/starlight\.components\.Sidebar replaces the topic selector/);
   });
 
-  it('leaves Starlight Sidebar untouched in collapsible mode and delegates list mode to Sidebar Topics', () => {
+  it('uses the recursive snapshot sidebar in every topic display mode', () => {
     const collapsible = n0ctane({
       title: 'Docs',
       sidebar: { topicDisplay: 'collapsible', topics: ['guides'] },
@@ -100,15 +66,26 @@ describe('N0ctane configuration expansion', () => {
       integrations: { blog: false },
     });
 
-    expect(collapsible.components?.Sidebar).toBeUndefined();
+    expect(collapsible.components?.Sidebar).toContain('Sidebar.astro');
     const dropdown = n0ctane({
       title: 'Docs',
       sidebar: { topicDisplay: 'dropdown', topics: ['guides'] },
       integrations: { blog: false },
     });
 
-    expect(list.components?.Sidebar).toBeUndefined();
+    expect(list.components?.Sidebar).toContain('Sidebar.astro');
     expect(dropdown.components?.Sidebar).toContain('Sidebar.astro');
+  });
+
+  it('uses the upstream version selector wrapper only when versioning is enabled', () => {
+    const versioned = n0ctane({
+      title: 'Docs',
+      versioning: { versions: [{ slug: '1.0', label: 'v1.0' }] },
+      integrations: { blog: false },
+    });
+    expect(versioned.components?.Sidebar).toContain('VersionedSidebar.astro');
+    expect(versioned.components?.ThemeSelect).toContain('ThemeSelect.astro');
+    expect(versioned.components?.ThemeSelect).not.toContain('VersionedThemeSelect');
   });
 
   it('turns string topics into title-cased autogenerate groups', () => {

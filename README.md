@@ -1,9 +1,9 @@
 # @n0ctanedev/starlight-n0ct
 
-A spacious, neon-accented theme and integration bundle for [Astro Starlight](https://starlight.astro.build/), based on the N0ctOS visual identity.
+A role-based dark/light theme and integration bundle for [Astro Starlight](https://starlight.astro.build/), based on the N0ctOS visual identity.
 
 - Space Grotesk Variable and Space Mono.
-- A consistent pink–violet–cyan brand gradient across dark and light modes.
+- Role-based dark and light palettes that preserve the original N0ctane four-color identity.
 - A single icon button cycles **Auto → Light → Dark**.
 - Ion-inspired icon syntax for sidebar labels and footer icons, powered by `astro-icon`.
 - Ion-inspired spacing, recursive sidebar navigation and footer links.
@@ -121,7 +121,7 @@ Use `autogenerate: false` for a manually authored group or `autogenerate: true` 
 
 Set `sidebar.topicDisplay` to one of three presentations:
 
-- `collapsible` (default): uses Starlight's default `Sidebar` component and native collapsible groups. N0ctane does not override this component or enable Sidebar Topics.
+- `collapsible` (default): uses the snapshot's recursive sidebar structure with native collapsible groups.
 - `list`: uses the upstream `starlight-sidebar-topics` topic list above the selected topic's sidebar.
 - `dropdown`: uses `starlight-sidebar-topics-dropdown` to render each root topic as a selector above the selected topic's sidebar.
 
@@ -143,7 +143,7 @@ sidebar: {
 },
 ```
 
-When Blog is enabled, N0ctane automatically excludes the configured Blog route prefix (default `/blog`) so Blog retains its own generated sidebar. The Sidebar Topics plugin runs before Blog's route middleware: regular documentation pages get the selected topic sidebar and Blog can then add its mobile navigation link; generated Blog routes remain under Blog's control. If another plugin generates routes with its own sidebar, add those routes to `topicOptions.exclude` or associate them through `topicOptions.topics`. N0ctane also composes Blog's public `ThemeSelect` and `SiteTitle` components into its own header overrides for the Blog plugin's `header-end` and `header-start` navigation modes.
+When Blog is enabled, N0ctane automatically excludes the configured Blog route prefix (default `/blog`) so Blog retains its own generated sidebar. The Sidebar Topics plugin runs before Blog's route middleware: regular documentation pages get the selected topic sidebar and Blog can then add its mobile navigation link; generated Blog routes remain under Blog's control. If another plugin generates routes with its own sidebar, add those routes to `topicOptions.exclude` or associate them through `topicOptions.topics`. N0ctane keeps Starlight's native header structure and composes Blog's public `ThemeSelect` and `SiteTitle` components into the corresponding native header slots when Blog is enabled.
 
 Plugin-backed modes take ownership of Starlight's top-level `sidebar` configuration and `Sidebar` component. Do not set `starlight.sidebar` or `starlight.components.Sidebar` when `topicDisplay` is `list` or `dropdown`; use `collapsible` if you want Starlight's native sidebar or need to provide a custom one. `sidebar.extra` is appended to every topic's sidebar in plugin-backed modes.
 
@@ -185,7 +185,7 @@ A bare filename after the fence language becomes a title tab. Shell-language fen
 export default { title: 'My Docs' };
 ```
 
-N0ctane supplies its own magenta–violet–cyan syntax palette for both dark and light code themes. Regular Expressive Code metadata such as `title=`, line highlighting, and wrapping remains available.
+N0ctane derives syntax colors from your semantic dark/light palette. Regular Expressive Code metadata such as `title=`, line highlighting, and wrapping remains available.
 
 ## Icons
 
@@ -251,7 +251,7 @@ The dedicated `llmsTxt` plugin owns site-level indexes by default. To use the LL
 
 ## Documentation versioning
 
-N0ctane delegates documentation versioning to the upstream [`starlight-versions`](https://starlight-versions.vercel.app/) plugin. Configure its native options in `n0ct.config.mjs`:
+N0ctane delegates documentation versioning to the upstream [`starlight-versions`](https://starlight-versions.vercel.app/) plugin. Its upstream `VersionSelect` component is rendered at the top of the recursive sidebar; the native Starlight header keeps only the theme toggle and site title. Configure its native options in `n0ct.config.mjs`:
 
 ```js
 versioning: {

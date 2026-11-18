@@ -103,31 +103,125 @@ export interface N0ctExpandedSidebarGroup {
 
 export type N0ctNormalizedSidebarItem = N0ctExpandedSidebarGroup | N0ctNativeSidebarItem;
 
-export type N0ctNavPosition = 'left' | 'center' | 'right';
-export type N0ctNavControl = 'brand' | 'search' | 'social' | 'versions' | 'theme' | 'language' | 'menuToggle';
+export type N0ctThemeSemantic = 'success' | 'warning' | 'danger' | 'info';
 
-export interface N0ctNavbarLink {
-  label: string;
-  href?: string;
-  external?: boolean;
-  position?: N0ctNavPosition;
-  items?: Array<{ label: string; href: string; external?: boolean }>;
+export interface N0ctThemePalette {
+  /** Main brand color. The defaults preserve the original N0ctane primary hue in each mode. */
+  primary?: string;
+  /** Interactive color for focus, active controls and hover states. */
+  accent?: string;
+  /** Main card and panel surface color. */
+  surface?: string;
+  /** Main readable foreground color. */
+  text?: string;
+  /** Optional secondary brand color. Derived from primary and accent when omitted. */
+  secondary?: string;
+  /** Optional highlighted surface color. */
+  highlight?: string;
+  /** Optional text color on highlighted surfaces. */
+  highlightText?: string;
+  /** Optional page background. Derived from surface when omitted. */
+  background?: string;
 }
 
-export interface N0ctNavbarConfig {
-  /** Header height, for example `3.5rem` or `56px`. */
-  height?: string;
-  /** Place native header controls in the left, centre, or right group. */
-  placements?: Partial<Record<N0ctNavControl, N0ctNavPosition>>;
-  /** Custom top-level links and dropdowns. Root-relative paths respect Astro's base. */
-  links?: N0ctNavbarLink[];
-  showBrand?: boolean;
-  showSearch?: boolean;
-  showTheme?: boolean;
-  showSocial?: boolean;
-  showVersions?: boolean;
-  showLanguage?: boolean;
-  showMenuToggle?: boolean;
+export interface N0ctThemeSemanticColors {
+  foreground?: string;
+  background?: string;
+  border?: string;
+  text?: string;
+}
+
+export interface N0ctThemeCodeOverrides {
+  background?: string;
+  foreground?: string;
+  cursor?: string;
+  selectionBackground?: string;
+  lineHighlight?: string;
+  lineNumber?: string;
+  lineNumberActive?: string;
+  diffAdded?: Partial<N0ctThemeSemanticColors>;
+  diffRemoved?: Partial<N0ctThemeSemanticColors>;
+  tabs?: {
+    background?: string;
+    activeBackground?: string;
+    foreground?: string;
+    activeForeground?: string;
+    border?: string;
+  };
+}
+
+export interface N0ctThemeOverrides {
+  brand?: {
+    primary?: string;
+    secondary?: string;
+    accent?: string;
+    highlight?: string;
+    highlightText?: string;
+  };
+  surfaces?: {
+    void?: string;
+    base?: string;
+    surface?: string;
+    elevated?: string;
+    sunken?: string;
+    overlay?: string;
+    navigation?: string;
+    sidebar?: string;
+    code?: string;
+  };
+  text?: {
+    primary?: string;
+    secondary?: string;
+    muted?: string;
+    subtle?: string;
+    inverse?: string;
+    accent?: string;
+    highlight?: string;
+    onAccent?: string;
+  };
+  borders?: {
+    subtle?: string;
+    default?: string;
+    strong?: string;
+    focus?: string;
+  };
+  interactive?: {
+    hover?: string;
+    active?: string;
+    selected?: string;
+  };
+  highlight?: {
+    background?: string;
+    text?: string;
+    border?: string;
+    selectionBackground?: string;
+    selectionText?: string;
+  };
+  code?: N0ctThemeCodeOverrides;
+}
+
+export interface N0ctThemeMode {
+  /** Four core colors plus up to four optional refinement colors. */
+  palette?: N0ctThemePalette;
+  /** Semantic colors are independently configurable in each mode. */
+  semantic?: Partial<Record<N0ctThemeSemantic, N0ctThemeSemanticColors>>;
+  /** Optional role overrides. Unset roles are derived from the palette. */
+  overrides?: N0ctThemeOverrides;
+}
+
+export interface N0ctThemeColors {
+  dark?: N0ctThemeMode;
+  light?: N0ctThemeMode;
+}
+
+export interface N0ctThemeConfig {
+  colors?: N0ctThemeColors;
+  /** Main content width, e.g. `58rem` or `900px`. */
+  contentWidth?: string;
+  /** Sidebar width, e.g. `18rem` or `280px`. */
+  sidebarWidth?: string;
+  /** Decorative background glow strength. */
+  glow?: 'subtle' | 'balanced' | 'strong';
 }
 
 export interface N0ctNormalizedConfig {
@@ -147,8 +241,6 @@ export interface N0ctConfig {
   title: string;
   /** Optional description used by Starlight metadata and search previews. */
   description?: string;
-  /** Full header layout and navigation controls. */
-  navbar?: N0ctNavbarConfig;
   sidebar?: {
     /** Use Starlight's default collapsible sidebar, the upstream topic list, or its dropdown component. */
     topicDisplay?: 'collapsible' | 'list' | 'dropdown';
@@ -202,21 +294,8 @@ export interface N0ctConfig {
     /** Iconify collection names and allowlisted icon names. Lucide is included by default. */
     include?: Record<string, string[]>;
   };
-  /** N0ctane-specific theme tokens and layout dimensions. */
-  theme?: {
-    /** Shared accent color, as a CSS hex color. */
-    accent?: string;
-    /** Dark-mode accent override, as a CSS hex color. */
-    darkAccent?: string;
-    /** Light-mode accent override, as a CSS hex color. */
-    lightAccent?: string;
-    /** Main content width, e.g. `58rem` or `900px`. */
-    contentWidth?: string;
-    /** Sidebar width, e.g. `18rem` or `280px`. */
-    sidebarWidth?: string;
-    /** Strength of the decorative background glow. */
-    glow?: 'subtle' | 'balanced' | 'strong';
-  };
+  /** Palette-driven dark/light theme with individually overridable semantic roles. */
+  theme?: N0ctThemeConfig;
   /** Advanced native Starlight settings. These are merged after N0ctane defaults. */
   starlight?: Partial<StarlightUserConfig>;
 }

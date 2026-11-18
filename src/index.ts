@@ -5,7 +5,7 @@ import { createN0ctIntegrations, createN0ctVersioning } from './integrations.js'
 import { normalizeN0ctConfig } from './config.js';
 import { createN0ctanePlugin } from './plugin.js';
 import { createN0ctSidebarTopics } from './sidebar-topics.js';
-import { n0ctaneDarkCodeTheme, n0ctaneLightCodeTheme } from './code-themes.js';
+import { createN0ctaneCodeThemes } from './code-themes.js';
 import type { N0ctConfig, N0ctaneOptions } from './types.js';
 
 export type {
@@ -20,14 +20,21 @@ export type {
   N0ctSidebarTopicsPluginOptions,
   N0ctVersioningConfig,
   N0ctPluginOptions,
-  N0ctNavControl,
-  N0ctNavPosition,
-  N0ctNavbarLink,
-  N0ctNavbarConfig,
 } from './types.js';
 export { normalizeN0ctConfig, topicToSidebar } from './config.js';
 export { createN0ctIntegrations, createN0ctVersioning } from './integrations.js';
 export { createN0ctSidebarTopics } from './sidebar-topics.js';
+export { resolveN0ctThemeColors, generateN0ctThemeCss, validateN0ctThemeColors } from './theme-colors.js';
+export type {
+  N0ctThemeColors,
+  N0ctThemeMode,
+  N0ctThemePalette,
+  N0ctThemeOverrides,
+  N0ctThemeSemantic,
+  N0ctThemeSemanticColors,
+  N0ctThemeCodeOverrides,
+  N0ctThemeConfig,
+} from './types.js';
 
 /**
  * Expand the intentionally small `n0ct.config.mjs` API into a complete
@@ -68,33 +75,62 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
   const hasBlogHeaderEnd = blogEnabled && blogNavigation === 'header-end';
 
   const defaultCss = fileURLToPath(new URL('./styles/theme.css', import.meta.url));
-  const referenceCss = fileURLToPath(new URL('./styles/reference.css', import.meta.url));
+  const interfaceCss = fileURLToPath(new URL('./styles/interface.css', import.meta.url));
+  const componentsCss = fileURLToPath(new URL('./styles/components.css', import.meta.url));
   const component = (name: string) => fileURLToPath(new URL(`./components/${name}.astro`, import.meta.url));
   const themeComponents = {
-    Header: component('Header'),
     // Blog and Versions both override ThemeSelect. The composed N0ctane
     // variants render their public components alongside the N0ctane toggle.
-    ThemeSelect: component(
-      hasBlogHeaderEnd
-        ? (config.versioning ? 'BlogVersionedThemeSelect' : 'BlogThemeSelect')
-        : (config.versioning ? 'VersionedThemeSelect' : 'ThemeSelect'),
-    ),
-    // Blog's header-start navigation overrides SiteTitle; compose it with
-    // N0ctane's title rather than dropping the upstream Blog link.
+    // Intentional override: starlight-versions normally places VersionSelect in the header; VersionedSidebar renders its public selector in the sidebar instead.
+    ThemeSelect: component(hasBlogHeaderEnd ? 'BlogThemeSelect' : 'ThemeSelect'),
+    // Keep the snapshot's native Starlight header composition; customize only its title and theme control.
     SiteTitle: component(hasBlogHeaderStart ? 'BlogSiteTitle' : 'SiteTitle'),
     Footer: component('Footer'),
-    // List mode uses Sidebar Topics' own component override. Only dropdown
-    // needs a theme wrapper to insert its alternate topic selector. Native
-    // collapsible mode leaves Starlight's default Sidebar untouched.
-    ...(sidebarTopicDisplay === 'dropdown' ? { Sidebar: component('Sidebar') } : {}),
+    Sidebar: component(config.versioning ? 'VersionedSidebar' : 'Sidebar'),
   };
 
   const expressiveCode = (advanced.expressiveCode === false ? false : {
-    themes: [n0ctaneDarkCodeTheme, n0ctaneLightCodeTheme],
+    themes: createN0ctaneCodeThemes(config.theme?.colors),
     useStarlightDarkModeSwitch: true,
     styleOverrides: {
-      borderRadius: '0.75rem',
-      frames: { shadowColor: '#09111f55' },
+      borderRadius: '0.65rem',
+      borderColor: 'var(--n0ct-border)',
+      borderWidth: '1px',
+      codeBackground: 'var(--n0ct-code-background)',
+      codeForeground: 'var(--n0ct-code-foreground)',
+      codeSelectionBackground: 'var(--n0ct-code-selection-background)',
+      codeFontFamily: "'Space Mono', monospace",
+      codeFontSize: '0.84rem',
+      codeLineHeight: '1.65',
+      codePaddingInline: '1rem',
+      focusBorder: 'var(--n0ct-border-focus)',
+      frames: {
+        shadowColor: 'transparent',
+        frameBoxShadowCssValue: 'none',
+        terminalIcon: 'none',
+        terminalTitlebarDotsOpacity: '0',
+        terminalTitlebarBackground: 'var(--n0ct-surface-elevated)',
+        terminalTitlebarForeground: 'var(--n0ct-text-primary)',
+        terminalTitlebarBorderBottomColor: 'var(--n0ct-border)',
+        terminalBackground: 'var(--n0ct-code-background)',
+        editorBackground: 'var(--n0ct-code-background)',
+        editorActiveTabBackground: 'var(--n0ct-code-tabs-active-bg)',
+        editorActiveTabForeground: 'var(--n0ct-code-tabs-active-text)',
+        editorTabBarBackground: 'var(--n0ct-code-tabs-bg)',
+        editorTabBarBorderColor: 'var(--n0ct-code-tabs-border)',
+      },
+      codeblocksWordDiff: {
+        ins: 'var(--n0ct-code-diff-added-border)',
+        del: 'var(--n0ct-code-diff-removed-border)',
+        insBackground: 'var(--n0ct-code-diff-added-bg)',
+        delBackground: 'var(--n0ct-code-diff-removed-bg)',
+      },
+      codeblocksLineStates: {
+        error: 'var(--n0ct-danger)',
+        warning: 'var(--n0ct-warning)',
+        info: 'var(--n0ct-info)',
+        success: 'var(--n0ct-success)',
+      },
     },
     ...(typeof advanced.expressiveCode === 'object' && advanced.expressiveCode !== null
       ? advanced.expressiveCode
@@ -109,7 +145,7 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     ...(!usesSidebarTopicsPlugin
       ? { sidebar: advancedSidebar ?? (normalizedSidebar as StarlightUserConfig['sidebar']) }
       : {}),
-    customCss: [defaultCss, referenceCss, ...(advanced.customCss ?? [])],
+    customCss: [defaultCss, interfaceCss, componentsCss, ...(advanced.customCss ?? [])],
     components: { ...themeComponents, ...(advanced.components ?? {}) },
     expressiveCode,
     plugins: [

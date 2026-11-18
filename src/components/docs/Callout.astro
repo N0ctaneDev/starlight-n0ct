@@ -1,0 +1,16 @@
+---
+export interface Props {
+  title?: string;
+  /** Legacy Starlight-compatible tone prop. */
+  type?: 'note' | 'tip' | 'warning' | 'danger' | 'info';
+  /** Preferred N0ctane tone prop; takes precedence over type. */
+  tone?: 'note' | 'tip' | 'warning' | 'danger' | 'info';
+}
+const { title, tone, type } = Astro.props;
+const resolvedTone = tone ?? type ?? 'note';
+const defaultTitles = { note: 'Note', tip: 'Tip', warning: 'Warning', danger: 'Important', info: 'Info' };
+---
+<aside class="noct-callout" data-tone={resolvedTone} role={resolvedTone === 'danger' || resolvedTone === 'warning' ? 'alert' : 'note'}>
+  <p class="noct-callout-title">{title ?? defaultTitles[resolvedTone]}</p>
+  <div class="noct-callout-content"><slot /></div>
+</aside>
