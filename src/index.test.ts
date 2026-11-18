@@ -84,6 +84,8 @@ describe('N0ctane configuration expansion', () => {
       integrations: { blog: false },
     });
     expect(versioned.components?.Sidebar).toContain('VersionedSidebar.astro');
+    expect(versioned.components?.ThemeSelect).toContain('ThemeSelect.astro');
+    expect(versioned.components?.ThemeSelect).not.toContain('VersionedThemeSelect');
   });
 
   it('turns string topics into title-cased autogenerate groups', () => {
