@@ -24,9 +24,9 @@ function createTheme(mode: Mode, variables: Record<string, string>) {
     'terminal.ansiRed': get('danger'),
     'terminal.ansiGreen': get('success'),
     'terminal.ansiYellow': get('warning'),
-    'terminal.ansiBlue': get('accent-500'),
+    'terminal.ansiBlue': get('highlight'),
     'terminal.ansiMagenta': get('primary-500'),
-    'terminal.ansiCyan': get('info'),
+    'terminal.ansiCyan': get('accent-500'),
     'terminal.ansiWhite': codeForeground,
   };
 
