@@ -19,6 +19,10 @@ describe('semantic theme palettes', () => {
     expect(vars['--n0ct-accent-500']).toBe('#445566');
     expect(vars['--n0ct-surface']).toBe('#101010');
     expect(vars['--n0ct-text-primary']).toBe('#F0F0F0');
+    expect(vars['--n0ct-secondary-500']).toBe('#2B3C4D');
+    expect(vars['--n0ct-highlight']).toBe('#1B1F23');
+    expect(vars['--n0ct-base']).toBe('#0D0E11');
+    expect(vars['--n0ct-highlight-text']).toBe('#FFFFFF');
     expect(vars['--n0ct-success-bg']).toContain('color-mix');
     expect(vars['--n0ct-border-focus']).toBe('#445566');
   });
