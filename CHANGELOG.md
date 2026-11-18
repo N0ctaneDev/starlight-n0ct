@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0
+
+- Add stable mode-qualified color tokens such as `--n0ct-dark-base` and `--n0ct-light-surface`.
+- Add independent dark and light syntax palettes through `theme.colors.*.codePalette`, sharing the resolver with UI colors.
+- Improve default light/dark documentation contrast, badges, heading accents, and code-frame styling.
+- Remove the standalone Command component in favor of standard Expressive Code fences.
+- Restore macOS-style terminal title-bar dots, remove the extra copy button, and clean up duplicate code-frame outlines.
+- Expand the demo with active blog, versioning, announcement, keyboard, image zoom, and showcase content.
+- Bump the package version to 0.2.0.
+
 ## 0.1.4
 
 - Normalize version matching when deployed with or without trailing slashes and verify the Astro base-path boundary.

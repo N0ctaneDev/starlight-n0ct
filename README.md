@@ -185,7 +185,7 @@ A bare filename after the fence language becomes a title tab. Shell-language fen
 export default { title: 'My Docs' };
 ```
 
-N0ctane derives syntax colors from your semantic dark/light palette. Regular Expressive Code metadata such as `title=`, line highlighting, and wrapping remains available.
+N0ctane uses dedicated `theme.colors.dark.codePalette` and `theme.colors.light.codePalette` settings for syntax colors, separate from the UI palette. Mode-qualified CSS variables such as `--n0ct-dark-base` and `--n0ct-light-surface` are available alongside active-mode aliases. Regular Expressive Code metadata such as `title=`, line highlighting, and wrapping remains available. Terminal frames use macOS-style dots and the redundant title-bar copy button is disabled.
 
 ## Icons
 

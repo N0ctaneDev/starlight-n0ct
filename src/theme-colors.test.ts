@@ -7,7 +7,7 @@ describe('semantic theme palettes', () => {
     const theme = resolveN0ctThemeColors();
     expect(theme.dark.variables['--n0ct-primary-500']).toBe('#F25CFF');
     expect(theme.dark.variables['--n0ct-secondary-500']).toBe('#8C42FF');
-    expect(theme.light.variables['--n0ct-primary-500']).toBe('#C92FCF');
+    expect(theme.light.variables['--n0ct-primary-500']).toBe('#B72DBF');
     expect(theme.light.variables['--n0ct-secondary-500']).toBe('#7540CE');
     expect(theme.dark.variables['--n0ct-accent-500']).toBe('#00E5FF');
     expect(theme.dark.variables['--n0ct-highlight']).toBe('#2A85FF');
@@ -17,7 +17,7 @@ describe('semantic theme palettes', () => {
     expect(theme.light.variables['--n0ct-accent-500']).toBe('#00AFC2');
     expect(theme.light.variables['--n0ct-highlight']).toBe('#286DCE');
     expect(theme.light.variables['--n0ct-surface-code']).toBe('#F3F1F8');
-    expect(theme.light.variables['--n0ct-border']).toBe('#DED9E9');
+    expect(theme.light.variables['--n0ct-border']).toBe('#D5CFE2');
     expect(theme.light.variables['--n0ct-info']).toBe('#A85A00');
     expect(theme.dark.variables['--n0ct-dark-base']).toBe(theme.dark.variables['--n0ct-base']);
     expect(theme.dark.variables['--n0ct-dark-surface']).toBe(theme.dark.variables['--n0ct-surface']);
