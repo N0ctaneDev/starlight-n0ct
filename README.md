@@ -1,6 +1,6 @@
 # @n0ctanedev/starlight-n0ct
 
-A spacious, neon-accented theme and integration bundle for [Astro Starlight](https://starlight.astro.build/), based on the N0ctOS visual identity.
+A role-based dark/light theme and integration bundle for [Astro Starlight](https://starlight.astro.build/), based on the N0ctOS visual identity.
 
 - Space Grotesk Variable and Space Mono.
 - Role-based dark and light palettes, with purple-dark and blue-light defaults.
@@ -143,7 +143,7 @@ sidebar: {
 },
 ```
 
-When Blog is enabled, N0ctane automatically excludes the configured Blog route prefix (default `/blog`) so Blog retains its own generated sidebar. The Sidebar Topics plugin runs before Blog's route middleware: regular documentation pages get the selected topic sidebar and Blog can then add its mobile navigation link; generated Blog routes remain under Blog's control. If another plugin generates routes with its own sidebar, add those routes to `topicOptions.exclude` or associate them through `topicOptions.topics`. N0ctane also composes Blog's public `ThemeSelect` and `SiteTitle` components into its own header overrides for the Blog plugin's `header-end` and `header-start` navigation modes.
+When Blog is enabled, N0ctane automatically excludes the configured Blog route prefix (default `/blog`) so Blog retains its own generated sidebar. The Sidebar Topics plugin runs before Blog's route middleware: regular documentation pages get the selected topic sidebar and Blog can then add its mobile navigation link; generated Blog routes remain under Blog's control. If another plugin generates routes with its own sidebar, add those routes to `topicOptions.exclude` or associate them through `topicOptions.topics`. N0ctane keeps Starlight's native header structure and composes Blog's public `ThemeSelect` and `SiteTitle` components into the corresponding native header slots when Blog is enabled.
 
 Plugin-backed modes take ownership of Starlight's top-level `sidebar` configuration and `Sidebar` component. Do not set `starlight.sidebar` or `starlight.components.Sidebar` when `topicDisplay` is `list` or `dropdown`; use `collapsible` if you want Starlight's native sidebar or need to provide a custom one. `sidebar.extra` is appended to every topic's sidebar in plugin-backed modes.
 
