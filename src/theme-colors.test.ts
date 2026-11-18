@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { generateN0ctThemeCss, resolveN0ctThemeColors, validateN0ctThemeColors } from './theme-colors.js';
+import { createN0ctaneCodeThemes } from './code-themes.js';
 
 describe('semantic theme palettes', () => {
   it('provides purple-dark and blue-light defaults', () => {
@@ -58,6 +59,19 @@ describe('semantic theme palettes', () => {
     expect(css).toContain(':root[data-theme="dark"]');
     expect(css).toContain(':root[data-theme="light"]');
     expect(css).toContain('--sl-color-bg-sidebar');
+  });
+
+  it('builds literal Expressive Code colors from the active palette', () => {
+    const [dark, light] = createN0ctaneCodeThemes({
+      dark: { palette: { primary: '#112233', accent: '#445566', surface: '#101010', text: '#F0F0F0' } },
+      light: { palette: { primary: '#123456', accent: '#654321', surface: '#FFFFFF', text: '#121212' } },
+    });
+    expect(dark.colors['editor.background']).toBe('#101010');
+    expect(dark.colors['editor.foreground']).toBe('#F0F0F0');
+    expect(dark.colors['terminal.ansiGreen']).toBe('#43C995');
+    expect(light.colors['editor.background']).toBe('#FFFFFF');
+    expect(light.colors['editor.foreground']).toBe('#121212');
+    expect(String(dark.colors['editor.background'])).not.toContain('var(');
   });
 
   it('warns when the configured text contrast is below WCAG AA guidance', () => {
