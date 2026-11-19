@@ -52,6 +52,7 @@ export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
 
         const themeSet = resolveN0ctThemeConfig(config.theme);
         const runtimeSettings = {
+          favicon: config.favicon ?? '/favicon.svg',
           footer: config.footer ?? {},
           sidebar: { topicDisplay: config.sidebar?.topicDisplay ?? 'collapsible' },
           versioning: config.versioning ?? false,
@@ -60,6 +61,7 @@ export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
             themes: Object.entries(themeSet.themes).map(([id, theme]) => ({
               id,
               label: theme.label,
+              favicon: theme.favicon,
               colors: theme.colors,
             })),
           },
