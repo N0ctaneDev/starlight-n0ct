@@ -1,0 +1,81 @@
+---
+const settings = (Astro.locals as any).n0ctane ?? {};
+const themeSettings = settings.theme ?? {};
+const defaultTheme = themeSettings.defaultTheme ?? 'n0ctane';
+const themes = Array.isArray(themeSettings.themes) ? themeSettings.themes : [];
+const fallbackFavicon = settings.favicon ?? '/favicon.svg';
+const baseUrl = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
+const settingsLiteral = JSON.stringify({
+  defaultTheme,
+  themes: themes.map((theme: { id: string }) => theme.id),
+  favicon: fallbackFavicon,
+  favicons: themes.reduce((result: Record<string, string>, theme: { id: string; favicon?: string }) => {
+    if (theme.favicon) result[theme.id] = theme.favicon;
+    return result;
+  }, {}),
+  baseUrl,
+}).replace(/</g, '\\u003c');
+
+const bootstrapScript = `(() => {
+  const settings = ${settingsLiteral};
+  const normalize = (preferences) => ({
+    theme: settings.themes.includes(preferences?.theme)
+      ? preferences.theme
+      : settings.defaultTheme,
+    mode: preferences?.mode === 'light' ? 'light' : 'dark',
+  });
+
+  const readPreferences = () => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('n0ct-theme-preferences') || 'null');
+      const legacyMode = localStorage.getItem('starlight-theme');
+      return normalize({
+        theme: saved?.theme,
+        mode: saved?.mode === 'light' || (!saved && legacyMode === 'light') ? 'light' : 'dark',
+      });
+    } catch {
+      return normalize(null);
+    }
+  };
+
+  const apply = (targetDocument, preferences) => {
+    if (!targetDocument?.documentElement) return;
+
+    const next = normalize(preferences);
+    const root = targetDocument.documentElement;
+    root.dataset.theme = next.mode;
+    root.dataset.n0ctTheme = next.theme;
+    root.dataset.n0ctCodeTheme = next.theme + '-' + next.mode;
+
+    const path = settings.favicons[next.theme] || settings.favicon || '/favicon.svg';
+    const href = /^(?:https?:|data:)/i.test(path)
+      ? path
+      : settings.baseUrl + path.replace(/^\\/+/, '');
+    let links = Array.from(targetDocument.querySelectorAll('link[rel~="icon"]'));
+    if (links.length === 0 && targetDocument.head) {
+      const link = targetDocument.createElement('link');
+      link.rel = 'icon';
+      targetDocument.head.append(link);
+      links = [link];
+    }
+    links.forEach((link) => link.setAttribute('href', href));
+    targetDocument.querySelectorAll('[data-n0ct-themed-favicon]').forEach((image) => {
+      image.setAttribute('src', href);
+    });
+  };
+
+  apply(document, readPreferences());
+
+  if (!window.__n0ctThemeBootstrapInstalled) {
+    window.__n0ctThemeBootstrapInstalled = true;
+    document.addEventListener('astro:before-swap', (event) => {
+      const current = document.documentElement;
+      apply(event.newDocument, {
+        mode: current.dataset.theme,
+        theme: current.dataset.n0ctTheme,
+      });
+    });
+  }
+})();`;
+---
+<script is:inline set:html={bootstrapScript}></script>
