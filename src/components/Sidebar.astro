@@ -42,6 +42,18 @@ const settings = (Astro.locals as any).n0ctane ?? {};
       );
     }
 
+    function relocateScrollToTopButton() {
+      const button = document.getElementById('scroll-to-top-button');
+      const mainFrame = document.querySelector<HTMLElement>('.main-frame');
+
+      // The scroll plugin appends this fixed button to body. Keep it inside the
+      // page content layer so it follows the same transform as the page during
+      // a sidebar swipe instead of remaining fixed over the revealed sidebar.
+      if (button && mainFrame && !mainFrame.contains(button)) {
+        mainFrame.appendChild(button);
+      }
+    }
+
     function setN0ctMobileMenuState(open: boolean) {
       document.documentElement.toggleAttribute('data-n0ct-mobile-menu-open', open);
 
@@ -55,6 +67,7 @@ const settings = (Astro.locals as any).n0ctane ?? {};
     }
 
     function syncN0ctMobileMenuState() {
+      relocateScrollToTopButton();
       setN0ctMobileMenuState(isMobileMenuOpen());
     }
 
