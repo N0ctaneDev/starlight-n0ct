@@ -5,7 +5,6 @@
  */
 const config = {
   favicon: '/favicons/n0ctane.svg',
-        logo: { dark: '/logos/n0ctane-dark.svg', light: '/logos/n0ctane-light.svg' },
   title: 'N0ctane',
   description: 'A modern, readable documentation theme for Astro Starlight.',
   sidebar: {
