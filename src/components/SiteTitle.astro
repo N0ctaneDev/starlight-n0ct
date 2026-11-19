@@ -12,6 +12,8 @@ const label = match ? siteTitle.slice(match[0].length) : siteTitle;
     <>
       <img
         class:list={{ 'light:sl-hidden print:hidden': !('src' in config.logo) }}
+        data-n0ct-themed-logo
+        data-n0ct-logo-fallback={logos.dark.src}
         alt={config.logo.alt}
         src={logos.dark.src}
         width={logos.dark.width}
@@ -20,6 +22,8 @@ const label = match ? siteTitle.slice(match[0].length) : siteTitle;
       {!('src' in config.logo) && (
         <img
           class="dark:sl-hidden print:block"
+          data-n0ct-themed-logo
+          data-n0ct-logo-fallback={logos.light?.src}
           alt={config.logo.alt}
           src={logos.light?.src}
           width={logos.light?.width}
