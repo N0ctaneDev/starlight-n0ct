@@ -631,6 +631,7 @@ export function validateN0ctThemeColors(input?: N0ctThemeColors): string[] {
 export interface N0ctResolvedNamedTheme {
   label: string;
   favicon?: string;
+  logo?: { dark?: string; light?: string };
   colors: N0ctThemeColors;
 }
 
@@ -662,6 +663,7 @@ export function resolveN0ctThemeConfig(input?: N0ctThemeConfig): N0ctResolvedThe
     themes[id] = {
       label,
       ...(definition.favicon ? { favicon: definition.favicon } : {}),
+      ...(definition.logo ? { logo: definition.logo } : {}),
       colors: definition.colors ?? (id === 'n0ctane' ? input?.colors ?? {} : {}),
     };
   }
