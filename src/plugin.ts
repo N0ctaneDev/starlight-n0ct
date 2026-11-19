@@ -41,6 +41,86 @@ function tokenStyles(config: N0ctConfig) {
   return generateN0ctThemeSetCss(theme) + '\n:root { ' + layout.join(' ') + ' }\n';
 }
 
+
+function themeBootstrapScript(
+  theme: { defaultTheme: string; themes: Array<{ id: string; favicon?: string }> },
+  fallbackFavicon: string,
+  baseUrl: string,
+): string {
+  const settingsLiteral = JSON.stringify({
+    defaultTheme: theme.defaultTheme,
+    themes: theme.themes.map(({ id }) => id),
+    favicon: fallbackFavicon,
+    favicons: theme.themes.reduce<Record<string, string>>((result, { id, favicon }) => {
+      if (favicon) result[id] = favicon;
+      return result;
+    }, {}),
+    baseUrl: (baseUrl || '/').replace(/\/?$/, '/'),
+  }).replace(/</g, '\\u003c');
+
+  return `(() => {
+    const settings = ${settingsLiteral};
+    const normalize = (preferences) => ({
+      theme: settings.themes.includes(preferences?.theme)
+        ? preferences.theme
+        : settings.defaultTheme,
+      mode: preferences?.mode === 'light' ? 'light' : 'dark',
+    });
+
+    const readPreferences = () => {
+      try {
+        const saved = JSON.parse(localStorage.getItem('n0ct-theme-preferences') || 'null');
+        const legacyMode = localStorage.getItem('starlight-theme');
+        return normalize({
+          theme: saved?.theme,
+          mode: saved?.mode === 'light' || (!saved && legacyMode === 'light') ? 'light' : 'dark',
+        });
+      } catch {
+        return normalize(null);
+      }
+    };
+
+    const apply = (targetDocument, preferences) => {
+      if (!targetDocument?.documentElement) return;
+
+      const next = normalize(preferences);
+      const root = targetDocument.documentElement;
+      root.dataset.theme = next.mode;
+      root.dataset.n0ctTheme = next.theme;
+      root.dataset.n0ctCodeTheme = next.theme + '-' + next.mode;
+
+      const path = settings.favicons[next.theme] || settings.favicon || '/favicon.svg';
+      const href = /^(?:https?:|data:)/i.test(path)
+        ? path
+        : settings.baseUrl + path.replace(/^\/+/, '');
+      let links = Array.from(targetDocument.querySelectorAll('link[rel~="icon"]'));
+      if (links.length === 0 && targetDocument.head) {
+        const link = targetDocument.createElement('link');
+        link.rel = 'icon';
+        targetDocument.head.append(link);
+        links = [link];
+      }
+      links.forEach((link) => link.setAttribute('href', href));
+      targetDocument.querySelectorAll('[data-n0ct-themed-favicon]').forEach((image) => {
+        image.setAttribute('src', href);
+      });
+    };
+
+    apply(document, readPreferences());
+
+    if (!window.__n0ctThemeBootstrapInstalled) {
+      window.__n0ctThemeBootstrapInstalled = true;
+      document.addEventListener('astro:before-swap', (event) => {
+        const current = document.documentElement;
+        apply(event.newDocument, {
+          mode: current.dataset.theme,
+          theme: current.dataset.n0ctTheme,
+        });
+      });
+    }
+  })();`;
+}
+
 export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
   return {
     name: 'starlight-n0ct',
@@ -67,6 +147,19 @@ export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
           },
         };
         const settingsLiteral = JSON.stringify(runtimeSettings).replace(/</g, '\\u003c');
+        const bootstrapScript = themeBootstrapScript(
+          runtimeSettings.theme,
+          runtimeSettings.favicon,
+          astroConfig.base,
+        );
+        const existingHead = [...(starlightConfig.head ?? [])];
+        existingHead.unshift({
+          tag: 'script',
+          attrs: { 'data-n0ct-theme-bootstrap': 'true' },
+          content: bootstrapScript,
+        });
+        updateConfig({ head: existingHead });
+
         const middlewarePath = join(runtimeDir, 'route-middleware.mjs');
         const tokenPath = join(runtimeDir, 'tokens.css');
         const middleware = `const settings = ${settingsLiteral};\nexport function onRequest(context, next) {\n  context.locals.n0ctane = settings;\n  return next();\n}\n`;

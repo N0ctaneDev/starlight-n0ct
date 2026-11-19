@@ -5,7 +5,7 @@
  */
 const config = {
   favicon: '/favicons/n0ctane.svg',
-  title: '[lucide:terminal] N0ctane',
+  title: 'N0ctane',
   description: 'A modern, readable documentation theme for Astro Starlight.',
   sidebar: {
     topicDisplay: 'collapsible',
@@ -314,6 +314,10 @@ const config = {
     sidebarWidth: '17rem',
   },
   starlight: {
+    logo: {
+      src: './src/assets/star-orbit.svg',
+      alt: 'N0ctane Star-Orbit logo',
+    },
     lastUpdated: true,
     editLink: { baseUrl: 'https://github.com/n0ctanedev/starlight-n0ct/edit/main/docs/' },
   },
