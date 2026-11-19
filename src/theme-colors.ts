@@ -196,7 +196,6 @@ function resolveEffects(
   input: N0ctThemeEffects | undefined,
   mode: Mode,
   primary: string,
-  secondary: string,
   accent: string,
   highlight: string,
 ): void {
@@ -208,7 +207,7 @@ function resolveEffects(
     brandSoft: 'linear-gradient(125deg, color-mix(in srgb, var(--n0ct-primary-500) 18%, transparent), color-mix(in srgb, var(--n0ct-secondary-500) 12%, transparent) 45%, color-mix(in srgb, var(--n0ct-accent-500) 11%, transparent))',
     canvas: 'radial-gradient(ellipse at 0% 0%, color-mix(in srgb, var(--n0ct-primary-500) var(--n0ct-glow-background-strength, 7%), transparent), transparent 34rem), radial-gradient(ellipse at 100% 100%, color-mix(in srgb, var(--n0ct-accent-500) var(--n0ct-glow-accent-strength, 5%), transparent), transparent 38rem)',
     shimmer: 'linear-gradient(115deg, transparent 0%, color-mix(in srgb, var(--n0ct-primary-500) 10%, transparent) 35%, color-mix(in srgb, var(--n0ct-accent-500) 9%, transparent) 52%, transparent 75%)',
-    callout: 'linear-gradient(125deg, color-mix(in srgb, var(--n0ct-accent-500) 8%, transparent), transparent 62%)',
+    callout: 'linear-gradient(125deg, color-mix(in srgb, var(--callout, var(--n0ct-accent-500)) 8%, transparent), transparent 62%)',
     card: 'linear-gradient(145deg, color-mix(in srgb, var(--n0ct-secondary-500) 6%, transparent), transparent 58%)',
     cardHover: 'linear-gradient(145deg, color-mix(in srgb, var(--n0ct-secondary-500) 9%, transparent), transparent 58%)',
     steps: 'linear-gradient(135deg, color-mix(in srgb, var(--n0ct-secondary-500) 9%, transparent), transparent 54%), linear-gradient(315deg, color-mix(in srgb, var(--n0ct-accent-500) 6%, transparent), transparent 55%)',
@@ -536,7 +535,7 @@ function resolveMode(mode: Mode, input?: N0ctThemeMode): N0ctResolvedThemeMode {
   set(vars, 'code-tabs-active-text', tabs.activeForeground ?? vars['--n0ct-text-primary']!);
   set(vars, 'code-tabs-border', tabs.border ?? vars['--n0ct-border']!);
 
-  resolveEffects(vars, input?.effects, mode, primary, secondary, accent, highlight);
+  resolveEffects(vars, input?.effects, mode, primary, accent, highlight);
   set(vars, 'nav-glass', mixColor(navigation, base, 0.12));
   set(vars, 'file-selected-bg', highlight);
   set(vars, 'file-selected-text', highlightText);
