@@ -249,6 +249,11 @@ export interface N0ctThemeEffects {
     control?: string;
     popover?: string;
     sidebar?: string;
+    sidebarActive?: string;
+    scrollbar?: string;
+    scrollbarHover?: string;
+    focus?: string;
+    tab?: string;
     wordmark?: string;
     step?: string;
   };
