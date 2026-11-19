@@ -82,6 +82,32 @@ Secondary, highlight, highlight text, and page background are derived when omitt
 
 The demo also includes **Catppuccin** (Mocha dark / Latte light), **Rosé Pine** (Main dark / Dawn light), **Dracula** (Dracula Classic dark / Alucard Classic light), **Nord**, and **Flexoki**. These are complete starting presets with separate dark and light palettes; every color and effect remains editable.
 
+## Themed favicons
+
+Set one global favicon path on the root config. A named theme can override it with its own `favicon`; themes without an override use the global path. Paths are root-relative and point to files inside the consumer project's `public/` directory.
+
+~~~js
+export default {
+  favicon: '/favicons/default.svg',
+  theme: {
+    themes: {
+      n0ctane: {
+        favicon: '/favicons/n0ctane.svg',
+        colors: {
+          dark: { brandGradient: 'linear-gradient(110deg, #F25CFF, #8C42FF, #00E5FF)' },
+          light: { brandGradient: 'linear-gradient(110deg, #B72DBF, #7540CE, #00AFC2)' },
+        },
+      },
+      github: {
+        favicon: '/favicons/github.svg',
+      },
+    },
+  },
+};
+~~~
+
+The active theme updates the browser favicon and the footer brand mark together. The footer falls back to the global favicon when the selected theme has no override.
+
 ## Appearance and saved preferences
 
 The theme switcher has two independent controls. Its icon cycles between **Dark** and **Light**; a native HTML select chooses the named palette. Choosing GitHub while Dark is active applies GitHub's dark palette and GitHub's dark syntax theme. Changing to Light then selects GitHub's light values.

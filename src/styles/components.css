@@ -331,23 +331,38 @@
 
 /* Interactive tabs are inserted into the code-frame header by starlight-codeblocks. */
 .expressive-code .frame .header:has(> .scb-tabs-list) {
+  position: relative;
   display: flex !important;
   overflow: visible;
   background-clip: padding-box;
   box-sizing: border-box;
   align-items: stretch !important;
+  border-block-start: 1px solid var(--n0ct-border) !important;
+  border-inline: 0 !important;
+  border-bottom: 0 !important;
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
   justify-content: flex-start !important;
   min-height: 2.5rem;
   height: 2.5rem;
-  padding-inline: 0 3rem !important;
+  padding: 1px 3rem 0 1px !important;
   text-align: start;
+}
+
+.expressive-code .frame .header:has(> .scb-tabs-list)::after {
+  position: absolute;
+  z-index: 2;
+  inset-inline: 0;
+  inset-block-end: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--n0ct-gradient-divider);
+  content: '';
+  pointer-events: none;
 }
 
 .expressive-code .frame .header > .scb-tabs-list {
   display: flex !important;
-  clip-path: inset(0 round var(--n0ct-radius-md) var(--n0ct-radius-md) 0 0);
   flex: 1 1 auto;
   align-self: stretch;
   align-items: stretch;
@@ -355,10 +370,10 @@
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  min-height: 2.5rem;
-  height: 2.5rem;
-  border-top-left-radius: inherit;
-  border-top-right-radius: inherit;
+  min-height: 0;
+  height: 100%;
+  border-top-left-radius: calc(var(--n0ct-radius-md) - 1px);
+  border-top-right-radius: calc(var(--n0ct-radius-md) - 1px);
   gap: 0;
   margin: 0 !important;
   padding: 0 !important;
@@ -381,8 +396,8 @@
   justify-content: flex-start;
   min-width: max-content;
   box-sizing: border-box;
-  min-height: 2.5rem;
-  height: 2.5rem;
+  min-height: 100%;
+  height: 100%;
   margin: 0 !important;
   padding: 0.5rem 1rem !important;
   border: 0 !important;
@@ -416,9 +431,8 @@
 
 .expressive-code .frame .header > .scb-tabs-list > [role='tab'][aria-selected='true'] {
   margin-block-start: 0 !important;
-  border: 1px solid var(--n0ct-border) !important;
-  border-bottom: 0 !important;
-  border-radius: 0.58rem 0.58rem 0 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
   color: var(--n0ct-code-tabs-active-text) !important;
   background: var(--n0ct-code-tabs-active-bg) !important;
   font-weight: 700 !important;
@@ -439,6 +453,8 @@
 /* Keep the Expressive Code title tab shape, but move its accent from the top edge to an underline. */
 .expressive-code .frame.has-title:not(.is-terminal) > .header {
   position: relative;
+  min-height: 2.5rem;
+  height: 2.5rem;
   border-bottom: 0 !important;
 }
 
@@ -446,6 +462,7 @@
   position: absolute;
   inset-inline: 0;
   inset-block-end: 0;
+  z-index: 2;
   height: 2px;
   border: 0;
   border-radius: 999px;
@@ -456,6 +473,7 @@
 
 .expressive-code .frame.has-title:not(.is-terminal) > .header > .title {
   position: relative;
+  z-index: 1;
   box-sizing: border-box;
   height: 100%;
   display: inline-flex;

@@ -1,11 +1,24 @@
 ---
 const themeSettings = (Astro.locals as any).n0ctane?.theme ?? {};
 const defaultTheme = themeSettings.defaultTheme ?? 'n0ctane';
+const globalFavicon = themeSettings.favicon ?? '/favicon.svg';
+const themeFavicons = Object.fromEntries(
+  (themeSettings.themes ?? []).filter((theme: { id: string; favicon?: string }) => theme.favicon)
+    .map((theme: { id: string; favicon: string }) => [theme.id, theme.favicon]),
+);
+const baseUrl = import.meta.env.BASE_URL || '/';
 const themes = Array.isArray(themeSettings.themes) && themeSettings.themes.length
   ? themeSettings.themes
   : [{ id: 'n0ctane', label: 'N0ctane' }];
 ---
-<div class="n0ct-theme-control" data-n0ct-theme-control data-default-theme={defaultTheme}>
+<div
+  class="n0ct-theme-control"
+  data-n0ct-theme-control
+  data-default-theme={defaultTheme}
+  data-global-favicon={globalFavicon}
+  data-theme-favicons={JSON.stringify(themeFavicons)}
+  data-base-url={baseUrl}
+>
   <script is:inline>
     (() => {
       const control = document.currentScript?.closest('[data-n0ct-theme-control]');
@@ -26,6 +39,13 @@ const themes = Array.isArray(themeSettings.themes) && themeSettings.themes.lengt
       document.documentElement.dataset.theme = mode;
       document.documentElement.dataset.n0ctTheme = theme;
       document.documentElement.dataset.n0ctCodeTheme = theme + '-' + mode;
+    applyFavicon(theme);
+      const base = (control.getAttribute('data-base-url') || '/').replace(/\/?$/, '/');
+      const favicons = JSON.parse(control.getAttribute('data-theme-favicons') || '{}');
+      const favicon = favicons[theme] || control.getAttribute('data-global-favicon') || '/favicon.svg';
+      const href = /^(?:https?:|data:)/i.test(favicon) ? favicon : base + favicon.replace(/^\/+/, '');
+      document.querySelectorAll('link[rel~="icon"]').forEach((link) => link.setAttribute('href', href));
+      document.querySelectorAll('[data-n0ct-themed-favicon]').forEach((image) => image.setAttribute('src', href));
     })();
   </script>
 
@@ -107,6 +127,26 @@ const themes = Array.isArray(themeSettings.themes) && themeSettings.themes.lengt
     }
   }
 
+  function applyFavicon(theme: string): void {
+    const control = document.querySelector<HTMLElement>('[data-n0ct-theme-control]');
+    if (!control) return;
+    const global = control.dataset.globalFavicon ?? '/favicon.svg';
+    let overrides: Record<string, string> = {};
+    try { overrides = JSON.parse(control.dataset.themeFavicons ?? '{}'); } catch { /* Keep global fallback. */ }
+    const path = overrides[theme] ?? global;
+    const base = (control.dataset.baseUrl ?? '/').replace(/\/?$/, '/');
+    const href = /^(?:https?:|data:)/i.test(path) ? path : base + path.replace(/^\/+/, '');
+    let links = Array.from(document.querySelectorAll<HTMLLinkElement>('link[rel~="icon"]'));
+    if (links.length === 0) {
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      document.head.append(link);
+      links = [link];
+    }
+    links.forEach((link) => { link.href = href; });
+    document.querySelectorAll<HTMLImageElement>('[data-n0ct-themed-favicon]').forEach((image) => { image.src = href; });
+  }
+
   function applyPreferences(preferences: ThemePreferences, persist = true): void {
     const validThemes = getThemeIds();
     const theme = validThemes.includes(preferences.theme) ? preferences.theme : getDefaultTheme();
@@ -116,6 +156,7 @@ const themes = Array.isArray(themeSettings.themes) && themeSettings.themes.lengt
     document.documentElement.dataset.theme = mode;
     document.documentElement.dataset.n0ctTheme = theme;
     document.documentElement.dataset.n0ctCodeTheme = theme + '-' + mode;
+    applyFavicon(theme);
 
     getThemeSelects().forEach((select) => { select.value = theme; });
     document.querySelectorAll<HTMLElement>('[data-n0ct-theme-control]').forEach((control) => {

@@ -6,6 +6,7 @@
  * @satisfies {import('@n0ctanedev/starlight-n0ct').N0ctConfig}
  */
 const config = {
+  favicon: '/favicon.svg',
   title: 'My Documentation',
   description: 'Documentation powered by N0ctane and Astro Starlight.',
 

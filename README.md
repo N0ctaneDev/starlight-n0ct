@@ -40,6 +40,7 @@ Create `n0ct.config.mjs` beside `astro.config.mjs`:
 ```js
 export default {
   title: 'My Docs',
+  favicon: '/favicon.svg', // global favicon in public/; named themes may override it
   description: 'Documentation for my project',
   sidebar: {
     topicDisplay: 'collapsible', // 'list' or 'dropdown' are also available

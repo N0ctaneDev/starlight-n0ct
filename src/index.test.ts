@@ -3,6 +3,14 @@ import { normalizeN0ctConfig, topicToSidebar } from './config.js';
 import { n0ctane } from './index.js';
 
 describe('N0ctane configuration expansion', () => {
+  it('validates global and named-theme favicon paths', () => {
+    expect(() => normalizeN0ctConfig({ title: 'Docs', favicon: '../outside.svg' })).toThrow(/public/);
+    expect(() => normalizeN0ctConfig({
+      title: 'Docs',
+      theme: { themes: { n0ctane: { favicon: '/../../outside.svg' } } },
+    })).toThrow(/public/);
+  });
+
   it('keeps the native Starlight header and installs code-block enhancements by default', () => {
     const config = n0ctane({ title: 'Docs', integrations: { blog: false } });
     expect(config.plugins?.some((plugin) => plugin.name === 'starlight-codeblocks')).toBe(true);
@@ -15,6 +23,19 @@ describe('N0ctane configuration expansion', () => {
       starlight: { components: { Header: './src/components/MyHeader.astro' } },
     });
     expect(config.components?.Header).toBe('./src/components/MyHeader.astro');
+  });
+
+  it('preserves the global favicon and composes LLM actions with version notices', () => {
+    const plain = n0ctane({ title: 'Docs', favicon: '/brand.svg', integrations: { blog: false } });
+    expect(plain.favicon).toBe('/brand.svg');
+    expect(plain.components?.PageTitle).toContain('PageTitle.astro');
+
+    const versioned = n0ctane({
+      title: 'Docs',
+      versioning: { versions: [{ slug: '1.0' }] },
+      integrations: { blog: false, llmActions: {} },
+    });
+    expect(versioned.components?.PageTitle).toContain('VersionedPageTitle.astro');
   });
 
   it('keeps Expressive Code built-in copy controls enabled by default', () => {

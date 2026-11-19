@@ -5,6 +5,7 @@ import demoConfig from '../n0ct.config.mjs';
 import {
   generateN0ctThemeSetCss,
   resolveN0ctThemeConfig,
+  resolveN0ctThemeColors,
 } from './theme-colors.js';
 
 describe('named theme palettes', () => {
@@ -20,6 +21,7 @@ describe('named theme palettes', () => {
       },
       github: {
         label: 'GitHub',
+        favicon: '/favicons/github.svg',
         colors: {
           dark: { palette: { primary: '#4493F8', accent: '#3FB950' } },
           light: { palette: { primary: '#0969DA', accent: '#1A7F37' } },
@@ -33,6 +35,7 @@ describe('named theme palettes', () => {
     expect(result.defaultTheme).toBe('github');
     expect(result.themes.n0ctane?.label).toBe('N0ctane');
     expect(result.themes.github?.label).toBe('GitHub');
+    expect(result.themes.github?.favicon).toBe('/favicons/github.svg');
     expect(result.themes.github?.colors.dark?.palette?.primary).toBe('#4493F8');
   });
 
@@ -69,7 +72,17 @@ describe('named theme palettes', () => {
     expect(css).toContain(':root[data-n0ct-theme="n0ctane"][data-theme="light"]');
     expect(css).toContain(':root[data-n0ct-theme="github"]');
     expect(css).toContain('--n0ct-primary-500: #4493F8');
+    expect(css).not.toContain('brandGradient');
     expect(css).not.toContain('prefers-color-scheme');
+  });
+
+  it('applies each mode brandGradient to the brand and divider tokens', () => {
+    const gradient = 'linear-gradient(110deg, #F25CFF 0%, #8C42FF 52%, #00E5FF 100%)';
+    const resolved = resolveN0ctThemeColors({
+      dark: { brandGradient: gradient },
+    });
+    expect(resolved.dark.variables['--n0ct-gradient-brand']).toBe(gradient);
+    expect(resolved.dark.variables['--n0ct-gradient-divider']).toBe(gradient);
   });
 
   it('creates a matching pair of Expressive Code themes per named palette', () => {
