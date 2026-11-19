@@ -331,12 +331,14 @@
 
 /* Interactive tabs are inserted into the code-frame header by starlight-codeblocks. */
 .expressive-code .frame .header:has(> .scb-tabs-list) {
+  position: relative;
   display: flex !important;
   overflow: visible;
   background-clip: padding-box;
   box-sizing: border-box;
   align-items: stretch !important;
-  border: 1px solid var(--n0ct-border) !important;
+  border-block-start: 1px solid var(--n0ct-border) !important;
+  border-inline: 0 !important;
   border-bottom: 0 !important;
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
@@ -345,6 +347,18 @@
   height: 2.5rem;
   padding: 1px 3rem 0 1px !important;
   text-align: start;
+}
+
+.expressive-code .frame .header:has(> .scb-tabs-list)::after {
+  position: absolute;
+  z-index: 2;
+  inset-inline: 0;
+  inset-block-end: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--n0ct-gradient-divider);
+  content: '';
+  pointer-events: none;
 }
 
 .expressive-code .frame .header > .scb-tabs-list {
@@ -459,6 +473,7 @@
 
 .expressive-code .frame.has-title:not(.is-terminal) > .header > .title {
   position: relative;
+  z-index: 1;
   box-sizing: border-box;
   height: 100%;
   display: inline-flex;
