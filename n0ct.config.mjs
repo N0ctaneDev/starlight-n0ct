@@ -4,6 +4,7 @@
  * @satisfies {import('./src/types.js').N0ctConfig}
  */
 const config = {
+  favicon: '/favicons/n0ctane.svg',
   title: '[lucide:terminal] N0ctane',
   description: 'A modern, readable documentation theme for Astro Starlight.',
   sidebar: {
@@ -70,8 +71,10 @@ const config = {
     themes: {
       n0ctane: {
         label: 'N0ctane',
+        favicon: '/favicons/n0ctane.svg',
         colors: {
           dark: {
+            brandGradient: 'linear-gradient(115deg, #F25CFF 0%, #8C42FF 52%, #00E5FF 100%)',
             palette: {
               primary: '#F25CFF', secondary: '#8C42FF', accent: '#00E5FF',
               surface: '#131626', text: '#E6EAF8', highlight: '#2A85FF',
@@ -86,6 +89,7 @@ const config = {
             },
           },
           light: {
+            brandGradient: 'linear-gradient(115deg, #B72DBF 0%, #7540CE 52%, #00AFC2 100%)',
             palette: {
               primary: '#B72DBF', secondary: '#7540CE', accent: '#00AFC2',
               surface: '#FFFFFF', text: '#211D32', highlight: '#286DCE',
@@ -103,8 +107,10 @@ const config = {
       },
       github: {
         label: 'GitHub',
+        favicon: '/favicons/github.svg',
         colors: {
           dark: {
+            brandGradient: 'linear-gradient(115deg, #4493F8 0%, #8957E5 52%, #3FB950 100%)',
             palette: {
               primary: '#4493F8', secondary: '#8957E5', accent: '#3FB950',
               surface: '#161B22', text: '#E6EDF3', highlight: '#1F6FEB',
@@ -112,6 +118,7 @@ const config = {
             },
           },
           light: {
+            brandGradient: 'linear-gradient(115deg, #0969DA 0%, #8250DF 52%, #1A7F37 100%)',
             palette: {
               primary: '#0969DA', secondary: '#8250DF', accent: '#1A7F37',
               surface: '#FFFFFF', text: '#1F2328', highlight: '#DDF4FF',
@@ -123,8 +130,10 @@ const config = {
 
       catppuccin: {
         label: 'Catppuccin',
+        favicon: '/favicons/catppuccin.svg',
         colors: {
           dark: {
+            brandGradient: 'linear-gradient(115deg, #CBA6F7 0%, #F5C2E7 52%, #89DCEB 100%)',
             palette: {
               primary: '#CBA6F7', secondary: '#F5C2E7', accent: '#89DCEB',
               surface: '#313244', text: '#CDD6F4', highlight: '#89B4FA',
@@ -139,6 +148,7 @@ const config = {
             },
           },
           light: {
+            brandGradient: 'linear-gradient(115deg, #8839EF 0%, #EA76CB 52%, #179299 100%)',
             palette: {
               primary: '#8839EF', secondary: '#EA76CB', accent: '#179299',
               surface: '#E6E9EF', text: '#4C4F69', highlight: '#1E66F5',
@@ -156,8 +166,10 @@ const config = {
       },
       'rose-pine': {
         label: 'Rosé Pine',
+        favicon: '/favicons/rose-pine.svg',
         colors: {
           dark: {
+            brandGradient: 'linear-gradient(115deg, #C4A7E7 0%, #EBBCBA 52%, #9CCFD8 100%)',
             palette: {
               primary: '#C4A7E7', secondary: '#EBBCBA', accent: '#9CCFD8',
               surface: '#1F1D2E', text: '#E0DEF4', highlight: '#403D52',
@@ -172,6 +184,7 @@ const config = {
             },
           },
           light: {
+            brandGradient: 'linear-gradient(115deg, #907AA9 0%, #D7827E 52%, #56949F 100%)',
             palette: {
               primary: '#907AA9', secondary: '#D7827E', accent: '#56949F',
               surface: '#FFFAF3', text: '#464261', highlight: '#CEC9D6',
@@ -189,8 +202,10 @@ const config = {
       },
       dracula: {
         label: 'Dracula',
+        favicon: '/favicons/dracula.svg',
         colors: {
           dark: {
+            brandGradient: 'linear-gradient(115deg, #BD93F9 0%, #FF79C6 52%, #8BE9FD 100%)',
             palette: {
               primary: '#BD93F9', secondary: '#FF79C6', accent: '#8BE9FD',
               surface: '#343746', text: '#F8F8F2', highlight: '#44475A',
@@ -205,6 +220,7 @@ const config = {
             },
           },
           light: {
+            brandGradient: 'linear-gradient(115deg, #644AC9 0%, #A3144D 52%, #036A96 100%)',
             palette: {
               primary: '#644AC9', secondary: '#A3144D', accent: '#036A96',
               surface: '#ECE9DF', text: '#1F1F1F', highlight: '#CFCFDE',
@@ -222,6 +238,7 @@ const config = {
       },
       nord: {
         label: 'Nord',
+        favicon: '/favicons/nord.svg',
         colors: {
           dark: {
             brandGradient: 'linear-gradient(110deg, #88C0D0 0%, #81A1C1 55%, #8FBCBB 100%)',
@@ -257,6 +274,7 @@ const config = {
       },
       flexoki: {
         label: 'Flexoki',
+        favicon: '/favicons/flexoki.svg',
         colors: {
           dark: {
             brandGradient: 'linear-gradient(110deg, #DA702C 0%, #D0A215 52%, #879A39 100%)',
