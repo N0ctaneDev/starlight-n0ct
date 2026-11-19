@@ -47,7 +47,7 @@ export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
   return {
     name: 'starlight-n0ct',
     hooks: {
-      async 'config:setup'({ astroConfig, addIntegration, addRouteMiddleware, updateConfig, logger }) {
+      async 'config:setup'({ astroConfig, addIntegration, addRouteMiddleware, updateConfig, config: starlightConfig, logger }) {
         const projectRoot = fileURLToPath(astroConfig.root);
         const runtimeDir = join(projectRoot, '.astro', 'n0ctane');
         await mkdir(runtimeDir, { recursive: true });
