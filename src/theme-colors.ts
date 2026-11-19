@@ -196,7 +196,6 @@ function resolveEffects(
   input: N0ctThemeEffects | undefined,
   mode: Mode,
   primary: string,
-  accent: string,
   highlight: string,
 ): void {
   const dark = mode === 'dark';
@@ -235,6 +234,11 @@ function resolveEffects(
     control: '0 2px 8px color-mix(in srgb, var(--n0ct-shadow-color) 10%, transparent)',
     popover: '0 12px 32px color-mix(in srgb, var(--n0ct-shadow-color) 32%, transparent)',
     sidebar: '8px 0 28px color-mix(in srgb, var(--n0ct-shadow-color) 11%, transparent)',
+    sidebarActive: 'inset 2px 0 0 var(--n0ct-primary-500), 0 4px 16px color-mix(in srgb, var(--n0ct-secondary-500) 9%, transparent)',
+    scrollbar: 'inset 0 0 0 1px color-mix(in srgb, var(--n0ct-accent-500) 38%, transparent), 0 0 8px color-mix(in srgb, var(--n0ct-accent-500) 38%, transparent)',
+    scrollbarHover: 'inset 0 0 0 1px color-mix(in srgb, var(--n0ct-accent-500) 56%, transparent), 0 0 10px color-mix(in srgb, var(--n0ct-accent-500) 58%, transparent), 0 0 18px color-mix(in srgb, var(--n0ct-primary-500) 28%, transparent)',
+    focus: '0 0 0 2px color-mix(in srgb, var(--n0ct-accent-500) 14%, transparent)',
+    tab: '0 -2px 9px color-mix(in srgb, var(--n0ct-primary-500) 8%, transparent)',
     wordmark: '0 0 .9rem color-mix(in srgb, var(--n0ct-primary-500) 42%, transparent)',
     step: '0 0 0 3px color-mix(in srgb, var(--n0ct-primary-500) 9%, transparent)',
   };
@@ -535,7 +539,7 @@ function resolveMode(mode: Mode, input?: N0ctThemeMode): N0ctResolvedThemeMode {
   set(vars, 'code-tabs-active-text', tabs.activeForeground ?? vars['--n0ct-text-primary']!);
   set(vars, 'code-tabs-border', tabs.border ?? vars['--n0ct-border']!);
 
-  resolveEffects(vars, input?.effects, mode, primary, accent, highlight);
+  resolveEffects(vars, input?.effects, mode, primary, highlight);
   set(vars, 'nav-glass', mixColor(navigation, base, 0.12));
   set(vars, 'file-selected-bg', highlight);
   set(vars, 'file-selected-text', highlightText);
