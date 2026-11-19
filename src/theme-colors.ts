@@ -4,6 +4,7 @@ import type {
   N0ctThemeConfig,
   N0ctThemeMode,
   N0ctThemePalette,
+  N0ctThemeEffects,
 } from './types.js';
 
 export interface N0ctResolvedThemeMode {
@@ -178,6 +179,77 @@ function set(vars: Record<string, string>, key: string, value: string): void {
   vars['--n0ct-' + key] = value;
 }
 
+function normalizeCssEffect(value: string, path: string): string {
+  const normalized = value.trim();
+  if (
+    !normalized ||
+    /[;{}<>]/.test(normalized) ||
+    /url\s*\(|expression\s*\(|javascript:/i.test(normalized)
+  ) {
+    throw new Error('N0ctane ' + path + ' must be a non-empty CSS value without declarations, URLs, or executable expressions.');
+  }
+  return normalized;
+}
+
+function resolveEffects(
+  vars: Record<string, string>,
+  input: N0ctThemeEffects | undefined,
+  mode: Mode,
+  primary: string,
+  highlight: string,
+): void {
+  const dark = mode === 'dark';
+  const gradients: Required<NonNullable<N0ctThemeEffects['gradients']>> = {
+    monochrome: 'linear-gradient(125deg, var(--n0ct-primary-300), var(--n0ct-primary-500) 56%, var(--n0ct-primary-700))',
+    accent: 'linear-gradient(125deg, var(--n0ct-accent-400), var(--n0ct-accent-600))',
+    brand: 'linear-gradient(125deg, var(--n0ct-primary-500) 0%, var(--n0ct-secondary-500) 38%, var(--n0ct-highlight) 70%, var(--n0ct-accent-500) 100%)',
+    brandSoft: 'linear-gradient(125deg, color-mix(in srgb, var(--n0ct-primary-500) 18%, transparent), color-mix(in srgb, var(--n0ct-secondary-500) 12%, transparent) 45%, color-mix(in srgb, var(--n0ct-accent-500) 11%, transparent))',
+    canvas: 'radial-gradient(ellipse at 0% 0%, color-mix(in srgb, var(--n0ct-primary-500) var(--n0ct-glow-background-strength, 7%), transparent), transparent 34rem), radial-gradient(ellipse at 100% 100%, color-mix(in srgb, var(--n0ct-accent-500) var(--n0ct-glow-accent-strength, 5%), transparent), transparent 38rem)',
+    shimmer: 'linear-gradient(115deg, transparent 0%, color-mix(in srgb, var(--n0ct-primary-500) 10%, transparent) 35%, color-mix(in srgb, var(--n0ct-accent-500) 9%, transparent) 52%, transparent 75%)',
+    callout: 'linear-gradient(125deg, color-mix(in srgb, var(--callout, var(--n0ct-accent-500)) 8%, transparent), transparent 62%)',
+    card: 'linear-gradient(145deg, color-mix(in srgb, var(--n0ct-secondary-500) 6%, transparent), transparent 58%)',
+    cardHover: 'linear-gradient(145deg, color-mix(in srgb, var(--n0ct-secondary-500) 9%, transparent), transparent 58%)',
+    steps: 'linear-gradient(135deg, color-mix(in srgb, var(--n0ct-secondary-500) 9%, transparent), transparent 54%), linear-gradient(315deg, color-mix(in srgb, var(--n0ct-accent-500) 6%, transparent), transparent 55%)',
+    fileTree: 'linear-gradient(135deg, color-mix(in srgb, var(--n0ct-secondary-500) 7%, transparent), transparent 58%)',
+    sidebar: 'linear-gradient(150deg, color-mix(in srgb, var(--n0ct-primary-500) 7%, transparent), transparent 43%), linear-gradient(320deg, color-mix(in srgb, var(--n0ct-highlight) 4%, transparent), transparent 48%)',
+    sidebarActive: 'linear-gradient(100deg, color-mix(in srgb, var(--n0ct-primary-500) 17%, transparent), color-mix(in srgb, var(--n0ct-accent-500) 9%, transparent))',
+    versionSelect: 'linear-gradient(120deg, color-mix(in srgb, var(--n0ct-primary-500) 7%, transparent), transparent 65%)',
+    scrollbar: 'linear-gradient(180deg, var(--n0ct-primary-500), var(--n0ct-accent-500))',
+    scrollbarHover: 'linear-gradient(180deg, var(--n0ct-primary-400), var(--n0ct-accent-400))',
+    divider: 'linear-gradient(90deg, var(--n0ct-primary-500), var(--n0ct-secondary-500) 52%, var(--n0ct-accent-500))',
+  };
+  for (const [key, fallback] of Object.entries(gradients)) {
+    const value = input?.gradients?.[key as keyof NonNullable<N0ctThemeEffects['gradients']>] ?? fallback;
+    set(vars, 'gradient-' + key.replace(/[A-Z]/g, (letter) => '-' + letter.toLowerCase()), normalizeCssEffect(value, 'theme.effects.gradients.' + key));
+  }
+
+  const shadowColor = mixColor(primary, dark ? '#000000' : '#FFFFFF', dark ? 0.68 : 0.78);
+  set(vars, 'shadow-color', shadowColor);
+  const shadows: Required<NonNullable<N0ctThemeEffects['shadows']>> = {
+    soft: '0 10px 34px color-mix(in srgb, var(--n0ct-shadow-color) 18%, transparent)',
+    float: '0 16px 44px color-mix(in srgb, var(--n0ct-shadow-color) 30%, transparent)',
+    callout: '0 5px 18px color-mix(in srgb, var(--n0ct-shadow-color) 12%, transparent)',
+    card: '0 10px 30px color-mix(in srgb, var(--n0ct-shadow-color) 16%, transparent)',
+    cardHover: '0 10px 28px color-mix(in srgb, var(--n0ct-shadow-color) 20%, transparent)',
+    control: '0 2px 8px color-mix(in srgb, var(--n0ct-shadow-color) 10%, transparent)',
+    popover: '0 12px 32px color-mix(in srgb, var(--n0ct-shadow-color) 32%, transparent)',
+    sidebar: '8px 0 28px color-mix(in srgb, var(--n0ct-shadow-color) 11%, transparent)',
+    sidebarActive: 'inset 2px 0 0 var(--n0ct-primary-500), 0 4px 16px color-mix(in srgb, var(--n0ct-secondary-500) 9%, transparent)',
+    scrollbar: 'inset 0 0 0 1px color-mix(in srgb, var(--n0ct-accent-500) 38%, transparent), 0 0 8px color-mix(in srgb, var(--n0ct-accent-500) 38%, transparent)',
+    scrollbarHover: 'inset 0 0 0 1px color-mix(in srgb, var(--n0ct-accent-500) 56%, transparent), 0 0 10px color-mix(in srgb, var(--n0ct-accent-500) 58%, transparent), 0 0 18px color-mix(in srgb, var(--n0ct-primary-500) 28%, transparent)',
+    focus: '0 0 0 2px color-mix(in srgb, var(--n0ct-accent-500) 14%, transparent)',
+    tab: '0 -2px 9px color-mix(in srgb, var(--n0ct-primary-500) 8%, transparent)',
+    wordmark: '0 0 .9rem color-mix(in srgb, var(--n0ct-primary-500) 42%, transparent)',
+    step: '0 0 0 3px color-mix(in srgb, var(--n0ct-primary-500) 9%, transparent)',
+  };
+  for (const [key, fallback] of Object.entries(shadows)) {
+    const value = input?.shadows?.[key as keyof NonNullable<N0ctThemeEffects['shadows']>] ?? fallback;
+    set(vars, 'shadow-' + key.replace(/[A-Z]/g, (letter) => '-' + letter.toLowerCase()), normalizeCssEffect(value, 'theme.effects.shadows.' + key));
+  }
+  set(vars, 'steps-marker-text', getN0ctContrastText(primary));
+  set(vars, 'steps-connector', mixColor(primary, highlight, dark ? 0.22 : 0.18));
+}
+
 function checkObject(value: unknown, path: string): void {
   if (!value || typeof value !== 'object') return;
   for (const [key, child] of Object.entries(value)) {
@@ -207,6 +279,15 @@ function resolveMode(mode: Mode, input?: N0ctThemeMode): N0ctResolvedThemeMode {
   checkObject(input?.semantic, 'theme.colors.' + mode + '.semantic');
   checkObject(codePalette, 'theme.colors.' + mode + '.codePalette');
   checkObject(overrides, 'theme.colors.' + mode + '.overrides');
+  // Effects are CSS values, not hex colors; validate them separately before emitting CSS.
+  if (input?.effects) {
+    for (const [key, value] of Object.entries(input.effects.gradients ?? {})) {
+      if (value) normalizeCssEffect(value, 'theme.colors.' + mode + '.effects.gradients.' + key);
+    }
+    for (const [key, value] of Object.entries(input.effects.shadows ?? {})) {
+      if (value) normalizeCssEffect(value, 'theme.colors.' + mode + '.effects.shadows.' + key);
+    }
+  }
 
   const pageSurface = normalizeHex(
     supplied.surface ?? DEFAULTS[mode].surface,
@@ -458,10 +539,7 @@ function resolveMode(mode: Mode, input?: N0ctThemeMode): N0ctResolvedThemeMode {
   set(vars, 'code-tabs-active-text', tabs.activeForeground ?? vars['--n0ct-text-primary']!);
   set(vars, 'code-tabs-border', tabs.border ?? vars['--n0ct-border']!);
 
-  set(vars, 'gradient-monochrome', 'linear-gradient(125deg, var(--n0ct-primary-300), var(--n0ct-primary-500) 56%, var(--n0ct-primary-700))');
-  set(vars, 'gradient-accent', 'linear-gradient(125deg, var(--n0ct-accent-400), var(--n0ct-accent-600))');
-  set(vars, 'gradient-brand', 'linear-gradient(125deg, var(--n0ct-primary-500) 0%, var(--n0ct-secondary-500) 38%, var(--n0ct-highlight) 70%, var(--n0ct-accent-500) 100%)');
-  set(vars, 'gradient-brand-soft', 'linear-gradient(125deg, color-mix(in srgb, var(--n0ct-primary-500) 18%, transparent), color-mix(in srgb, var(--n0ct-secondary-500) 12%, transparent) 45%, color-mix(in srgb, var(--n0ct-accent-500) 11%, transparent))');
+  resolveEffects(vars, input?.effects, mode, primary, highlight);
   set(vars, 'nav-glass', mixColor(navigation, base, 0.12));
   set(vars, 'file-selected-bg', highlight);
   set(vars, 'file-selected-text', highlightText);

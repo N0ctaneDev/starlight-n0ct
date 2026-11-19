@@ -67,6 +67,27 @@ describe('semantic theme palettes', () => {
     expect(theme.light.variables['--n0ct-border-focus']).toBe('#123456');
   });
 
+  it('exposes configurable gradient and shadow tokens and rejects unsafe CSS values', () => {
+    const theme = resolveN0ctThemeColors({
+      dark: {
+        effects: {
+          gradients: {
+            brand: 'linear-gradient(90deg, #123456, #ABCDEF)',
+            divider: 'linear-gradient(90deg, #112233, #445566)',
+          },
+          shadows: { soft: '0 0 18px #123456', focus: '0 0 0 3px #ABCDEF' },
+        },
+      },
+    });
+    expect(theme.dark.variables['--n0ct-gradient-brand']).toBe('linear-gradient(90deg, #123456, #ABCDEF)');
+    expect(theme.dark.variables['--n0ct-gradient-divider']).toBe('linear-gradient(90deg, #112233, #445566)');
+    expect(theme.dark.variables['--n0ct-shadow-soft']).toBe('0 0 18px #123456');
+    expect(theme.dark.variables['--n0ct-shadow-focus']).toBe('0 0 0 3px #ABCDEF');
+    expect(() => resolveN0ctThemeColors({
+      dark: { effects: { gradients: { brand: 'red; body { display:none }' } } },
+    })).toThrow(/without declarations/);
+  });
+
   it('rejects invalid hex colors with the offending configuration path', () => {
     expect(() => resolveN0ctThemeColors({
       dark: { palette: { primary: 'purple' } },

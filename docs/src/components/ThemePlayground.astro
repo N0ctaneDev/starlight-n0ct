@@ -6,39 +6,23 @@ import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
 import FileTree from '@n0ctanedev/starlight-n0ct/components/docs/FileTree.astro';
 import Kbd from '@n0ctanedev/starlight-n0ct/components/docs/Kbd.astro';
 import Steps from '@n0ctanedev/starlight-n0ct/components/docs/Steps.astro';
-import { resolveN0ctThemeColors } from '@n0ctanedev/starlight-n0ct/theme-playground';
 
 const configuredTheme = (Astro.locals as any).n0ctane?.theme ?? {};
 const configuredThemes = Array.isArray(configuredTheme.themes) ? configuredTheme.themes : [];
 const sourceThemes = configuredThemes.length
   ? configuredThemes
   : [{ id: 'n0ctane', label: 'N0ctane', colors: {} }];
-
 const playgroundThemes = sourceThemes.map((theme: {
   id: string;
   label: string;
   colors?: Record<string, unknown>;
-}) => {
-  const resolved = resolveN0ctThemeColors(theme.colors as never);
-  const pickMainColors = (variables: Record<string, string>) => ({
-    primary: variables['--n0ct-primary-500'],
-    accent: variables['--n0ct-accent-500'],
-    surface: variables['--n0ct-surface'],
-    text: variables['--n0ct-text-primary'],
-  });
-  return {
-    id: theme.id,
-    label: theme.label,
-    colors: {
-      dark: pickMainColors(resolved.dark.variables),
-      light: pickMainColors(resolved.light.variables),
-    },
-    sourceColors: theme.colors ?? {},
-  };
-});
+}) => ({
+  id: theme.id,
+  label: theme.label,
+  sourceColors: theme.colors ?? {},
+}));
 const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 'n0ctane';
----
-<section
+---<section
   class="n0ct-theme-playground"
   data-n0ct-theme-playground
   data-themes={JSON.stringify(playgroundThemes)}
@@ -47,8 +31,8 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
   <div class="n0ct-playground-toolbar">
     <div class="n0ct-playground-heading">
       <span class="n0ct-playground-eyebrow">Interactive designer</span>
-      <h3>Build a palette</h3>
-      <p>Change the four core colors and watch the current documentation page update. Fine-grained semantic overrides and syntax colors stay separate.</p>
+      <h3>Build a theme</h3>
+      <p>Edit the palette, semantic roles, code syntax, gradients, and shadows. The entire page below updates with the active values, including the real Starlight components and code frames.</p>
     </div>
     <div class="n0ct-playground-actions">
       <button type="button" class="n0ct-playground-button n0ct-playground-button--quiet" data-playground-reset>Reset palette</button>
@@ -57,27 +41,33 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
   </div>
 
   <div class="n0ct-playground-controls">
-    <label class="n0ct-playground-field">
-      <span>Palette</span>
-      <select data-playground-theme>
-        {playgroundThemes.map((theme: { id: string; label: string }) => (
-          <option value={theme.id} selected={theme.id === defaultTheme}>{theme.label}</option>
-        ))}
-      </select>
-    </label>
-    <label class="n0ct-playground-field">
-      <span>Edit appearance</span>
-      <select data-playground-mode>
-        <option value="dark">Dark</option>
-        <option value="light">Light</option>
-      </select>
-    </label>
-    {(['primary', 'accent', 'surface', 'text'] as const).map((role) => (
-      <label class="n0ct-playground-color" data-color-field={role}>
-        <input type="color" data-color-input={role} aria-label={role + ' color'} />
-        <span><strong>{role}</strong><small data-color-value={role}></small></span>
+    <div class="n0ct-playground-selects">
+      <label class="n0ct-playground-field">
+        <span>Palette</span>
+        <select data-playground-theme>
+          {playgroundThemes.map((theme: { id: string; label: string }) => (
+            <option value={theme.id} selected={theme.id === defaultTheme}>{theme.label}</option>
+          ))}
+        </select>
       </label>
-    ))}
+      <label class="n0ct-playground-field">
+        <span>Edit appearance</span>
+        <select data-playground-mode>
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+        </select>
+      </label>
+    </div>
+    <div class="n0ct-playground-core-fields" data-playground-core-fields></div>
+    <details class="n0ct-playground-advanced" open>
+      <summary>Advanced color roles</summary>
+      <div data-playground-color-groups></div>
+    </details>
+    <details class="n0ct-playground-advanced">
+      <summary>Gradients and shadows</summary>
+      <p class="n0ct-playground-help">These values accept CSS gradient and box-shadow syntax. They are saved inside the selected theme's appearance mode.</p>
+      <div data-playground-effect-groups></div>
+    </details>
   </div>
 
   <div class="n0ct-playground-status" role="status" aria-live="polite" data-playground-status>
@@ -111,13 +101,12 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
     </CardGrid>
 
     <div class="n0ct-playground-preview-grid">
-      <div>
-        <Callout tone="tip" title="Palette-aware callout">
-          Callouts use semantic status roles while retaining the active surface and text colors.
-        </Callout>
-        <Callout tone="warning" title="Warning state">
-          Warning and danger colors are intentionally not tied to the primary brand hue.
-        </Callout>
+      <div class="n0ct-playground-callouts">
+        <Callout tone="note" title="Note">Neutral context and secondary information.</Callout>
+        <Callout tone="tip" title="Tip">Positive guidance and recommended actions.</Callout>
+        <Callout tone="warning" title="Warning">A caution state using the warning semantic role.</Callout>
+        <Callout tone="danger" title="Danger">A destructive or high-impact action.</Callout>
+        <Callout tone="info" title="Information">A useful informational status message.</Callout>
       </div>
       <div class="n0ct-playground-sample-panel">
         <span class="n0ct-playground-eyebrow">Controls</span>
@@ -181,170 +170,411 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
 </section>
 
 <script>
-  import { generateN0ctThemeCss } from '@n0ctanedev/starlight-n0ct/theme-playground';
+  import { generateN0ctThemeCss, resolveN0ctThemeColors } from '@n0ctanedev/starlight-n0ct/theme-playground';
 
   type Mode = 'dark' | 'light';
-  type Role = 'primary' | 'accent' | 'surface' | 'text';
-  type Palette = Record<Role, string>;
+  type Field = { label: string; paths: string[]; token: string };
+  type FieldGroup = { label: string; fields: Field[] };
   type PlaygroundTheme = {
     id: string;
     label: string;
-    colors: { dark: Palette; light: Palette };
-    sourceColors: {
-      dark?: { palette?: Partial<Palette>; [key: string]: unknown };
-      light?: { palette?: Partial<Palette>; [key: string]: unknown };
-    };
+    sourceColors: Record<string, any>;
   };
+
+  const coreGroup: FieldGroup = {
+    label: 'Core palette',
+    fields: [
+      { label: 'Primary brand', paths: ['overrides.brand.primary', 'palette.primary'], token: '--n0ct-primary-500' },
+      { label: 'Secondary brand', paths: ['overrides.brand.secondary', 'palette.secondary'], token: '--n0ct-secondary-500' },
+      { label: 'Accent', paths: ['overrides.brand.accent', 'palette.accent'], token: '--n0ct-accent-500' },
+      { label: 'Panel surface', paths: ['overrides.surfaces.surface', 'palette.surface'], token: '--n0ct-surface' },
+      { label: 'Page background', paths: ['overrides.surfaces.base', 'palette.background'], token: '--n0ct-base' },
+      { label: 'Main text', paths: ['overrides.text.primary', 'palette.text'], token: '--n0ct-text-primary' },
+      { label: 'Highlight surface', paths: ['overrides.highlight.background', 'overrides.brand.highlight', 'palette.highlight'], token: '--n0ct-highlight' },
+      { label: 'Highlight text', paths: ['overrides.highlight.text', 'overrides.brand.highlightText', 'palette.highlightText'], token: '--n0ct-highlight-text' },
+    ],
+  };
+
+  const colorGroups: FieldGroup[] = [
+    {
+      label: 'Surfaces',
+      fields: [
+        ['Void', 'overrides.surfaces.void', '--n0ct-base-void'],
+        ['Elevated', 'overrides.surfaces.elevated', '--n0ct-surface-elevated'],
+        ['Sunken', 'overrides.surfaces.sunken', '--n0ct-surface-sunken'],
+        ['Overlay', 'overrides.surfaces.overlay', '--n0ct-surface-overlay'],
+        ['Navigation', 'overrides.surfaces.navigation', '--n0ct-surface-navigation'],
+        ['Sidebar', 'overrides.surfaces.sidebar', '--n0ct-surface-sidebar'],
+        ['Code surface', 'overrides.surfaces.code', '--n0ct-surface-code'],
+      ].map(([label, path, token]) => ({ label, paths: [path], token })),
+    },
+    {
+      label: 'Text roles',
+      fields: [
+        ['Secondary', 'overrides.text.secondary', '--n0ct-text-secondary'],
+        ['Muted', 'overrides.text.muted', '--n0ct-text-muted'],
+        ['Subtle', 'overrides.text.subtle', '--n0ct-text-subtle'],
+        ['Inverse', 'overrides.text.inverse', '--n0ct-text-inverse'],
+        ['Accent text', 'overrides.text.accent', '--n0ct-text-accent'],
+        ['Highlight text role', 'overrides.text.highlight', '--n0ct-text-highlight'],
+        ['Text on accent', 'overrides.text.onAccent', '--n0ct-text-on-accent'],
+      ].map(([label, path, token]) => ({ label, paths: [path], token })),
+    },
+    {
+      label: 'Borders',
+      fields: [
+        ['Subtle', 'overrides.borders.subtle', '--n0ct-border-subtle'],
+        ['Default', 'overrides.borders.default', '--n0ct-border'],
+        ['Strong', 'overrides.borders.strong', '--n0ct-border-strong'],
+        ['Focus', 'overrides.borders.focus', '--n0ct-border-focus'],
+      ].map(([label, path, token]) => ({ label, paths: [path], token })),
+    },
+    {
+      label: 'Interactive states',
+      fields: [
+        ['Hover', 'overrides.interactive.hover', '--n0ct-interactive-hover'],
+        ['Active', 'overrides.interactive.active', '--n0ct-interactive-active'],
+        ['Selected', 'overrides.interactive.selected', '--n0ct-interactive-selected'],
+      ].map(([label, path, token]) => ({ label, paths: [path], token })),
+    },
+    {
+      label: 'Highlight and selection',
+      fields: [
+        ['Highlight border', 'overrides.highlight.border', '--n0ct-highlight-border'],
+        ['Selection background', 'overrides.highlight.selectionBackground', '--n0ct-selection-background'],
+        ['Selection text', 'overrides.highlight.selectionText', '--n0ct-selection-text'],
+      ].map(([label, path, token]) => ({ label, paths: [path], token })),
+    },
+    {
+      label: 'Semantic status colors',
+      fields: (['success', 'warning', 'danger', 'info'] as const).flatMap((status) => [
+        { label: status + ' foreground', paths: ['semantic.' + status + '.foreground'], token: '--n0ct-' + status },
+        { label: status + ' background', paths: ['semantic.' + status + '.background'], token: '--n0ct-' + status + '-bg' },
+        { label: status + ' border', paths: ['semantic.' + status + '.border'], token: '--n0ct-' + status + '-border' },
+        { label: status + ' text', paths: ['semantic.' + status + '.text'], token: '--n0ct-' + status + '-text' },
+      ]),
+    },
+    {
+      label: 'Code frame roles',
+      fields: [
+        { label: 'Code background', paths: ['overrides.code.background', 'codePalette.background', 'overrides.surfaces.code'], token: '--n0ct-code-background' },
+        { label: 'Code foreground', paths: ['overrides.code.foreground', 'codePalette.foreground'], token: '--n0ct-code-foreground' },
+        { label: 'Cursor', paths: ['overrides.code.cursor'], token: '--n0ct-code-cursor' },
+        { label: 'Selection', paths: ['overrides.code.selectionBackground'], token: '--n0ct-code-selection-background' },
+        { label: 'Line highlight', paths: ['overrides.code.lineHighlight'], token: '--n0ct-code-line-highlight' },
+        { label: 'Line numbers', paths: ['overrides.code.lineNumber'], token: '--n0ct-code-line-number' },
+        { label: 'Active line number', paths: ['overrides.code.lineNumberActive'], token: '--n0ct-code-line-number-active' },
+        { label: 'Added diff background', paths: ['overrides.code.diffAdded.background'], token: '--n0ct-code-diff-added-bg' },
+        { label: 'Added diff text', paths: ['overrides.code.diffAdded.text'], token: '--n0ct-code-diff-added-text' },
+        { label: 'Added diff border', paths: ['overrides.code.diffAdded.border'], token: '--n0ct-code-diff-added-border' },
+        { label: 'Removed diff background', paths: ['overrides.code.diffRemoved.background'], token: '--n0ct-code-diff-removed-bg' },
+        { label: 'Removed diff text', paths: ['overrides.code.diffRemoved.text'], token: '--n0ct-code-diff-removed-text' },
+        { label: 'Removed diff border', paths: ['overrides.code.diffRemoved.border'], token: '--n0ct-code-diff-removed-border' },
+        { label: 'Tab strip', paths: ['overrides.code.tabs.background'], token: '--n0ct-code-tabs-bg' },
+        { label: 'Active tab', paths: ['overrides.code.tabs.activeBackground'], token: '--n0ct-code-tabs-active-bg' },
+        { label: 'Tab text', paths: ['overrides.code.tabs.foreground'], token: '--n0ct-code-tabs-text' },
+        { label: 'Active tab text', paths: ['overrides.code.tabs.activeForeground'], token: '--n0ct-code-tabs-active-text' },
+        { label: 'Tab border', paths: ['overrides.code.tabs.border'], token: '--n0ct-code-tabs-border' },
+      ],
+    },
+    {
+      label: 'Syntax highlighting',
+      fields: ['comment', 'keyword', 'string', 'number', 'function', 'type', 'variable', 'tag', 'attribute', 'punctuation', 'invalid']
+        .map((role) => ({ label: role, paths: ['codePalette.' + role], token: '--n0ct-code-syntax-' + role })),
+    },
+  ];
+
+  const effectGroups = [
+    {
+      label: 'Gradients',
+      fields: [
+        ['Brand underline / text', 'effects.gradients.brand', '--n0ct-gradient-brand'],
+        ['Divider', 'effects.gradients.divider', '--n0ct-gradient-divider'],
+        ['Brand soft fill', 'effects.gradients.brandSoft', '--n0ct-gradient-brand-soft'],
+        ['Monochrome', 'effects.gradients.monochrome', '--n0ct-gradient-monochrome'],
+        ['Accent', 'effects.gradients.accent', '--n0ct-gradient-accent'],
+        ['Page glow', 'effects.gradients.canvas', '--n0ct-gradient-canvas'],
+        ['Shimmer', 'effects.gradients.shimmer', '--n0ct-gradient-shimmer'],
+        ['Callouts', 'effects.gradients.callout', '--n0ct-gradient-callout'],
+        ['Cards', 'effects.gradients.card', '--n0ct-gradient-card'],
+        ['Card hover', 'effects.gradients.cardHover', '--n0ct-gradient-card-hover'],
+        ['Steps', 'effects.gradients.steps', '--n0ct-gradient-steps'],
+        ['File tree', 'effects.gradients.fileTree', '--n0ct-gradient-file-tree'],
+        ['Sidebar', 'effects.gradients.sidebar', '--n0ct-gradient-sidebar'],
+        ['Active sidebar item', 'effects.gradients.sidebarActive', '--n0ct-gradient-sidebar-active'],
+        ['Version selector', 'effects.gradients.versionSelect', '--n0ct-gradient-version-select'],
+        ['Scrollbar', 'effects.gradients.scrollbar', '--n0ct-gradient-scrollbar'],
+        ['Scrollbar hover', 'effects.gradients.scrollbarHover', '--n0ct-gradient-scrollbar-hover'],
+      ],
+    },
+    {
+      label: 'Shadows',
+      fields: [
+        ['Soft', 'effects.shadows.soft', '--n0ct-shadow-soft'],
+        ['Floating', 'effects.shadows.float', '--n0ct-shadow-float'],
+        ['Callout', 'effects.shadows.callout', '--n0ct-shadow-callout'],
+        ['Card', 'effects.shadows.card', '--n0ct-shadow-card'],
+        ['Card hover', 'effects.shadows.cardHover', '--n0ct-shadow-card-hover'],
+        ['Controls', 'effects.shadows.control', '--n0ct-shadow-control'],
+        ['Popovers', 'effects.shadows.popover', '--n0ct-shadow-popover'],
+        ['Sidebar', 'effects.shadows.sidebar', '--n0ct-shadow-sidebar'],
+        ['Active sidebar item', 'effects.shadows.sidebarActive', '--n0ct-shadow-sidebar-active'],
+        ['Scrollbar thumb', 'effects.shadows.scrollbar', '--n0ct-shadow-scrollbar'],
+        ['Scrollbar hover', 'effects.shadows.scrollbarHover', '--n0ct-shadow-scrollbar-hover'],
+        ['Focus ring', 'effects.shadows.focus', '--n0ct-shadow-focus'],
+        ['Selected code tab', 'effects.shadows.tab', '--n0ct-shadow-tab'],
+        ['Wordmark', 'effects.shadows.wordmark', '--n0ct-shadow-wordmark'],
+        ['Steps marker', 'effects.shadows.step', '--n0ct-shadow-step'],
+      ],
+    },
+  ];
+
+  function hasPath(source: Record<string, any>, path: string): boolean {
+    return path.split('.').reduce((value, key) => value?.[key], source) !== undefined;
+  }
+
+  function getPath(source: Record<string, any>, path: string): unknown {
+    return path.split('.').reduce((value, key) => value?.[key], source);
+  }
+
+  function setPath(source: Record<string, any>, path: string, value: string): void {
+    const parts = path.split('.');
+    let target = source;
+    for (const part of parts.slice(0, -1)) {
+      target[part] ??= {};
+      target = target[part];
+    }
+    target[parts.at(-1)!] = value;
+  }
+
+  function cssColorToHex(value: string): string {
+    if (/^#[\da-f]{6}$/i.test(value)) return value.toUpperCase();
+    const probe = document.createElement('span');
+    probe.style.color = value;
+    document.body.append(probe);
+    const resolved = getComputedStyle(probe).color;
+    probe.remove();
+    const channels = resolved.match(/[\d.]+/g)?.slice(0, 3).map(Number);
+    if (!channels || channels.length !== 3) return '#808080';
+    return '#' + channels.map((channel) => Math.round(channel).toString(16).padStart(2, '0')).join('').toUpperCase();
+  }
 
   function initializeThemePlaygrounds() {
     document.querySelectorAll<HTMLElement>('[data-n0ct-theme-playground]').forEach((playground) => {
-    if (playground.dataset.initialized === 'true') return;
-    playground.dataset.initialized = 'true';
+      if (playground.dataset.initialized === 'true') return;
+      playground.dataset.initialized = 'true';
 
-    const themes = JSON.parse(playground.dataset.themes ?? '[]') as PlaygroundTheme[];
-    if (!themes.length) return;
+      const themes = JSON.parse(playground.dataset.themes ?? '[]') as PlaygroundTheme[];
+      if (!themes.length) return;
+      const originalThemes = JSON.parse(JSON.stringify(themes)) as PlaygroundTheme[];
+      const themeSelect = playground.querySelector<HTMLSelectElement>('[data-playground-theme]');
+      const modeSelect = playground.querySelector<HTMLSelectElement>('[data-playground-mode]');
+      const colorHost = playground.querySelector<HTMLElement>('[data-playground-color-groups]');
+      const coreHost = playground.querySelector<HTMLElement>('[data-playground-core-fields]');
+      const effectHost = playground.querySelector<HTMLElement>('[data-playground-effect-groups]');
+      const configOutput = playground.querySelector<HTMLElement>('[data-playground-config]');
+      const status = playground.querySelector<HTMLElement>('[data-playground-status]');
+      const previewMode = playground.querySelector<HTMLElement>('[data-preview-mode]');
+      const styleId = 'n0ct-theme-playground-preview';
+      let selectedTheme = playground.dataset.defaultTheme ?? themes[0]!.id;
+      let selectedMode: Mode = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+      const colorInputs: Array<{ input: HTMLInputElement; field: Field; isCore: boolean }> = [];
+      const effectInputs: Array<{ input: HTMLInputElement; path: string; token: string }> = [];
 
-    const originalThemes = JSON.parse(JSON.stringify(themes)) as PlaygroundTheme[];
-    const themeSelect = playground.querySelector<HTMLSelectElement>('[data-playground-theme]');
-    const modeSelect = playground.querySelector<HTMLSelectElement>('[data-playground-mode]');
-    const inputs = Array.from(playground.querySelectorAll<HTMLInputElement>('[data-color-input]'));
-    const configOutput = playground.querySelector<HTMLElement>('[data-playground-config]');
-    const status = playground.querySelector<HTMLElement>('[data-playground-status]');
-    const previewMode = playground.querySelector<HTMLElement>('[data-preview-mode]');
-    const styleId = 'n0ct-theme-playground-preview';
-    let selectedTheme = playground.dataset.defaultTheme ?? themes[0]!.id;
-    let selectedMode: Mode = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+      const getTheme = () => themes.find((theme) => theme.id === selectedTheme) ?? themes[0]!;
+      const getMode = () => {
+        const theme = getTheme();
+        theme.sourceColors[selectedMode] ??= {};
+        return theme.sourceColors[selectedMode] as Record<string, any>;
+      };
+      const themeLabel = () => getTheme().label || getTheme().id;
 
-    const getTheme = () => themes.find((theme) => theme.id === selectedTheme) ?? themes[0]!;
-    const themeLabel = () => getTheme().label || getTheme().id;
-    const getThemeStyle = () => {
-      let style = document.getElementById(styleId) as HTMLStyleElement | null;
-      if (!style) {
-        style = document.createElement('style');
-        style.id = styleId;
-        document.head.appendChild(style);
-      }
-      return style;
-    };
+      const getThemeStyle = () => {
+        let style = document.getElementById(styleId) as HTMLStyleElement | null;
+        if (!style) {
+          style = document.createElement('style');
+          style.id = styleId;
+          document.head.appendChild(style);
+        }
+        return style;
+      };
 
-    const getFullThemeColors = (theme: PlaygroundTheme) => ({
-      dark: {
-        ...theme.sourceColors.dark,
-        palette: { ...theme.sourceColors.dark?.palette, ...theme.colors.dark },
-      },
-      light: {
-        ...theme.sourceColors.light,
-        palette: { ...theme.sourceColors.light?.palette, ...theme.colors.light },
-      },
-    });
+      const resolvedVariables = () => resolveN0ctThemeColors(getTheme().sourceColors as never)[selectedMode].variables;
 
-    const currentConfig = () => ({
-      theme: {
-        defaultTheme: selectedTheme,
-        themes: {
-          [selectedTheme]: {
-            label: themeLabel(),
-            colors: getFullThemeColors(getTheme()),
+      const addColorGroup = (host: HTMLElement | null, group: FieldGroup, isCore = false) => {
+        if (!host) return;
+        const details = document.createElement('details');
+        details.className = 'n0ct-playground-role-group';
+        details.open = isCore;
+        const summary = document.createElement('summary');
+        summary.textContent = group.label;
+        const grid = document.createElement('div');
+        grid.className = 'n0ct-playground-field-grid';
+        group.fields.forEach((field) => {
+          const label = document.createElement('label');
+          label.className = 'n0ct-playground-color';
+          const input = document.createElement('input');
+          input.type = 'color';
+          input.setAttribute('aria-label', field.label);
+          const text = document.createElement('span');
+          const name = document.createElement('strong');
+          name.textContent = field.label;
+          const value = document.createElement('small');
+          value.dataset.colorValue = field.token;
+          text.append(name, value);
+          label.append(input, text);
+          grid.append(label);
+          colorInputs.push({ input, field, isCore });
+        });
+        details.append(summary, grid);
+        host.append(details);
+      };
+
+      const addEffectGroup = (host: HTMLElement | null, group: { label: string; fields: string[][] }) => {
+        if (!host) return;
+        const details = document.createElement('details');
+        details.className = 'n0ct-playground-role-group';
+        const summary = document.createElement('summary');
+        summary.textContent = group.label;
+        const grid = document.createElement('div');
+        grid.className = 'n0ct-playground-effect-grid';
+        group.fields.forEach(([labelText, path, token]) => {
+          const label = document.createElement('label');
+          label.className = 'n0ct-playground-effect';
+          const name = document.createElement('span');
+          name.textContent = labelText;
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.autocomplete = 'off';
+          input.spellcheck = false;
+          input.setAttribute('aria-label', labelText + ' CSS value');
+          label.append(name, input);
+          grid.append(label);
+          effectInputs.push({ input, path, token });
+        });
+        details.append(summary, grid);
+        host.append(details);
+      };
+
+      addColorGroup(coreHost, coreGroup, true);
+      colorGroups.forEach((group) => addColorGroup(colorHost, group));
+      effectGroups.forEach((group) => addEffectGroup(effectHost, group));
+
+      const currentConfig = () => ({
+        theme: {
+          defaultTheme: selectedTheme,
+          themes: {
+            [selectedTheme]: {
+              label: themeLabel(),
+              colors: getTheme().sourceColors,
+            },
           },
         },
-      },
-    });
-
-    const renderConfig = () => {
-      if (!configOutput) return;
-      configOutput.textContent =
-        'theme: ' + JSON.stringify(currentConfig().theme, null, 2).replace(/^/gm, '  ').trimStart();
-    };
-
-    const syncInputs = () => {
-      const palette = getTheme().colors[selectedMode];
-      inputs.forEach((input) => {
-        const role = input.dataset.colorInput as Role;
-        input.value = palette[role];
-        const value = playground.querySelector<HTMLElement>('[data-color-value="' + role + '"]');
-        if (value) value.textContent = palette[role].toUpperCase();
       });
-      if (themeSelect) themeSelect.value = selectedTheme;
-      if (modeSelect) modeSelect.value = selectedMode;
-      if (previewMode) previewMode.textContent = selectedMode[0]!.toUpperCase() + selectedMode.slice(1) + ' · ' + themeLabel();
-      if (status) status.textContent = 'Editing ' + themeLabel() + ' · ' + selectedMode[0]!.toUpperCase() + selectedMode.slice(1) + ' palette';
-      renderConfig();
-    };
 
-    const applyPreview = () => {
-      const colors = getFullThemeColors(getTheme());
-      const css = generateN0ctThemeCss(colors as never)
-        .replaceAll(':root', ':root[data-n0ct-playground]');
-      getThemeStyle().textContent = css;
-      document.documentElement.dataset.n0ctPlayground = 'true';
-      renderConfig();
-    };
+      const renderConfig = () => {
+        if (configOutput) {
+          configOutput.textContent = 'theme: ' + JSON.stringify(currentConfig().theme, null, 2).replace(/^/gm, '  ').trimStart();
+        }
+      };
 
-    const clearPreview = () => {
-      document.getElementById(styleId)?.remove();
-      delete document.documentElement.dataset.n0ctPlayground;
-    };
+      const pathForField = (field: Field) => field.paths.find((path) => hasPath(getMode(), path)) ?? field.paths[field.paths.length - 1]!;
 
-    const refresh = () => {
-      syncInputs();
-      applyPreview();
-    };
+      const syncInputs = () => {
+        const variables = resolvedVariables();
+        colorInputs.forEach(({ input, field }) => {
+          const color = cssColorToHex(variables[field.token] ?? '#808080');
+          input.value = color;
+          const value = playground.querySelector<HTMLElement>('[data-color-value="' + field.token + '"]');
+          if (value) value.textContent = color;
+        });
+        effectInputs.forEach(({ input, path, token }) => {
+          const configured = getPath(getMode(), path);
+          input.value = typeof configured === 'string' ? configured : variables[token] ?? '';
+        });
+        if (themeSelect) themeSelect.value = selectedTheme;
+        if (modeSelect) modeSelect.value = selectedMode;
+        if (previewMode) previewMode.textContent = selectedMode[0]!.toUpperCase() + selectedMode.slice(1) + ' · ' + themeLabel();
+        if (status) status.textContent = 'Editing ' + themeLabel() + ' · ' + selectedMode[0]!.toUpperCase() + selectedMode.slice(1) + ' palette';
+        renderConfig();
+      };
 
-    themeSelect?.addEventListener('change', () => {
-      selectedTheme = themes.some((theme) => theme.id === themeSelect.value)
-        ? themeSelect.value
-        : themes[0]!.id;
-      window.dispatchEvent(new CustomEvent('n0ct-theme:set-theme', { detail: selectedTheme }));
-      refresh();
-    });
+      const applyPreview = () => {
+        try {
+          const css = generateN0ctThemeCss(getTheme().sourceColors as never)
+            .replaceAll(':root', ':root[data-n0ct-playground]');
+          getThemeStyle().textContent = css;
+          document.documentElement.dataset.n0ctPlayground = 'true';
+          renderConfig();
+        } catch (error) {
+          if (status) status.textContent = error instanceof Error ? error.message : 'Invalid theme value.';
+        }
+      };
 
-    modeSelect?.addEventListener('change', () => {
-      selectedMode = modeSelect.value === 'light' ? 'light' : 'dark';
-      window.dispatchEvent(new CustomEvent('n0ct-theme:set-mode', { detail: selectedMode }));
-      refresh();
-    });
+      const clearPreview = () => {
+        document.getElementById(styleId)?.remove();
+        delete document.documentElement.dataset.n0ctPlayground;
+      };
 
-    inputs.forEach((input) => input.addEventListener('input', () => {
-      const role = input.dataset.colorInput as Role;
-      getTheme().colors[selectedMode][role] = input.value.toUpperCase();
-      const value = playground.querySelector<HTMLElement>('[data-color-value="' + role + '"]');
-      if (value) value.textContent = input.value.toUpperCase();
-      applyPreview();
-    }));
+      const refresh = () => {
+        syncInputs();
+        applyPreview();
+      };
 
-    playground.querySelector('[data-playground-reset]')?.addEventListener('click', () => {
-      const original = originalThemes.find((theme) => theme.id === selectedTheme) ?? originalThemes[0]!;
-      getTheme().colors = JSON.parse(JSON.stringify(original.colors)) as PlaygroundTheme['colors'];
-      getTheme().sourceColors = JSON.parse(JSON.stringify(original.sourceColors)) as PlaygroundTheme['sourceColors'];
-      clearPreview();
-      syncInputs();
-    });
+      themeSelect?.addEventListener('change', () => {
+        selectedTheme = themes.some((theme) => theme.id === themeSelect.value) ? themeSelect.value : themes[0]!.id;
+        window.dispatchEvent(new CustomEvent('n0ct-theme:set-theme', { detail: selectedTheme }));
+        refresh();
+      });
 
-    playground.querySelector('[data-playground-copy]')?.addEventListener('click', async () => {
-      const configText = 'export default ' + JSON.stringify(currentConfig(), null, 2) + ';';
-      try {
-        await navigator.clipboard.writeText(configText);
-        if (status) status.textContent = 'Copied the ' + themeLabel() + ' theme configuration.';
-      } catch {
-        if (status) status.textContent = 'Clipboard unavailable. Open “View generated configuration” and copy it manually.';
-      }
-    });
+      modeSelect?.addEventListener('change', () => {
+        selectedMode = modeSelect.value === 'light' ? 'light' : 'dark';
+        window.dispatchEvent(new CustomEvent('n0ct-theme:set-mode', { detail: selectedMode }));
+        refresh();
+      });
 
-    window.addEventListener('n0ct:theme-change', (event) => {
-      const detail = (event as CustomEvent<{ mode?: Mode; theme?: string }>).detail;
-      if (detail.mode === 'light' || detail.mode === 'dark') selectedMode = detail.mode;
-      if (detail.theme && themes.some((theme) => theme.id === detail.theme) && detail.theme !== selectedTheme) {
-        selectedTheme = detail.theme;
+      colorInputs.forEach(({ input, field }) => input.addEventListener('input', () => {
+        setPath(getMode(), pathForField(field), input.value.toUpperCase());
+        refresh();
+      }));
+
+      effectInputs.forEach(({ input, path }) => input.addEventListener('change', () => {
+        setPath(getMode(), path, input.value);
+        refresh();
+      }));
+
+      playground.querySelector('[data-playground-reset]')?.addEventListener('click', () => {
+        const original = originalThemes.find((theme) => theme.id === selectedTheme) ?? originalThemes[0]!;
+        getTheme().sourceColors = JSON.parse(JSON.stringify(original.sourceColors)) as PlaygroundTheme['sourceColors'];
         clearPreview();
-      }
-      syncInputs();
-    });
+        refresh();
+      });
 
-    document.addEventListener('astro:before-preparation', clearPreview);
+      playground.querySelector('[data-playground-copy]')?.addEventListener('click', async () => {
+        const configText = 'export default ' + JSON.stringify(currentConfig(), null, 2) + ';';
+        try {
+          await navigator.clipboard.writeText(configText);
+          if (status) status.textContent = 'Copied the ' + themeLabel() + ' theme configuration.';
+        } catch {
+          if (status) status.textContent = 'Clipboard unavailable. Open “View generated configuration” and copy it manually.';
+        }
+      });
 
-    const selected = document.documentElement.dataset.n0ctTheme;
-    if (selected && themes.some((theme) => theme.id === selected)) selectedTheme = selected;
-    refresh();
+      window.addEventListener('n0ct:theme-change', (event) => {
+        const detail = (event as CustomEvent<{ mode?: Mode; theme?: string }>).detail;
+        if (detail.mode === 'light' || detail.mode === 'dark') selectedMode = detail.mode;
+        if (detail.theme && themes.some((theme) => theme.id === detail.theme) && detail.theme !== selectedTheme) {
+          selectedTheme = detail.theme;
+          clearPreview();
+        }
+        syncInputs();
+      });
+
+      document.addEventListener('astro:before-preparation', clearPreview);
+
+      const selected = document.documentElement.dataset.n0ctTheme;
+      if (selected && themes.some((theme) => theme.id === selected)) selectedTheme = selected;
+      refresh();
     });
   }
 
@@ -362,10 +592,8 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
     padding: clamp(0.85rem, 2vw, 1.25rem);
     border: 1px solid var(--n0ct-border);
     border-radius: var(--n0ct-radius-lg);
-    background:
-      linear-gradient(145deg, color-mix(in srgb, var(--n0ct-secondary-500) 5%, transparent), transparent 60%),
-      var(--n0ct-surface);
-    box-shadow: var(--n0ct-shadow-soft);
+    background: var(--n0ct-gradient-card), var(--n0ct-surface);
+    box-shadow: var(--n0ct-shadow-card);
   }
 
   .n0ct-playground-toolbar,
@@ -432,11 +660,59 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
 
   .n0ct-playground-controls {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.7rem;
+    gap: 0.8rem;
     margin-block: 1.1rem 0.5rem;
     padding-block: 1rem;
     border-block: 1px solid var(--n0ct-border);
+  }
+
+  .n0ct-playground-selects {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+
+  .n0ct-playground-core-fields,
+  .n0ct-playground-field-grid,
+  .n0ct-playground-effect-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  .n0ct-playground-advanced,
+  .n0ct-playground-role-group {
+    min-width: 0;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid var(--n0ct-border);
+    border-radius: var(--n0ct-radius-sm);
+    background: var(--n0ct-surface-elevated);
+  }
+
+  .n0ct-playground-advanced > summary,
+  .n0ct-playground-role-group > summary {
+    color: var(--n0ct-text-primary);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .n0ct-playground-advanced > [data-playground-color-groups],
+  .n0ct-playground-advanced > [data-playground-effect-groups] {
+    display: grid;
+    gap: 0.55rem;
+    margin-block-start: 0.65rem;
+  }
+
+  .n0ct-playground-role-group .n0ct-playground-field-grid,
+  .n0ct-playground-role-group .n0ct-playground-effect-grid {
+    margin-block-start: 0.65rem;
+  }
+
+  .n0ct-playground-help {
+    margin: 0.55rem 0 0;
+    color: var(--n0ct-text-muted);
+    font-size: 0.72rem;
   }
 
   .n0ct-playground-field {
@@ -489,6 +765,29 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
   .n0ct-playground-color span { display: grid; min-width: 0; gap: 0.1rem; }
   .n0ct-playground-color strong { font-size: 0.77rem; text-transform: capitalize; }
   .n0ct-playground-color small { color: var(--n0ct-text-muted); font: 0.65rem var(--sl-font-mono); }
+
+  .n0ct-playground-effect {
+    display: grid;
+    min-width: 0;
+    gap: 0.3rem;
+    color: var(--n0ct-text-muted);
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  .n0ct-playground-effect input {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 2.25rem;
+    padding: 0.4rem 0.5rem;
+    border: 1px solid var(--n0ct-border);
+    border-radius: var(--n0ct-radius-xs);
+    color: var(--n0ct-text-primary);
+    background: var(--n0ct-surface);
+    font: 0.68rem var(--sl-font-mono);
+  }
+
+  .n0ct-playground-callouts { display: grid; gap: 0.45rem; }
 
   .n0ct-playground-status {
     min-height: 1.2rem;
@@ -579,14 +878,18 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
   .n0ct-code-string { color: var(--n0ct-code-syntax-string); }
 
   @media (min-width: 48rem) {
-    .n0ct-playground-controls {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
+    .n0ct-playground-core-fields,
+    .n0ct-playground-field-grid,
+    .n0ct-playground-effect-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
 
   @media (max-width: 38rem) {
     .n0ct-playground-toolbar { flex-direction: column; }
-    .n0ct-playground-preview-grid { grid-template-columns: 1fr; }
+    .n0ct-playground-preview-grid,
+    .n0ct-playground-selects,
+    .n0ct-playground-core-fields,
+    .n0ct-playground-field-grid,
+    .n0ct-playground-effect-grid { grid-template-columns: 1fr; }
     .n0ct-playground-actions { width: 100%; }
   }
 </style>

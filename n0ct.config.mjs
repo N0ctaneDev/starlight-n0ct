@@ -121,6 +121,106 @@ const config = {
         },
       },
     },
+
+      catppuccin: {
+        label: 'Catppuccin',
+        colors: {
+          dark: {
+            palette: {
+              primary: '#CBA6F7', secondary: '#F5C2E7', accent: '#89DCEB',
+              surface: '#313244', text: '#CDD6F4', highlight: '#89B4FA',
+              highlightText: '#1E1E2E', background: '#1E1E2E',
+            },
+            codePalette: {
+              background: '#1E1E2E', foreground: '#CDD6F4',
+              comment: '#6C7086', keyword: '#CBA6F7', string: '#A6E3A1',
+              number: '#FAB387', function: '#89B4FA', type: '#F9E2AF',
+              variable: '#CDD6F4', tag: '#F38BA8', attribute: '#89DCEB',
+              punctuation: '#BAC2DE', invalid: '#F38BA8',
+            },
+          },
+          light: {
+            palette: {
+              primary: '#8839EF', secondary: '#EA76CB', accent: '#179299',
+              surface: '#E6E9EF', text: '#4C4F69', highlight: '#1E66F5',
+              highlightText: '#FFFFFF', background: '#EFF1F5',
+            },
+            codePalette: {
+              background: '#EFF1F5', foreground: '#4C4F69',
+              comment: '#9CA0B0', keyword: '#8839EF', string: '#40A02B',
+              number: '#FE640B', function: '#1E66F5', type: '#DF8E1D',
+              variable: '#4C4F69', tag: '#D20F39', attribute: '#179299',
+              punctuation: '#5C5F77', invalid: '#D20F39',
+            },
+          },
+        },
+      },
+      'rose-pine': {
+        label: 'Rosé Pine',
+        colors: {
+          dark: {
+            palette: {
+              primary: '#C4A7E7', secondary: '#EBBCBA', accent: '#9CCFD8',
+              surface: '#1F1D2E', text: '#E0DEF4', highlight: '#403D52',
+              highlightText: '#E0DEF4', background: '#191724',
+            },
+            codePalette: {
+              background: '#191724', foreground: '#E0DEF4',
+              comment: '#6E6A86', keyword: '#C4A7E7', string: '#9CCFD8',
+              number: '#F6C177', function: '#31748F', type: '#EBBCBA',
+              variable: '#E0DEF4', tag: '#EB6F92', attribute: '#9CCFD8',
+              punctuation: '#908CAA', invalid: '#EB6F92',
+            },
+          },
+          light: {
+            palette: {
+              primary: '#907AA9', secondary: '#D7827E', accent: '#56949F',
+              surface: '#FFFAF3', text: '#464261', highlight: '#CEC9D6',
+              highlightText: '#464261', background: '#FAF4ED',
+            },
+            codePalette: {
+              background: '#FAF4ED', foreground: '#464261',
+              comment: '#9893A5', keyword: '#907AA9', string: '#286983',
+              number: '#EA9D34', function: '#286983', type: '#D7827E',
+              variable: '#464261', tag: '#B4637A', attribute: '#56949F',
+              punctuation: '#797593', invalid: '#B4637A',
+            },
+          },
+        },
+      },
+      dracula: {
+        label: 'Dracula',
+        colors: {
+          dark: {
+            palette: {
+              primary: '#BD93F9', secondary: '#FF79C6', accent: '#8BE9FD',
+              surface: '#343746', text: '#F8F8F2', highlight: '#44475A',
+              highlightText: '#F8F8F2', background: '#282A36',
+            },
+            codePalette: {
+              background: '#282A36', foreground: '#F8F8F2',
+              comment: '#6272A4', keyword: '#FF79C6', string: '#F1FA8C',
+              number: '#FFB86C', function: '#50FA7B', type: '#8BE9FD',
+              variable: '#F8F8F2', tag: '#FF79C6', attribute: '#8BE9FD',
+              punctuation: '#F8F8F2', invalid: '#FF5555',
+            },
+          },
+          light: {
+            palette: {
+              primary: '#644AC9', secondary: '#A3144D', accent: '#036A96',
+              surface: '#ECE9DF', text: '#1F1F1F', highlight: '#CFCFDE',
+              highlightText: '#1F1F1F', background: '#FFFBEB',
+            },
+            codePalette: {
+              background: '#FFFBEB', foreground: '#1F1F1F',
+              comment: '#6C664B', keyword: '#A3144D', string: '#846E15',
+              number: '#A34D14', function: '#14710A', type: '#036A96',
+              variable: '#1F1F1F', tag: '#A3144D', attribute: '#036A96',
+              punctuation: '#1F1F1F', invalid: '#CB3A2A',
+            },
+          },
+        },
+      },
     glow: 'balanced',
     contentWidth: '58rem',
     sidebarWidth: '17rem',

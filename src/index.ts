@@ -34,6 +34,7 @@ export type {
   N0ctThemeSemanticColors,
   N0ctThemeCodeOverrides,
   N0ctThemeCodePalette,
+  N0ctThemeEffects,
   N0ctThemeConfig,
   N0ctThemeDefinition,
 } from './types.js';

@@ -33,7 +33,7 @@ const resolveHref = (href: string) => href.startsWith('/') && !href.startsWith('
 <style>
   .n0ct-site-footer { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:1rem; padding:1.25rem 0 1.7rem; margin-top:1.1rem; border-top:1px solid var(--n0ct-border); color:var(--n0ct-text-muted); font-size:.82rem; }
   .n0ct-site-footer__brand,.n0ct-site-footer__links,.n0ct-site-footer__icons { display:flex; align-items:center; gap:.85rem; }
-  .n0ct-site-footer__wordmark { display:grid; place-items:center; width:1.8rem; height:1.8rem; border-radius:.55rem; color:white; font-size:1rem; font-weight:800; text-decoration:none; background:var(--n0ct-gradient-brand); box-shadow:0 0 .9rem color-mix(in srgb,var(--n0ct-primary-500) 42%,transparent); }
+  .n0ct-site-footer__wordmark { display:grid; place-items:center; width:1.8rem; height:1.8rem; border-radius:.55rem; color:var(--n0ct-text-on-accent); font-size:1rem; font-weight:800; text-decoration:none; background:var(--n0ct-gradient-brand); box-shadow:var(--n0ct-shadow-wordmark); }
   .n0ct-site-footer a:not(.n0ct-site-footer__wordmark) { color:var(--n0ct-text-secondary); text-decoration:none; }
   .n0ct-site-footer a:hover { color:var(--n0ct-text-accent); }
   .n0ct-site-footer__icons a { display:grid; place-items:center; width:1.9rem; height:1.9rem; border:1px solid var(--n0ct-border); border-radius:.55rem; }

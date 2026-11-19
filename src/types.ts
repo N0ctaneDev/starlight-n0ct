@@ -218,6 +218,47 @@ export interface N0ctThemeCodePalette {
   invalid?: string;
 }
 
+export interface N0ctThemeEffects {
+  /** CSS gradient treatments used across the interface. Values accept CSS gradients or color values. */
+  gradients?: {
+    brand?: string;
+    brandSoft?: string;
+    monochrome?: string;
+    accent?: string;
+    canvas?: string;
+    shimmer?: string;
+    callout?: string;
+    card?: string;
+    cardHover?: string;
+    steps?: string;
+    fileTree?: string;
+    sidebar?: string;
+    sidebarActive?: string;
+    versionSelect?: string;
+    scrollbar?: string;
+    scrollbarHover?: string;
+    divider?: string;
+  };
+  /** CSS box-shadow values used by shared components and overlays. */
+  shadows?: {
+    soft?: string;
+    float?: string;
+    callout?: string;
+    card?: string;
+    cardHover?: string;
+    control?: string;
+    popover?: string;
+    sidebar?: string;
+    sidebarActive?: string;
+    scrollbar?: string;
+    scrollbarHover?: string;
+    focus?: string;
+    tab?: string;
+    wordmark?: string;
+    step?: string;
+  };
+}
+
 export interface N0ctThemeMode {
   /** Four core colors plus up to four optional refinement colors. */
   palette?: N0ctThemePalette;
@@ -227,6 +268,8 @@ export interface N0ctThemeMode {
   semantic?: Partial<Record<N0ctThemeSemantic, N0ctThemeSemanticColors>>;
   /** Optional role overrides. Unset roles are derived from the palette. */
   overrides?: N0ctThemeOverrides;
+  /** Optional per-mode gradients and shadows used by shared UI components. */
+  effects?: N0ctThemeEffects;
 }
 
 export interface N0ctThemeColors {
