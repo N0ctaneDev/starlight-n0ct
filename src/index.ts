@@ -86,7 +86,7 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
   const interfaceCss = fileURLToPath(new URL('./styles/interface.css', import.meta.url));
   const componentsCss = fileURLToPath(new URL('./styles/components.css', import.meta.url));
   const component = (name: string) => fileURLToPath(new URL(`./components/${name}.astro`, import.meta.url));
-  const themeComponents = {
+  const themeComponents: Record<string, string> = {
     // Blog and Versions both override ThemeSelect. The composed N0ctane
     // variants render their public components alongside the N0ctane toggle.
     // Intentional override: starlight-versions normally places VersionSelect in the header; VersionedSidebar renders its public selector in the sidebar instead.
@@ -98,6 +98,11 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     Footer: component('Footer'),
     Sidebar: component(config.versioning ? 'VersionedSidebar' : 'Sidebar'),
   };
+  // starlight-versions and starlight-llm-actions both override PageTitle.
+  // Compose their public components explicitly so neither plugin silently wins.
+  if (config.integrations?.llmActions !== false) {
+    themeComponents.PageTitle = component(config.versioning ? 'VersionedPageTitle' : 'PageTitle');
+  }
 
   const advancedExpressiveCode = typeof advanced.expressiveCode === 'object' && advanced.expressiveCode !== null
     ? advanced.expressiveCode
@@ -173,6 +178,7 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     ...starlightDefaults,
     ...advancedStarlight,
     title: config.title,
+    favicon: config.favicon ?? advancedStarlight.favicon ?? '/favicon.svg',
     ...(config.description ? { description: config.description } : {}),
     ...(!usesSidebarTopicsPlugin
       ? { sidebar: advancedSidebar ?? (normalizedSidebar as StarlightUserConfig['sidebar']) }
