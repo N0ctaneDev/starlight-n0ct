@@ -51,14 +51,14 @@ function themeBootstrapScript(
     defaultTheme: theme.defaultTheme,
     themes: theme.themes.map(({ id }) => id),
     favicon: fallbackFavicon,
-    favicons: Object.fromEntries(theme.themes
-      .filter((entry): entry is typeof entry & { favicon: string } => Boolean(entry.favicon))
-      .map(({ id, favicon }) => [id, favicon])),
-    baseUrl: (baseUrl || '/').replace(/\\/?$/, '/'),
+    favicons: Object.fromEntries(theme.themes.flatMap(({ id, favicon }) =>
+      favicon ? [[id, favicon]] : [],
+    )),
+    baseUrl: (baseUrl || '/').replace(/\/?$/, '/'),
   }).replace(/</g, '\\u003c');
 
-  return \`(() => {
-    const settings = \${settingsLiteral};
+  return `(() => {
+    const settings = ${settingsLiteral};
     const normalize = (preferences) => ({
       theme: settings.themes.includes(preferences?.theme)
         ? preferences.theme
@@ -91,7 +91,7 @@ function themeBootstrapScript(
       const path = settings.favicons[next.theme] || settings.favicon || '/favicon.svg';
       const href = /^(?:https?:|data:)/i.test(path)
         ? path
-        : settings.baseUrl + path.replace(/^\\/+/, '');
+        : settings.baseUrl + path.replace(/^\/+/, '');
       let links = Array.from(targetDocument.querySelectorAll('link[rel~="icon"]'));
       if (links.length === 0 && targetDocument.head) {
         const link = targetDocument.createElement('link');
@@ -117,7 +117,7 @@ function themeBootstrapScript(
         });
       });
     }
-  })();\`;
+  })();`;
 }
 
 export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
