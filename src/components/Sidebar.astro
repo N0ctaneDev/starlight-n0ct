@@ -42,48 +42,64 @@ const settings = (Astro.locals as any).n0ctane ?? {};
       );
     }
 
-    let scrollButtonPositionFrame = 0;
-    const scrollButtonBottomGap = 40;
+    let n0ctMainFrame: HTMLElement | null = null;
+    let n0ctMainFrameObserver: MutationObserver | null = null;
+    let n0ctScrollToTopButton: HTMLButtonElement | null = null;
+    let n0ctScrollButtonBaseTransition = '';
 
-    function updateScrollToTopButtonPosition() {
-      scrollButtonPositionFrame = 0;
+    function getMainFrameTranslateX(mainFrame: HTMLElement) {
+      const transform = mainFrame.style.transform.trim();
+      if (!transform || transform === 'none') return 0;
 
+      // starlight-sidebar-swipe uses translateX(100vw) for menu transitions
+      // and pixel values while a finger is dragging.
+      const match = transform.match(/^translateX\(\s*(-?(?:\d+\.?\d*|\.\d+))(px|vw|%)?\s*\)$/i);
+      if (match) {
+        const value = Number(match[1]);
+        switch (match[2]) {
+          case 'vw': return (value / 100) * window.innerWidth;
+          case '%': return (value / 100) * mainFrame.offsetWidth;
+          default: return value;
+        }
+      }
+
+      const computed = getComputedStyle(mainFrame).transform;
+      return computed === 'none' ? 0 : new DOMMatrixReadOnly(computed).m41;
+    }
+
+    function syncScrollToTopButtonWithSwipe() {
       const button = document.getElementById('scroll-to-top-button') as HTMLButtonElement | null;
       const mainFrame = document.querySelector<HTMLElement>('.main-frame');
-      if (!button || !mainFrame || !mainFrame.contains(button)) return;
+      if (!button || !mainFrame) return;
 
-      // main-frame is translated by starlight-sidebar-swipe. That transform
-      // becomes the containing block for fixed descendants, so a plain
-      // bottom: 40px would pin the button to the end of the document content.
-      // Convert the visual viewport's bottom edge into main-frame coordinates.
-      const frameTop = mainFrame.getBoundingClientRect().top + mainFrame.clientTop;
-      const viewport = window.visualViewport;
-      const viewportBottom = viewport
-        ? viewport.offsetTop + viewport.height
-        : window.innerHeight;
-      // offsetHeight ignores the plugin's scale(0) hidden-state transform.
-      const top = viewportBottom - frameTop - button.offsetHeight - scrollButtonBottomGap;
-
-      button.style.setProperty('top', `${Math.max(0, top)}px`, 'important');
-      button.style.setProperty('bottom', 'auto', 'important');
-    }
-
-    function scheduleScrollToTopButtonPosition() {
-      if (scrollButtonPositionFrame) return;
-      scrollButtonPositionFrame = window.requestAnimationFrame(updateScrollToTopButtonPosition);
-    }
-
-    function relocateScrollToTopButton() {
-      const button = document.getElementById('scroll-to-top-button');
-      const mainFrame = document.querySelector<HTMLElement>('.main-frame');
-
-      // The scroll plugin appends this fixed button to body. Keep it inside the
-      // page content layer so it follows the same transform as the page during
-      // a sidebar swipe instead of remaining fixed over the revealed sidebar.
-      if (button && mainFrame && !mainFrame.contains(button)) {
-        mainFrame.appendChild(button);
+      // Keep the button under body so position:fixed remains viewport-relative.
+      // Mirror only the horizontal swipe offset using the independent CSS
+      // translate property, preserving the plugin's own scale() transform.
+      if (button.parentElement !== document.body) {
+        document.body.appendChild(button);
       }
-      scheduleScrollToTopButtonPosition();
+
+      if (button !== n0ctScrollToTopButton) {
+        n0ctScrollToTopButton = button;
+        n0ctScrollButtonBaseTransition = getComputedStyle(button).transition;
+      }
+
+      if (mainFrame !== n0ctMainFrame) {
+        n0ctMainFrameObserver?.disconnect();
+        n0ctMainFrame = mainFrame;
+        n0ctMainFrameObserver ??= new MutationObserver(syncScrollToTopButtonWithSwipe);
+        n0ctMainFrameObserver.observe(mainFrame, {
+          attributes: true,
+          attributeFilter: ['style'],
+        });
+      }
+
+      const frameTransition = mainFrame.style.transition.trim();
+      const transitionMatch = frameTransition.match(/^transform\s+(.+)$/);
+      button.style.transition = transitionMatch
+        ? `${n0ctScrollButtonBaseTransition}, translate ${transitionMatch[1]}`
+        : n0ctScrollButtonBaseTransition;
+      button.style.translate = `${getMainFrameTranslateX(mainFrame)}px 0`;
     }
 
     function setN0ctMobileMenuState(open: boolean) {
@@ -99,7 +115,7 @@ const settings = (Astro.locals as any).n0ctane ?? {};
     }
 
     function syncN0ctMobileMenuState() {
-      relocateScrollToTopButton();
+      syncScrollToTopButtonWithSwipe();
       setN0ctMobileMenuState(isMobileMenuOpen());
     }
 
@@ -140,11 +156,6 @@ const settings = (Astro.locals as any).n0ctane ?? {};
       const trigger = target.closest('[popovertarget="starlight__sidebar"], [aria-controls="starlight__sidebar"]');
       if (trigger) requestAnimationFrame(syncN0ctMobileMenuState);
     }, true);
-
-    window.addEventListener('scroll', scheduleScrollToTopButtonPosition, { passive: true });
-    window.addEventListener('resize', scheduleScrollToTopButtonPosition, { passive: true });
-    window.visualViewport?.addEventListener('resize', scheduleScrollToTopButtonPosition, { passive: true });
-    window.visualViewport?.addEventListener('scroll', scheduleScrollToTopButtonPosition, { passive: true });
 
     mobileMenuMedia.addEventListener('change', syncN0ctMobileMenuState);
     document.addEventListener('astro:page-load', bindN0ctSidebarPanel);
