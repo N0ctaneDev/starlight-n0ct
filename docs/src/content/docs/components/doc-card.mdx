@@ -46,7 +46,7 @@ Omit `href` to render an article container. This mode supports slotted content.
 | href | string | — | Destination; when present the card becomes an anchor |
 | external | boolean | false | Opens a linked card in a new tab and adds safe rel attributes |
 
-The component does not validate or rewrite the destination. Use root-relative paths for local pages and complete HTTPS URLs for external destinations.
+The component prefixes root-relative internal paths (for example, `/guides/`) with Astro's configured `base` automatically. This uses Astro's `import.meta.env.BASE_URL`, so the same card works both at the domain root and when deployed below a subpath. Already-prefixed paths are not duplicated. Absolute URLs, protocol-relative URLs, fragments, and other non-root-relative destinations are left unchanged. Use complete HTTPS URLs for external destinations.
 
 ## CSS reference
 
