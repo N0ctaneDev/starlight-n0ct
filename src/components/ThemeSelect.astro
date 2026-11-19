@@ -6,6 +6,10 @@ const themeFavicons = Object.fromEntries(
   (themeSettings.themes ?? []).filter((theme: { id: string; favicon?: string }) => theme.favicon)
     .map((theme: { id: string; favicon: string }) => [theme.id, theme.favicon]),
 );
+const themeLogos = Object.fromEntries(
+  (themeSettings.themes ?? []).filter((theme: { id: string; logo?: { dark?: string; light?: string } }) => theme.logo)
+    .map((theme: { id: string; logo: { dark?: string; light?: string } }) => [theme.id, theme.logo]),
+);
 const baseUrl = import.meta.env.BASE_URL || '/';
 const themes = Array.isArray(themeSettings.themes) && themeSettings.themes.length
   ? themeSettings.themes
@@ -17,6 +21,7 @@ const themes = Array.isArray(themeSettings.themes) && themeSettings.themes.lengt
   data-default-theme={defaultTheme}
   data-global-favicon={globalFavicon}
   data-theme-favicons={JSON.stringify(themeFavicons)}
+  data-theme-logos={JSON.stringify(themeLogos)}
   data-base-url={baseUrl}
 >
 
@@ -118,6 +123,26 @@ const themes = Array.isArray(themeSettings.themes) && themeSettings.themes.lengt
     document.querySelectorAll<HTMLImageElement>('[data-n0ct-themed-favicon]').forEach((image) => { image.src = href; });
   }
 
+  function applyThemeLogo(theme: string, mode: ThemeMode): void {
+    const control = document.querySelector<HTMLElement>('[data-n0ct-theme-control]');
+    if (!control) return;
+
+    let overrides: Record<string, { dark?: string; light?: string }> = {};
+    try { overrides = JSON.parse(control.dataset.themeLogos ?? '{}'); } catch { /* Keep the configured Starlight logo. */ }
+
+    const configured = overrides[theme];
+    const path = configured?.[mode] ?? configured?.[mode === 'dark' ? 'light' : 'dark'];
+    const base = (control.dataset.baseUrl ?? '/').replace(/\\/?$/, '/');
+    const resolve = (value: string) => /^(?:https?:|data:)/i.test(value)
+      ? value
+      : base + value.replace(/^\\/+/, '');
+
+    document.querySelectorAll<HTMLImageElement>('[data-n0ct-themed-logo]').forEach((image) => {
+      if (path) image.src = resolve(path);
+      else if (image.dataset.n0ctLogoFallback) image.src = image.dataset.n0ctLogoFallback;
+    });
+  }
+
   function applyPreferences(preferences: ThemePreferences, persist = true): void {
     const validThemes = getThemeIds();
     const theme = validThemes.includes(preferences.theme) ? preferences.theme : getDefaultTheme();
@@ -128,6 +153,7 @@ const themes = Array.isArray(themeSettings.themes) && themeSettings.themes.lengt
     document.documentElement.dataset.n0ctTheme = theme;
     document.documentElement.dataset.n0ctCodeTheme = theme + '-' + mode;
     applyFavicon(theme);
+    applyThemeLogo(theme, mode);
 
     getThemeSelects().forEach((select) => { select.value = theme; });
     document.querySelectorAll<HTMLElement>('[data-n0ct-theme-control]').forEach((control) => {
