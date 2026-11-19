@@ -9,13 +9,7 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background-image: linear-gradient(
-    115deg,
-    transparent 0%,
-    color-mix(in srgb, var(--n0ct-primary-500) 10%, transparent) 35%,
-    color-mix(in srgb, var(--n0ct-accent-500) 9%, transparent) 52%,
-    transparent 75%
-  );
+  background-image: var(--n0ct-gradient-shimmer);
   background-size: 220% 100%;
   transition: background-position 360ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
@@ -30,9 +24,7 @@
 
 .noct-glow-hover:hover {
   border-color: color-mix(in srgb, var(--n0ct-primary-500) 44%, var(--n0ct-border));
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--n0ct-primary-500) 12%, transparent),
-    0 10px 28px color-mix(in srgb, var(--n0ct-secondary-500) 10%, transparent);
+  box-shadow: var(--n0ct-shadow-card-hover);
   transform: translateY(-1px);
 }
 
@@ -43,10 +35,8 @@
   border: 1px solid var(--n0ct-border);
   border-inline-start: 3px solid var(--callout-accent);
   border-radius: var(--n0ct-radius-md);
-  background:
-    linear-gradient(125deg, color-mix(in srgb, var(--callout-accent) 8%, transparent), transparent 62%),
-    var(--n0ct-surface);
-  box-shadow: 0 5px 18px rgb(0 0 0 / 0.07);
+  background: var(--n0ct-gradient-callout), var(--n0ct-surface);
+  box-shadow: var(--n0ct-shadow-callout);
   font-size: 0.92rem;
   line-height: 1.65;
 }
@@ -88,9 +78,7 @@
   border: 1px solid var(--n0ct-border);
   border-radius: var(--n0ct-radius-lg);
   color: var(--n0ct-text-secondary);
-  background:
-    linear-gradient(145deg, color-mix(in srgb, var(--n0ct-secondary-500) 6%, transparent), transparent 58%),
-    var(--n0ct-surface);
+  background: var(--n0ct-gradient-card), var(--n0ct-surface);
   text-decoration: none;
   isolation: isolate;
 }
@@ -161,10 +149,8 @@
   border: 1px solid var(--n0ct-border);
   border-radius: var(--n0ct-radius-lg);
   color: var(--n0ct-text-secondary);
-  background:
-    linear-gradient(145deg, color-mix(in srgb, var(--n0ct-secondary-500) 6%, transparent), transparent 58%),
-    var(--n0ct-surface);
-  box-shadow: var(--n0ct-shadow-soft);
+  background: var(--n0ct-gradient-card), var(--n0ct-surface);
+  box-shadow: var(--n0ct-shadow-card);
   isolation: isolate;
   transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background-color 180ms ease;
 }
@@ -212,9 +198,7 @@
 
 .sl-markdown-content :is(.card, .sl-link-card):hover {
   border-color: color-mix(in srgb, var(--n0ct-primary-500) 44%, var(--n0ct-border));
-  background:
-    linear-gradient(145deg, color-mix(in srgb, var(--n0ct-secondary-500) 9%, transparent), transparent 58%),
-    var(--n0ct-surface);
+  background: var(--n0ct-gradient-card-hover), var(--n0ct-surface);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--n0ct-primary-500) 12%, transparent),
     0 10px 28px color-mix(in srgb, var(--n0ct-secondary-500) 10%, transparent);
@@ -233,10 +217,7 @@
   padding: 1.15rem 1.2rem 0.8rem;
   border: 1px solid var(--n0ct-border);
   border-radius: var(--n0ct-radius-lg);
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--n0ct-secondary-500) 9%, transparent), transparent 54%),
-    linear-gradient(315deg, color-mix(in srgb, var(--n0ct-accent-500) 6%, transparent), transparent 55%),
-    var(--n0ct-surface);
+  background: var(--n0ct-gradient-steps), var(--n0ct-surface);
   box-shadow: var(--n0ct-shadow-soft);
 }
 
@@ -246,13 +227,13 @@
 }
 
 .sl-markdown-content ol.sl-steps > li::before {
-  color: #fff !important;
+  color: var(--n0ct-steps-marker-text) !important;
   background: var(--n0ct-gradient-brand);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--n0ct-primary-500) 9%, transparent);
+  box-shadow: var(--n0ct-shadow-step);
 }
 
 .sl-markdown-content ol.sl-steps > li::after {
-  background: color-mix(in srgb, var(--n0ct-primary-500) 24%, var(--n0ct-border));
+  background: var(--n0ct-steps-connector);
 }
 
 .sl-markdown-content ol.sl-steps > li:last-child::after { display: none; }
@@ -287,9 +268,7 @@
   border: 1px solid var(--n0ct-border);
   border-radius: var(--n0ct-radius-md);
   color: var(--n0ct-text-secondary);
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--n0ct-secondary-500) 7%, transparent), transparent 58%),
-    var(--n0ct-surface-code);
+  background: var(--n0ct-gradient-file-tree), var(--n0ct-surface-code);
   box-shadow: var(--n0ct-shadow-soft);
   font-family: var(--sl-font-mono);
   font-size: 0.82rem;
@@ -354,9 +333,13 @@
 /* Interactive tabs are inserted into the code-frame header by starlight-codeblocks. */
 .expressive-code .frame .header:has(> .scb-tabs-list) {
   display: flex !important;
+  box-sizing: border-box;
   align-items: stretch !important;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
   justify-content: flex-start !important;
-  min-height: 2.8rem;
+  min-height: 2.55rem;
+  height: 2.55rem;
   padding-inline: 0 3rem !important;
   text-align: start;
 }
@@ -369,8 +352,11 @@
   justify-content: flex-start !important;
   width: 100%;
   min-width: 0;
-  min-height: 2.8rem;
-  height: auto;
+  box-sizing: border-box;
+  min-height: 2.55rem;
+  height: 2.55rem;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
   gap: 0;
   margin: 0 !important;
   padding: 0 !important;
@@ -392,10 +378,11 @@
   align-items: center;
   justify-content: flex-start;
   min-width: max-content;
-  min-height: 2.8rem;
-  height: auto;
+  box-sizing: border-box;
+  min-height: 2.55rem;
+  height: 2.55rem;
   margin: 0 !important;
-  padding: 0.68rem 1rem !important;
+  padding: 0.5rem 1rem !important;
   border: 0 !important;
   border-radius: 0 !important;
   color: var(--n0ct-code-tabs-text) !important;
@@ -426,7 +413,7 @@
 }
 
 .expressive-code .frame .header > .scb-tabs-list > [role='tab'][aria-selected='true'] {
-  margin-block-start: 0.24rem !important;
+  margin-block-start: 0 !important;
   border: 1px solid var(--n0ct-border) !important;
   border-bottom: 0 !important;
   border-radius: 0.58rem 0.58rem 0 0 !important;
@@ -449,12 +436,18 @@
 
 /* Keep the Expressive Code title tab shape, but move its accent from the top edge to an underline. */
 .expressive-code .frame.has-title:not(.is-terminal) > .header > .title {
+  position: relative;
+  align-self: stretch;
   border-radius: 0.58rem 0.58rem 0 0 !important;
   border-bottom: 0 !important;
 }
 
 .expressive-code .frame.has-title:not(.is-terminal) > .header > .title::after {
   inset: auto 0 0 !important;
+  inset-block-start: auto !important;
+  inset-block-end: 0 !important;
+  top: auto !important;
+  bottom: 0 !important;
   height: 2px !important;
   border: 0 !important;
   border-radius: 999px;
