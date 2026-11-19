@@ -32,7 +32,7 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
     <div class="n0ct-playground-heading">
       <span class="n0ct-playground-eyebrow">Interactive designer</span>
       <h3>Build a theme</h3>
-      <p>Edit the palette, semantic roles, code syntax, gradients, and shadows. The entire page below updates with the active values, including the real Starlight components and code frames.</p>
+      <p>Start with the core palette. Expand the advanced sections only when you need precise control over interface roles, syntax colors, or effects. The preview updates as you edit.</p>
     </div>
     <div class="n0ct-playground-actions">
       <button type="button" class="n0ct-playground-button n0ct-playground-button--quiet" data-playground-reset>Reset palette</button>
@@ -59,7 +59,7 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
       </label>
     </div>
     <div class="n0ct-playground-core-fields" data-playground-core-fields></div>
-    <details class="n0ct-playground-advanced" open>
+    <details class="n0ct-playground-advanced">
       <summary>Advanced color roles</summary>
       <div data-playground-color-groups></div>
     </details>
@@ -160,9 +160,9 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
       <span class="n0ct-playground-eyebrow">Code surface</span>
       <pre class="n0ct-playground-code-sample"><code><span class="n0ct-code-comment">// Palette-aware code sample</span>
 <span class="n0ct-code-keyword">const</span> theme = &#123;
-  primary: <span class="n0ct-code-string">'#F25CFF'</span>,
-  accent: <span class="n0ct-code-string">'#00E5FF'</span>,
-  surface: <span class="n0ct-code-string">'#131626'</span>,
+  primary: palette.primary,
+  accent: palette.accent,
+  surface: palette.surface,
 &#125;;
 <span class="n0ct-code-keyword">export default</span> theme;</code></pre>
     </div>
@@ -288,8 +288,8 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
     {
       label: 'Gradients',
       fields: [
-        ['Brand underline / text', 'effects.gradients.brand', '--n0ct-gradient-brand'],
-        ['Divider', 'effects.gradients.divider', '--n0ct-gradient-divider'],
+        ['Brand gradient (text and lines)', 'brandGradient', '--n0ct-gradient-brand'],
+        ['Divider override', 'effects.gradients.divider', '--n0ct-gradient-divider'],
         ['Brand soft fill', 'effects.gradients.brandSoft', '--n0ct-gradient-brand-soft'],
         ['Monochrome', 'effects.gradients.monochrome', '--n0ct-gradient-monochrome'],
         ['Accent', 'effects.gradients.accent', '--n0ct-gradient-accent'],
@@ -588,8 +588,10 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
 
 <style>
   .n0ct-theme-playground {
-    margin-block: 1.5rem 2rem;
-    padding: clamp(0.85rem, 2vw, 1.25rem);
+    display: grid;
+    gap: 1.35rem;
+    margin-block: 1.75rem 2.25rem;
+    padding: clamp(1rem, 2.8vw, 1.65rem);
     border: 1px solid var(--n0ct-border);
     border-radius: var(--n0ct-radius-lg);
     background: var(--n0ct-gradient-card), var(--n0ct-surface);
@@ -601,29 +603,36 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 1.25rem;
+  }
+
+  .n0ct-playground-heading {
+    display: grid;
+    min-width: 0;
+    gap: 0.45rem;
   }
 
   .n0ct-playground-heading h3,
   .n0ct-playground-preview-heading h3 {
-    margin: 0.12rem 0 0.35rem;
+    margin: 0;
     color: var(--n0ct-text-primary);
-    font-size: 1.15rem;
+    font-size: 1.22rem;
+    line-height: 1.3;
   }
 
   .n0ct-playground-heading p {
-    max-width: 44rem;
+    max-width: 46rem;
     margin: 0;
     color: var(--n0ct-text-muted);
-    font-size: 0.86rem;
-    line-height: 1.55;
+    font-size: 0.9rem;
+    line-height: 1.65;
   }
 
   .n0ct-playground-eyebrow {
     color: var(--n0ct-text-accent);
-    font-size: 0.66rem;
+    font-size: 0.68rem;
     font-weight: 800;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.11em;
     text-transform: uppercase;
   }
 
@@ -631,17 +640,18 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
   .n0ct-playground-button-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.45rem;
+    align-items: center;
+    gap: 0.6rem;
   }
 
   .n0ct-playground-button {
-    min-height: 2.2rem;
-    padding: 0.48rem 0.8rem;
+    min-height: 2.45rem;
+    padding: 0.55rem 0.9rem;
     border: 1px solid var(--n0ct-border-focus);
     border-radius: var(--n0ct-radius-sm);
     color: var(--n0ct-text-on-accent);
     background: var(--n0ct-accent-500);
-    font-size: 0.79rem;
+    font-size: 0.82rem;
     font-weight: 730;
     cursor: pointer;
     transition: transform 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
@@ -652,6 +662,13 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
     transform: translateY(-1px);
   }
 
+  .n0ct-playground-button:focus-visible,
+  .n0ct-playground-field :is(select, input):focus-visible,
+  .n0ct-playground-effect input:focus-visible {
+    outline: 2px solid var(--n0ct-border-focus);
+    outline-offset: 2px;
+  }
+
   .n0ct-playground-button--quiet {
     border-color: var(--n0ct-border);
     color: var(--n0ct-text-primary);
@@ -660,68 +677,87 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
 
   .n0ct-playground-controls {
     display: grid;
-    gap: 0.8rem;
-    margin-block: 1.1rem 0.5rem;
-    padding-block: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 0;
+    padding: 1.15rem 0;
     border-block: 1px solid var(--n0ct-border);
+  }
+
+  .n0ct-playground-selects,
+  .n0ct-playground-core-fields {
+    grid-column: 1 / -1;
   }
 
   .n0ct-playground-selects {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.7rem;
+    gap: 0.9rem;
   }
 
-  .n0ct-playground-core-fields,
-  .n0ct-playground-field-grid,
-  .n0ct-playground-effect-grid {
+  .n0ct-playground-core-fields {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.55rem;
+    gap: 0.75rem;
+  }
+
+  .n0ct-playground-core-fields > .n0ct-playground-role-group {
+    padding: 1rem;
+    border: 1px solid var(--n0ct-border);
+    border-radius: var(--n0ct-radius-md);
+    background: var(--n0ct-surface-elevated);
   }
 
   .n0ct-playground-advanced,
   .n0ct-playground-role-group {
     min-width: 0;
-    padding: 0.65rem 0.75rem;
+    padding: 0.9rem 1rem;
     border: 1px solid var(--n0ct-border);
-    border-radius: var(--n0ct-radius-sm);
+    border-radius: var(--n0ct-radius-md);
     background: var(--n0ct-surface-elevated);
   }
 
   .n0ct-playground-advanced > summary,
   .n0ct-playground-role-group > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
     color: var(--n0ct-text-primary);
-    font-size: 0.82rem;
-    font-weight: 700;
+    font-size: 0.86rem;
+    font-weight: 720;
     cursor: pointer;
+  }
+
+  .n0ct-playground-advanced[open] > summary,
+  .n0ct-playground-role-group[open] > summary {
+    margin-block-end: 0.85rem;
   }
 
   .n0ct-playground-advanced > [data-playground-color-groups],
   .n0ct-playground-advanced > [data-playground-effect-groups] {
     display: grid;
-    gap: 0.55rem;
-    margin-block-start: 0.65rem;
+    gap: 0.75rem;
   }
 
   .n0ct-playground-role-group .n0ct-playground-field-grid,
   .n0ct-playground-role-group .n0ct-playground-effect-grid {
-    margin-block-start: 0.65rem;
+    margin-block-start: 0.75rem;
   }
 
   .n0ct-playground-help {
-    margin: 0.55rem 0 0;
+    margin: 0.7rem 0 0.85rem;
     color: var(--n0ct-text-muted);
-    font-size: 0.72rem;
+    font-size: 0.78rem;
+    line-height: 1.5;
   }
 
   .n0ct-playground-field {
     display: flex;
     min-width: 0;
     flex-direction: column;
-    gap: 0.32rem;
+    gap: 0.45rem;
     color: var(--n0ct-text-muted);
-    font-size: 0.72rem;
+    font-size: 0.76rem;
     font-weight: 700;
   }
 
@@ -729,100 +765,142 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
   .n0ct-playground-field input[type="text"] {
     box-sizing: border-box;
     width: 100%;
-    min-height: 2.35rem;
-    padding: 0.45rem 0.6rem;
+    min-height: 2.55rem;
+    padding: 0.55rem 0.7rem;
     border: 1px solid var(--n0ct-border);
     border-radius: var(--n0ct-radius-sm);
     color: var(--n0ct-text-primary);
-    background: var(--n0ct-surface-elevated);
+    background: var(--n0ct-surface);
     font: inherit;
+  }
+
+  .n0ct-playground-field select option {
+    color: var(--n0ct-text-primary);
+    background: var(--n0ct-surface-elevated);
+  }
+
+  .n0ct-playground-field-grid,
+  .n0ct-playground-effect-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
   }
 
   .n0ct-playground-color {
     display: flex;
     min-width: 0;
+    min-height: 3.5rem;
     align-items: center;
-    gap: 0.55rem;
-    padding: 0.45rem 0.55rem;
+    gap: 0.7rem;
+    padding: 0.65rem 0.75rem;
     border: 1px solid var(--n0ct-border);
     border-radius: var(--n0ct-radius-sm);
     color: var(--n0ct-text-primary);
-    background: var(--n0ct-surface-elevated);
+    background: var(--n0ct-surface);
     cursor: pointer;
+    transition: border-color 150ms ease, background-color 150ms ease;
+  }
+
+  .n0ct-playground-color:hover {
+    border-color: var(--n0ct-border-focus);
+    background: var(--n0ct-interactive-hover);
   }
 
   .n0ct-playground-color input {
     flex: 0 0 auto;
-    width: 2rem;
-    height: 2rem;
+    width: 2.25rem;
+    height: 2.25rem;
     padding: 0;
     border: 0;
-    border-radius: 0.35rem;
+    border-radius: 0.4rem;
     background: transparent;
     cursor: pointer;
   }
 
-  .n0ct-playground-color span { display: grid; min-width: 0; gap: 0.1rem; }
-  .n0ct-playground-color strong { font-size: 0.77rem; text-transform: capitalize; }
-  .n0ct-playground-color small { color: var(--n0ct-text-muted); font: 0.65rem var(--sl-font-mono); }
+  .n0ct-playground-color span {
+    display: grid;
+    min-width: 0;
+    gap: 0.2rem;
+  }
+
+  .n0ct-playground-color strong {
+    font-size: 0.8rem;
+    text-transform: capitalize;
+  }
+
+  .n0ct-playground-color small {
+    color: var(--n0ct-text-muted);
+    font: 0.68rem var(--sl-font-mono);
+  }
 
   .n0ct-playground-effect {
     display: grid;
     min-width: 0;
-    gap: 0.3rem;
+    gap: 0.45rem;
     color: var(--n0ct-text-muted);
-    font-size: 0.7rem;
+    font-size: 0.76rem;
     font-weight: 700;
   }
 
   .n0ct-playground-effect input {
     box-sizing: border-box;
     width: 100%;
-    min-height: 2.25rem;
-    padding: 0.4rem 0.5rem;
+    min-height: 2.55rem;
+    padding: 0.55rem 0.65rem;
     border: 1px solid var(--n0ct-border);
-    border-radius: var(--n0ct-radius-xs);
+    border-radius: var(--n0ct-radius-sm);
     color: var(--n0ct-text-primary);
     background: var(--n0ct-surface);
-    font: 0.68rem var(--sl-font-mono);
+    font: 0.7rem var(--sl-font-mono);
   }
 
-  .n0ct-playground-callouts { display: grid; gap: 0.45rem; }
+  .n0ct-playground-callouts {
+    display: grid;
+    align-content: start;
+    gap: 0.7rem;
+  }
 
   .n0ct-playground-status {
-    min-height: 1.2rem;
-    color: var(--n0ct-text-muted);
-    font-size: 0.72rem;
+    min-height: 2rem;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--n0ct-border);
+    border-radius: var(--n0ct-radius-sm);
+    color: var(--n0ct-text-secondary);
+    background: var(--n0ct-surface-elevated);
+    font-size: 0.78rem;
+    line-height: 1.4;
   }
 
   .n0ct-playground-code {
-    margin-block: 0.7rem 1rem;
+    margin: 0;
     border: 1px solid var(--n0ct-border);
-    border-radius: var(--n0ct-radius-sm);
+    border-radius: var(--n0ct-radius-md);
     background: var(--n0ct-surface-code);
   }
 
   .n0ct-playground-code summary {
-    padding: 0.55rem 0.7rem;
+    padding: 0.8rem 1rem;
     color: var(--n0ct-text-secondary);
-    font-size: 0.76rem;
+    font-size: 0.8rem;
+    font-weight: 650;
     cursor: pointer;
   }
 
   .n0ct-playground-code pre {
-    max-height: 17rem;
+    max-height: 20rem;
     margin: 0;
-    padding: 0.8rem;
+    padding: 1rem;
     overflow: auto;
+    border-block-start: 1px solid var(--n0ct-border);
     color: var(--n0ct-code-foreground);
     background: transparent;
-    font: 0.68rem/1.5 var(--sl-font-mono);
+    font: 0.72rem/1.65 var(--sl-font-mono);
   }
 
   .n0ct-playground-preview {
     display: grid;
-    gap: 0.8rem;
-    padding-block-start: 0.4rem;
+    gap: 1.1rem;
+    padding-block-start: 0.25rem;
   }
 
   .n0ct-playground-preview-heading {
@@ -830,11 +908,13 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
   }
 
   .n0ct-playground-preview-mode {
-    padding: 0.3rem 0.55rem;
+    flex: 0 0 auto;
+    padding: 0.35rem 0.65rem;
     border: 1px solid var(--n0ct-border);
     border-radius: 999px;
     color: var(--n0ct-text-muted);
-    font-size: 0.67rem;
+    background: var(--n0ct-surface-elevated);
+    font-size: 0.72rem;
     white-space: nowrap;
   }
 
@@ -842,15 +922,15 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: start;
-    gap: 0.75rem;
+    gap: 1rem;
   }
 
   .n0ct-playground-sample-panel {
     display: grid;
     min-width: 0;
     align-content: start;
-    gap: 0.65rem;
-    padding: 0.9rem;
+    gap: 0.85rem;
+    padding: 1rem;
     border: 1px solid var(--n0ct-border);
     border-radius: var(--n0ct-radius-md);
     background: var(--n0ct-surface-elevated);
@@ -859,37 +939,68 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
   .n0ct-playground-sample-copy {
     margin: 0;
     color: var(--n0ct-text-secondary);
-    font-size: 0.82rem;
+    font-size: 0.86rem;
+    line-height: 1.55;
   }
 
   .n0ct-playground-code-sample {
     margin: 0;
-    padding: 0.8rem;
+    padding: 1rem;
     overflow-x: auto;
     border: 1px solid var(--n0ct-border);
     border-radius: var(--n0ct-radius-sm);
     color: var(--n0ct-code-foreground);
     background: var(--n0ct-code-background);
-    font: 0.72rem/1.6 var(--sl-font-mono);
+    font: 0.74rem/1.7 var(--sl-font-mono);
   }
 
   .n0ct-code-comment { color: var(--n0ct-code-syntax-comment); }
   .n0ct-code-keyword { color: var(--n0ct-code-syntax-keyword); }
   .n0ct-code-string { color: var(--n0ct-code-syntax-string); }
 
-  @media (min-width: 48rem) {
-    .n0ct-playground-core-fields,
-    .n0ct-playground-field-grid,
-    .n0ct-playground-effect-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (min-width: 58rem) {
+    .n0ct-playground-core-fields .n0ct-playground-field-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .n0ct-playground-role-group .n0ct-playground-field-grid,
+    .n0ct-playground-role-group .n0ct-playground-effect-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 
-  @media (max-width: 38rem) {
-    .n0ct-playground-toolbar { flex-direction: column; }
-    .n0ct-playground-preview-grid,
+  @media (max-width: 52rem) {
+    .n0ct-playground-toolbar {
+      flex-direction: column;
+    }
+
+    .n0ct-playground-controls {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .n0ct-playground-advanced,
     .n0ct-playground-selects,
-    .n0ct-playground-core-fields,
-    .n0ct-playground-field-grid,
-    .n0ct-playground-effect-grid { grid-template-columns: 1fr; }
+    .n0ct-playground-core-fields {
+      grid-column: 1;
+    }
+
+    .n0ct-playground-preview-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
     .n0ct-playground-actions { width: 100%; }
+  }
+
+  @media (max-width: 34rem) {
+    .n0ct-playground-selects,
+    .n0ct-playground-core-fields .n0ct-playground-field-grid,
+    .n0ct-playground-role-group .n0ct-playground-field-grid,
+    .n0ct-playground-role-group .n0ct-playground-effect-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .n0ct-playground-actions { width: 100%; }
+    .n0ct-playground-actions .n0ct-playground-button { flex: 1 1 auto; }
+    .n0ct-playground-preview-heading { align-items: flex-start; flex-direction: column; }
   }
 </style>

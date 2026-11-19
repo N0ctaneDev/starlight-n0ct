@@ -5,7 +5,7 @@ description: Named palettes, two-state appearance preferences, semantic tokens, 
 
 import ThemePlayground from '../../../components/ThemePlayground.astro';
 
-N0ctane separates **palette identity** from **appearance mode**. A visitor chooses a named palette such as N0ctane, GitHub, Catppuccin, Rosé Pine, or Dracula, then chooses Light or Dark. Both settings apply to the site UI and the matching Expressive Code syntax theme.
+N0ctane separates **palette identity** from **appearance mode**. A visitor chooses a named palette such as N0ctane, GitHub, Catppuccin, Rosé Pine, Dracula, Nord, or Flexoki, then chooses Light or Dark. Both settings apply to the site UI and the matching Expressive Code syntax theme.
 
 ## Live palette playground
 
@@ -80,11 +80,11 @@ Each mode requires only four core colors:
 
 Secondary, highlight, highlight text, and page background are derived when omitted. You can still provide those optional palette values to fine-tune the result.
 
-The demo also includes **Catppuccin** (Mocha dark / Latte light), **Rosé Pine** (Main dark / Dawn light), and **Dracula** (Dracula Classic dark / Alucard Classic light), each with its own code syntax palette. These are complete starting presets; every color and effect remains editable.
+The demo also includes **Catppuccin** (Mocha dark / Latte light), **Rosé Pine** (Main dark / Dawn light), **Dracula** (Dracula Classic dark / Alucard Classic light), **Nord**, and **Flexoki**. These are complete starting presets with separate dark and light palettes; every color and effect remains editable.
 
 ## Appearance and saved preferences
 
-The theme switcher has two independent controls. Its icon cycles between **Dark** and **Light**; its dropdown selects the named palette. Choosing GitHub while Dark is active applies GitHub's dark palette and GitHub's dark syntax theme. Changing to Light then selects GitHub's light values.
+The theme switcher has two independent controls. Its icon cycles between **Dark** and **Light**; a native HTML select chooses the named palette. Choosing GitHub while Dark is active applies GitHub's dark palette and GitHub's dark syntax theme. Changing to Light then selects GitHub's light values.
 
 Preferences are saved in `localStorage` under `n0ct-theme-preferences` as a `{ mode, theme }` object. There is no automatic/system mode. The previous `starlight-theme` value is kept in sync for compatibility with integrations that read Starlight's appearance key.
 
@@ -201,6 +201,29 @@ theme: {
   },
 },
 ~~~
+
+## Brand gradients
+
+Set `brandGradient` inside each mode to define the gradient shared by branded text and divider lines. Dark and light values are independent; the selected named palette supplies both.
+
+~~~js
+theme: {
+  themes: {
+    n0ctane: {
+      colors: {
+        dark: {
+          brandGradient: 'linear-gradient(90deg, #F25CFF, #00E5FF)',
+        },
+        light: {
+          brandGradient: 'linear-gradient(90deg, #B72DBF, #00AFC2)',
+        },
+      },
+    },
+  },
+},
+~~~
+
+The fine-grained `effects.gradients.brand` and `effects.gradients.divider` settings remain available and take precedence when provided.
 
 ## Gradients and shadows
 
