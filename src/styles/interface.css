@@ -1,11 +1,11 @@
 html {
   scroll-behavior: smooth;
-  scrollbar-color: var(--n0ct-gradient-scrollbar) transparent;
+  scrollbar-color: var(--n0ct-accent-500) transparent;
   scrollbar-width: thin;
 }
 
 * {
-  scrollbar-color: var(--n0ct-gradient-scrollbar) transparent;
+  scrollbar-color: var(--n0ct-accent-500) transparent;
   scrollbar-width: thin;
 }
 
@@ -25,18 +25,13 @@ html {
   border-radius: 999px;
   background: var(--n0ct-gradient-scrollbar);
   background-clip: padding-box;
-  box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--n0ct-accent-500) 38%, transparent),
-    0 0 8px color-mix(in srgb, var(--n0ct-accent-500) 38%, transparent);
+  box-shadow: var(--n0ct-shadow-scrollbar);
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--n0ct-gradient-scrollbar-hover);
   background-clip: padding-box;
-  box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--n0ct-accent-500) 56%, transparent),
-    0 0 10px color-mix(in srgb, var(--n0ct-accent-500) 58%, transparent),
-    0 0 18px color-mix(in srgb, var(--n0ct-primary-500) 28%, transparent);
+  box-shadow: var(--n0ct-shadow-scrollbar-hover);
 }
 
 body {
@@ -67,7 +62,7 @@ body::before {
 
 .page > .header {
   border-block-end: 1px solid var(--n0ct-border);
-  background: color-mix(in srgb, var(--n0ct-surface-navigation) 94%, transparent);
+  background: var(--n0ct-nav-glass);
   box-shadow: none;
   backdrop-filter: blur(16px) saturate(1.12);
   -webkit-backdrop-filter: blur(16px) saturate(1.12);
@@ -82,7 +77,7 @@ body::before {
 
 .page > .header :is(select, [role='combobox']):focus-visible {
   border-color: var(--n0ct-accent-500);
-  outline: 2px solid color-mix(in srgb, var(--n0ct-accent-500) 28%, transparent);
+  outline: 2px solid var(--n0ct-border-focus);
   outline-offset: 1px;
 }
 
@@ -115,7 +110,7 @@ body::before {
 .page > .header starlight-kbd-picker label:focus-within {
   border-color: var(--n0ct-accent-500);
   color: var(--n0ct-text-primary);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--n0ct-accent-500) 12%, transparent);
+  box-shadow: var(--n0ct-shadow-focus);
 }
 
 .page > .header starlight-kbd-picker .label-icon,
@@ -221,7 +216,7 @@ body::before {
   min-height: max-content;
   padding-block: 1rem 1.5rem;
   scrollbar-width: thin;
-  scrollbar-color: var(--n0ct-gradient-scrollbar) transparent;
+  scrollbar-color: var(--n0ct-accent-500) transparent;
 }
 
 .sidebar-content .top-level > li + li {
@@ -241,7 +236,7 @@ body::before {
 .sidebar-content summary:hover,
 .sidebar-content a:hover,
 .sidebar-content a:focus-visible {
-  background: color-mix(in srgb, var(--n0ct-primary-500) 9%, transparent);
+  background: var(--n0ct-interactive-hover);
 }
 
 .sidebar-content a {
@@ -253,16 +248,9 @@ body::before {
 .sidebar-content a[aria-current='page']:hover,
 .sidebar-content a[aria-current='page']:focus-visible {
   color: var(--n0ct-text-primary);
-  outline: 1px solid color-mix(in srgb, var(--n0ct-primary-500) 28%, transparent);
-  background: linear-gradient(
-    110deg,
-    color-mix(in srgb, var(--n0ct-primary-500) 22%, transparent),
-    color-mix(in srgb, var(--n0ct-secondary-500) 17%, transparent) 56%,
-    color-mix(in srgb, var(--n0ct-highlight) 14%, transparent)
-  );
-  box-shadow:
-    inset 2px 0 0 var(--n0ct-primary-500),
-    0 4px 16px color-mix(in srgb, var(--n0ct-secondary-500) 9%, transparent);
+  outline: 1px solid var(--n0ct-border-focus);
+  background: var(--n0ct-gradient-sidebar-active);
+  box-shadow: var(--n0ct-shadow-sidebar-active);
 }
 
 .sidebar-content a[aria-current='page'] > span {
@@ -273,7 +261,7 @@ body::before {
 }
 
 .sidebar-content ul ul li {
-  border-inline-start-color: color-mix(in srgb, var(--n0ct-border) 82%, var(--n0ct-secondary-500));
+  border-inline-start-color: var(--n0ct-border-subtle);
 }
 
 .main-frame,
@@ -324,7 +312,7 @@ starlight-toc a:hover,
   width: min(100%, 18rem);
   height: 2px;
   border-radius: 999px;
-  background: var(--n0ct-gradient-brand);
+  background: var(--n0ct-gradient-divider);
   content: '';
   opacity: 0.9;
 }
@@ -342,7 +330,7 @@ starlight-toc a:hover,
 
 .sl-markdown-content a:not([class]) {
   color: var(--n0ct-text-accent);
-  text-decoration-color: color-mix(in srgb, var(--n0ct-text-accent) 42%, transparent);
+  text-decoration-color: currentColor;
   text-underline-offset: 0.18em;
 }
 
