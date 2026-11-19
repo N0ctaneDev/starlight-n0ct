@@ -17,6 +17,19 @@ describe('N0ctane configuration expansion', () => {
     expect(config.components?.Header).toBe('./src/components/MyHeader.astro');
   });
 
+  it('preserves the global favicon and composes LLM actions with version notices', () => {
+    const plain = n0ctane({ title: 'Docs', favicon: '/brand.svg', integrations: { blog: false } });
+    expect(plain.favicon).toBe('/brand.svg');
+    expect(plain.components?.PageTitle).toContain('PageTitle.astro');
+
+    const versioned = n0ctane({
+      title: 'Docs',
+      versioning: { versions: [{ slug: '1.0' }] },
+      integrations: { blog: false, llmActions: {} },
+    });
+    expect(versioned.components?.PageTitle).toContain('VersionedPageTitle.astro');
+  });
+
   it('keeps Expressive Code built-in copy controls enabled by default', () => {
     const config = n0ctane({ title: 'Docs', integrations: { blog: false } });
     expect(config.expressiveCode).not.toMatchObject({ frames: { showCopyToClipboardButton: false } });
