@@ -1,87 +1,68 @@
 ---
 title: Starlight-N0ct
-description: A visual system, component kit, and keyboard-first installer for Astro Starlight.
+description: A complete design system for Astro Starlight, with named themes, reusable components, expressive code blocks, and a keyboard-first installer.
+template: splash
+hero:
+  title: Documentation, with a point of view.
+  tagline: A cohesive design system for Astro Starlight — named color themes, expressive code, reusable components, and a keyboard-first installer.
+  image:
+    alt: A four-point star encircled by a simple orbit
+    dark: ../../assets/star-orbit-dark.svg
+    light: ../../assets/star-orbit-light.svg
+  actions:
+    - text: Get started
+      link: /getting-started/
+      icon: right-arrow
+      variant: primary
+    - text: Explore the theme system
+      link: /reference/theme/
+      variant: secondary
 ---
 
-import HomeHero from '../../components/HomeHero.astro';
 import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
 import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
 import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
-import Kbd from '@n0ctanedev/starlight-n0ct/components/docs/Kbd.astro';
 
-<HomeHero
-  title="Your docs, with a point of view."
-  tagline="A complete visual system for Astro Starlight: named themes, crisp code frames, reusable components, practical integrations, and an installer that gets a real project running."
-  primaryLabel="Build your docs"
-  primaryHref="/getting-started/"
-  secondaryLabel="Explore the components"
-  secondaryHref="/components/"
-  version="v1.0.0"
-/>
+## Everything works together
 
-<div class="n0ct-home-metrics">
-  <div><strong>7</strong><span>named palettes in the demo</span></div>
-  <div><strong>2</strong><span>independent appearance modes</span></div>
-  <div><strong>10</strong><span>optional integrations</span></div>
-  <div><strong>2</strong><span>installer templates</span></div>
-</div>
-
-## A theme system, not just a color swap
-
-Choose a named palette and edit its dark and light appearances independently. Every palette resolves into semantic roles for surfaces, text, borders, focus states, status colors, code syntax, gradients, and shadows.
-
-<Callout tone="tip" title="Make it yours">
-  Open the [live theme playground](/reference/theme/#live-theme-playground), edit a palette, preview real components, and copy the generated configuration into your project.
-</Callout>
-
-## Start with the part you need
+Starlight-N0ct brings the visual layer and the practical tooling into one place. Configure it once, then use the same theme tokens and components across your documentation.
 
 <DocGrid columns={2}>
-  <DocCard title="Get started" eyebrow="01 · Setup" description="Install the package or scaffold a complete site with the interactive project installer." href="/getting-started/" />
-  <DocCard title="Theme playground" eyebrow="02 · Design" description="Tune colors and syntax, inspect component states, and copy a ready-to-use theme config." href="/reference/theme/#live-theme-playground" />
-  <DocCard title="Component library" eyebrow="03 · Build" description="Browse every custom component with MDX usage, prop details, and CSS references." href="/components/" />
-  <DocCard title="Integration guide" eyebrow="04 · Extend" description="Enable blog, page actions, Markdown indexes, keyboard helpers, image zoom, and more." href="/guides/integrations/" />
+  <DocCard title="Named themes" eyebrow="Visual system" description="Switch between distinct palettes, each with independently tuned dark and light modes." href="/reference/theme/" />
+  <DocCard title="Expressive code" eyebrow="Reading experience" description="Consistent code colors, terminal and editor frames, tabs, copy controls, and diffs." href="/components/code-frames/" />
+  <DocCard title="Reusable components" eyebrow="Content" description="Callouts, link cards, grids, file trees, keyboard keys, and step-by-step guides." href="/components/" />
+  <DocCard title="Integrated workflows" eyebrow="Built in" description="Optional blog, versioning, keyboard helpers, page actions, image zoom, and validation." href="/guides/integrations/" />
 </DocGrid>
 
-## Made for documentation workflows
+## Make the theme yours
 
-<div class="n0ct-home-features">
-  <div><span class="n0ct-home-feature-icon">◈</span><h3>Independent light and dark palettes</h3><p>Each mode has its own colors, code syntax, gradient, and contrast tuning. No automatic color inversion.</p></div>
-  <div><span class="n0ct-home-feature-icon">⌘</span><h3>Expressive code frames</h3><p>Readable editor and terminal frames, copy controls, tabbed languages, syntax themes, and diff highlighting.</p></div>
-  <div><span class="n0ct-home-feature-icon">▦</span><h3>Reusable components</h3><p>Semantic callouts, link cards, responsive grids, keyboard caps, file trees, and accessible step lists.</p></div>
-  <div><span class="n0ct-home-feature-icon">⌥</span><h3>Keyboard-first installer</h3><p>Pick a docs or blog template, toggle integrations with Space, and confirm with Enter. No numbered lists to memorize.</p></div>
-</div>
+Tune a palette in the [live theme playground](/reference/theme/#live-theme-playground), preview real components, and copy the generated configuration into your project. Colors are resolved into semantic roles, so custom styling can follow the active theme without hard-coded values.
 
-## Two templates. One config.
+<Callout tone="tip" title="One config, your setup">
+  Enable only the integrations you need. Each built-in integration can be configured independently or disabled entirely.
+</Callout>
 
-Start with a focused documentation site, or choose the Blog + Documentation template for posts, tags, authors, and reading metrics.
+## Start with a complete project
+
+Use the installer to scaffold a documentation site or a Blog + Documentation publication.
 
 ~~~sh
 # Documentation site
 npx @n0ctanedev/starlight-n0ct init my-docs
 
-# Blog and docs site
+# Blog and documentation
 npx @n0ctanedev/starlight-n0ct init my-publication --template blog
 ~~~
 
-The installer can also scaffold without installing packages, use your existing package manager, and run non-interactively with --yes.
+The interactive installer lets you choose a template and toggle integrations with the keyboard. You can also run it non-interactively with `--yes`.
 
-## Add the features you actually need
-
-Ten integrations are included and configurable individually. Turn each one on with an options object or off with false.
+## Explore Starlight-N0ct
 
 <DocGrid columns={2}>
-  <DocCard title="Blog and versioning" eyebrow="Publishing" description="Publish author-led posts and keep documentation releases browsable." href="/guides/versioning/" />
-  <DocCard title="LLM page actions" eyebrow="AI workflows" description="Copy pages as Markdown, view raw Markdown, print to PDF, and open AI tools." href="/guides/integrations/" />
-  <DocCard title="Keyboard and navigation" eyebrow="Interaction" description="Keyboard notation, swipe navigation, announcement banners, and scroll-to-top." href="/guides/integrations/" />
-  <DocCard title="Validation and media" eyebrow="Quality" description="Check internal links during builds and zoom images accessibly." href="/guides/integrations/" />
+  <DocCard title="Getting started" eyebrow="01 · Setup" description="Install the package, configure Astro, and create your first page." href="/getting-started/" />
+  <DocCard title="Configuration reference" eyebrow="02 · Configure" description="Explore the complete N0ctConfig API and its available options." href="/reference/config-api/" />
+  <DocCard title="Component library" eyebrow="03 · Compose" description="Find usage examples, props, accessibility notes, and CSS references." href="/components/" />
+  <DocCard title="Showcase" eyebrow="04 · Preview" description="See the theme system and components working together." href="/showcase/" />
 </DocGrid>
 
-## Useful next steps
-
-- Read [Getting started](/getting-started/) to install and connect the package.
-- Explore [every component](/components/) with copyable examples and CSS hooks.
-- Read the [configuration reference](/reference/config-api/) for the complete N0ctConfig API.
-- Visit the [showcase](/showcase/) for a live tour of the visual system.
-- Browse the [project on GitHub](https://github.com/n0ctanedev/starlight-n0ct) or [install from npm](https://www.npmjs.com/package/@n0ctanedev/starlight-n0ct).
-
+[Browse the source on GitHub](https://github.com/n0ctanedev/starlight-n0ct) or [view the package on npm](https://www.npmjs.com/package/@n0ctanedev/starlight-n0ct).

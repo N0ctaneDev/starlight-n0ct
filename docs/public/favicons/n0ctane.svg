@@ -1,27 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="orbit" x1="7" y1="49" x2="57" y2="15" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#F25CFF"/>
-      <stop offset=".52" stop-color="#8C42FF"/>
-      <stop offset="1" stop-color="#00E5FF"/>
-    </linearGradient>
-    <linearGradient id="star" x1="18" y1="22" x2="49" y2="43" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#FFFFFF"/>
-      <stop offset=".55" stop-color="#E9E8FF"/>
-      <stop offset="1" stop-color="#B9F5FF"/>
-    </linearGradient>
-    <radialGradient id="aura">
-      <stop offset="0" stop-color="#9B65FF" stop-opacity=".48"/>
-      <stop offset="1" stop-color="#9B65FF" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-  <rect x="2" y="2" width="60" height="60" rx="16" fill="#0B0D17"/>
-  <rect x="2.75" y="2.75" width="58.5" height="58.5" rx="15.25" fill="none" stroke="#8C42FF" stroke-opacity=".28" stroke-width="1.5"/>
-  <circle cx="32" cy="32" r="21" fill="url(#aura)"/>
-  <ellipse cx="32" cy="32" rx="23" ry="10.5" transform="rotate(-27 32 32)" fill="none" stroke="url(#orbit)" stroke-width="3.6" stroke-linecap="round"/>
-  <path d="M32 12.5c2.1 11.4 4.2 15.3 19.5 19.5C36.2 36.2 34.1 40.1 32 51.5 29.9 40.1 27.8 36.2 12.5 32 27.8 27.8 29.9 23.9 32 12.5Z" fill="url(#star)"/>
-  <path d="M15 13.5c.8 4.2 1.6 5.7 7.2 7.2-5.6 1.5-6.4 3-7.2 7.2-.8-4.2-1.6-5.7-7.2-7.2 5.6-1.5 6.4-3 7.2-7.2Z" fill="#D9A2FF"/>
-  <path d="M49 39.5c.7 3.5 1.4 4.8 6 6-4.6 1.2-5.3 2.5-6 6-.7-3.5-1.4-4.8-6-6 4.6-1.2 5.3-2.5 6-6Z" fill="#73DFFF"/>
-  <circle cx="53.5" cy="16.5" r="1.5" fill="#00E5FF"/>
-  <circle cx="9.5" cy="43.5" r="1.35" fill="#F25CFF"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img">
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#0B0D17"/>
+  <ellipse cx="32" cy="32" rx="23" ry="10.5" transform="rotate(-32 32 32)" fill="none" stroke="#00E5FF" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M32 15 C34.8 26.7 37.3 29.2 49 32 C37.3 34.8 34.8 37.3 32 49 C29.2 37.3 26.7 34.8 15 32 C26.7 29.2 29.2 26.7 32 15Z" fill="#F25CFF"/>
 </svg>
