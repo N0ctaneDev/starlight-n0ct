@@ -30,6 +30,7 @@
 
 .noct-callout {
   --callout-accent: var(--n0ct-accent-500);
+  --callout: var(--callout-accent);
   margin-block: 0.8rem;
   padding: 0.72rem 0.9rem;
   border: 1px solid var(--n0ct-border);
