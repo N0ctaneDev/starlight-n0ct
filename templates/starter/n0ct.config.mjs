@@ -49,6 +49,13 @@ const config = {
     imageZoom: {},
   },
 
+  starlight: {
+    logo: {
+      src: '/favicon.svg',
+      alt: 'Documentation Star-Orbit logo',
+    },
+  },
+
   icons: {
     iconDir: './src/icons',
     include: { lucide: ['*'] },

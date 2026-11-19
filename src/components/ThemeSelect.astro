@@ -19,35 +19,6 @@ const themes = Array.isArray(themeSettings.themes) && themeSettings.themes.lengt
   data-theme-favicons={JSON.stringify(themeFavicons)}
   data-base-url={baseUrl}
 >
-  <script is:inline>
-    (() => {
-      const control = document.currentScript?.closest('[data-n0ct-theme-control]');
-      if (!control) return;
-      const select = control.querySelector('select[data-n0ct-theme-select]');
-      const allowedThemes = Array.from(select?.options ?? []).map((option) => option.value).filter(Boolean);
-      const fallbackTheme = control.getAttribute('data-default-theme') || allowedThemes[0] || 'n0ctane';
-      let preferences = null;
-      let legacyMode = null;
-      try {
-        preferences = JSON.parse(localStorage.getItem('n0ct-theme-preferences') || 'null');
-        legacyMode = localStorage.getItem('starlight-theme');
-      } catch {}
-      const mode = preferences?.mode === 'light' || (!preferences && legacyMode === 'light') ? 'light' : 'dark';
-      const theme = typeof preferences?.theme === 'string' && allowedThemes.includes(preferences.theme)
-        ? preferences.theme
-        : fallbackTheme;
-      document.documentElement.dataset.theme = mode;
-      document.documentElement.dataset.n0ctTheme = theme;
-      document.documentElement.dataset.n0ctCodeTheme = theme + '-' + mode;
-    applyFavicon(theme);
-      const base = (control.getAttribute('data-base-url') || '/').replace(/\/?$/, '/');
-      const favicons = JSON.parse(control.getAttribute('data-theme-favicons') || '{}');
-      const favicon = favicons[theme] || control.getAttribute('data-global-favicon') || '/favicon.svg';
-      const href = /^(?:https?:|data:)/i.test(favicon) ? favicon : base + favicon.replace(/^\/+/, '');
-      document.querySelectorAll('link[rel~="icon"]').forEach((link) => link.setAttribute('href', href));
-      document.querySelectorAll('[data-n0ct-themed-favicon]').forEach((image) => image.setAttribute('src', href));
-    })();
-  </script>
 
   <button
     class="n0ct-theme-mode"
@@ -216,7 +187,13 @@ const themes = Array.isArray(themeSettings.themes) && themeSettings.themes.lengt
       }
     });
 
-    document.addEventListener('astro:page-load', () => applyPreferences(readPreferences()));
+    document.addEventListener('astro:page-load', () => {
+      const root = document.documentElement;
+      applyPreferences({
+        mode: root.dataset.theme === 'light' ? 'light' : 'dark',
+        theme: root.dataset.n0ctTheme || readPreferences().theme,
+      }, false);
+    });
   }
 
   applyPreferences(readPreferences());
