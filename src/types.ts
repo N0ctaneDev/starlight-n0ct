@@ -281,6 +281,8 @@ export interface N0ctThemeColors {
 
 /** A named color theme. Both modes are independently derived from the main palette fields. */
 export interface N0ctThemeDefinition {
+  /** Optional favicon path relative to the consumer project's public/ directory. Falls back to the global favicon. */
+  favicon?: string;
   /** Label shown in the theme picker. Defaults to a title-cased theme ID. */
   label?: string;
   /** Dark and light values for this theme. */
@@ -318,6 +320,8 @@ export interface N0ctNormalizedConfig {
  * Keep this interface documented: its JSDoc comments power editor hovers.
  */
 export interface N0ctConfig {
+  /** Global favicon path relative to the consumer project's public/ directory. Named themes may override it. */
+  favicon?: string;
   /** Required documentation site title, passed to Starlight. */
   title: string;
   /** Optional description used by Starlight metadata and search previews. */
