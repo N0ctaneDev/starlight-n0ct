@@ -7,11 +7,10 @@ const links = footer.links ?? [];
 const icons = footer.icons ?? [];
 const globalFavicon = settings?.favicon ?? '/favicon.svg';
 const baseUrl = import.meta.env.BASE_URL || '/';
+const base = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
 const faviconHref = /^(?:https?:|data:)/i.test(globalFavicon)
   ? globalFavicon
   : baseUrl.replace(/\/?$/, '/') + globalFavicon.replace(/^\/+/, '');
-const baseUrl = import.meta.env.BASE_URL || '/';
-const base = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
 const resolveHref = (href: string) => href.startsWith('/') && !href.startsWith('//') ? `${base}${href}` : href;
 ---
 <div class="n0ct-footer-wrap">
