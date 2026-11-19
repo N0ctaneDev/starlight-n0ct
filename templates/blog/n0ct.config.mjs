@@ -61,7 +61,8 @@ const config = {
 
   starlight: {
     logo: {
-      src: './src/assets/n0ctane.svg',
+      dark: './src/assets/n0ctane-dark.svg',
+      light: './src/assets/n0ctane-light.svg',
       alt: 'N0ctane logo',
     },
   },
