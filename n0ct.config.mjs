@@ -120,7 +120,6 @@ const config = {
           },
         },
       },
-    },
 
       catppuccin: {
         label: 'Catppuccin',
@@ -220,7 +219,77 @@ const config = {
             },
           },
         },
+        nord: {
+        label: 'Nord',
+        colors: {
+          dark: {
+            brandGradient: 'linear-gradient(110deg, #88C0D0 0%, #81A1C1 55%, #8FBCBB 100%)',
+            palette: {
+              primary: '#88C0D0', secondary: '#81A1C1', accent: '#8FBCBB',
+              surface: '#3B4252', text: '#ECEFF4', highlight: '#5E81AC',
+              highlightText: '#ECEFF4', background: '#2E3440',
+            },
+            codePalette: {
+              background: '#2E3440', foreground: '#ECEFF4',
+              comment: '#7B88A1', keyword: '#81A1C1', string: '#A3BE8C',
+              number: '#B48EAD', function: '#88C0D0', type: '#EBCB8B',
+              variable: '#ECEFF4', tag: '#8FBCBB', attribute: '#D08770',
+              punctuation: '#D8DEE9', invalid: '#BF616A',
+            },
+          },
+          light: {
+            brandGradient: 'linear-gradient(110deg, #5E81AC 0%, #81A1C1 55%, #5E9FA6 100%)',
+            palette: {
+              primary: '#5E81AC', secondary: '#81A1C1', accent: '#5E9FA6',
+              surface: '#E5E9F0', text: '#2E3440', highlight: '#D8DEE9',
+              highlightText: '#2E3440', background: '#ECEFF4',
+            },
+            codePalette: {
+              background: '#ECEFF4', foreground: '#2E3440',
+              comment: '#68758A', keyword: '#5E81AC', string: '#3B6B45',
+              number: '#8C5B76', function: '#4C789E', type: '#8A641E',
+              variable: '#2E3440', tag: '#397B78', attribute: '#985B45',
+              punctuation: '#4C566A', invalid: '#B5484D',
+            },
+          },
+        },
       },
+      flexoki: {
+        label: 'Flexoki',
+        colors: {
+          dark: {
+            brandGradient: 'linear-gradient(110deg, #DA702C 0%, #D0A215 52%, #879A39 100%)',
+            palette: {
+              primary: '#DA702C', secondary: '#D0A215', accent: '#879A39',
+              surface: '#1C1B1A', text: '#CECDC3', highlight: '#4385BE',
+              highlightText: '#100F0F', background: '#100F0F',
+            },
+            codePalette: {
+              background: '#100F0F', foreground: '#CECDC3',
+              comment: '#878580', keyword: '#DA702C', string: '#879A39',
+              number: '#D0A215', function: '#4385BE', type: '#BC5215',
+              variable: '#CECDC3', tag: '#66800B', attribute: '#CE5D97',
+              punctuation: '#B7B5AC', invalid: '#D14D41',
+            },
+          },
+          light: {
+            brandGradient: 'linear-gradient(110deg, #BC5215 0%, #DA702C 52%, #66800B 100%)',
+            palette: {
+              primary: '#BC5215', secondary: '#4385BE', accent: '#66800B',
+              surface: '#F2F0E5', text: '#100F0F', highlight: '#DAD8CE',
+              highlightText: '#100F0F', background: '#FFFCF0',
+            },
+            codePalette: {
+              background: '#FFFCF0', foreground: '#100F0F',
+              comment: '#6F6E69', keyword: '#BC5215', string: '#66800B',
+              number: '#8A6A00', function: '#205EA6', type: '#AF3029',
+              variable: '#100F0F', tag: '#3D6B3D', attribute: '#A02F6F',
+              punctuation: '#575653', invalid: '#AF3029',
+            },
+          },
+        },
+      },
+    },
     glow: 'balanced',
     contentWidth: '58rem',
     sidebarWidth: '17rem',
