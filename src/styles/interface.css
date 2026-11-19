@@ -168,7 +168,7 @@ body::before {
 .n0ct-sidebar starlight-version-select label:hover,
 .n0ct-sidebar starlight-version-select label:focus-within {
   border-color: var(--n0ct-accent-500);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--n0ct-accent-500) 12%, transparent);
+  box-shadow: var(--n0ct-shadow-focus);
 }
 
 .n0ct-sidebar starlight-version-select .label-icon {
