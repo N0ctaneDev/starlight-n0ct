@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#88C0D0"/>
+      <stop offset=".54" stop-color="#81A1C1"/>
+      <stop offset="1" stop-color="#8FBCBB"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="1" stop-color="#f3f5ff" stop-opacity=".86"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="#101321"/>
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#brand)" opacity=".22"/>
+  <path d="M2 18V18A16 16 0 0 1 18 2H46" fill="none" stroke="url(#brand)" stroke-width="3" stroke-linecap="round"/>
+  <path d="M17 47V17h8l22 25V17h-8v12L25 17h-8v30h8V35l14 12h8V35h-8v-1L25 17" fill="none"/>
+  <path d="M17 47V17h8l22 25V17" fill="none" stroke="url(#mark)" stroke-width="6" stroke-linecap="square" stroke-linejoin="bevel"/>
+  <path d="M47 17v30" fill="none" stroke="#8FBCBB" stroke-width="2.5" stroke-linecap="round" opacity=".95"/>
+</svg>
