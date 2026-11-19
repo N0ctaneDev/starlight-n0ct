@@ -343,8 +343,6 @@
   --n0ct-space-4: 1rem;
   --n0ct-space-5: 1.25rem;
   --n0ct-space-6: 1.5rem;
-  --n0ct-shadow-soft: 0 10px 34px rgb(0 0 0 / .12);
-  --n0ct-shadow-float: 0 16px 44px rgb(0 0 0 / .22);
 }
 
 html {
@@ -368,9 +366,7 @@ body::before {
   inset: 0;
   width: 100vw;
   height: 100dvh;
-  background:
-    radial-gradient(ellipse at 0% 0%, color-mix(in srgb, var(--n0ct-primary-500) var(--n0ct-glow-background-strength, 7%), transparent), transparent 34rem),
-    radial-gradient(ellipse at 100% 100%, color-mix(in srgb, var(--n0ct-accent-500) var(--n0ct-glow-accent-strength, 5%), transparent), transparent 38rem);
+  background: var(--n0ct-gradient-canvas);
   background-repeat: no-repeat;
   content: '';
   pointer-events: none;
