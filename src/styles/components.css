@@ -1,6 +1,6 @@
 .noct-gradient-text {
   color: transparent;
-  background: var(--n0ct-gradient-divider);
+  background: var(--n0ct-gradient-brand);
   background-clip: text;
   -webkit-background-clip: text;
 }
@@ -198,7 +198,7 @@
 }
 
 .sl-markdown-content :is(.card, .sl-link-card):hover {
-  border-color: color-mix(in srgb, var(--n0ct-primary-500) 44%, var(--n0ct-border));
+  border-color: var(--n0ct-border-focus);
   background: var(--n0ct-gradient-card-hover), var(--n0ct-surface);
   box-shadow: var(--n0ct-shadow-card-hover);
   transform: translateY(-1px);
@@ -227,7 +227,7 @@
 
 .sl-markdown-content ol.sl-steps > li::before {
   color: var(--n0ct-steps-marker-text) !important;
-  background: var(--n0ct-gradient-divider);
+  background: var(--n0ct-gradient-brand);
   box-shadow: var(--n0ct-shadow-step);
 }
 
@@ -432,7 +432,7 @@
   height: 2px;
   border: 0;
   border-radius: 999px;
-  background: var(--n0ct-gradient-brand);
+  background: var(--n0ct-gradient-divider);
   content: '';
 }
 
@@ -479,7 +479,7 @@
   inset-block-end: 0;
   height: 2px;
   border-radius: 999px;
-  background: var(--n0ct-gradient-brand);
+  background: var(--n0ct-gradient-divider);
   content: '';
 }
 
