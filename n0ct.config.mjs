@@ -18,14 +18,14 @@ const config = {
     ],
   },
   versioning: {
-    versions: [{ slug: '0.1.4', label: 'v0.1.4', redirect: 'same-page' }],
-    current: { label: 'v0.2.0', redirect: 'same-page' },
+    versions: [{ slug: '0.2.0', label: 'v0.2.0', redirect: 'same-page' }],
+    current: { label: 'v1.0.0', redirect: 'same-page' },
     exclude: ['blog/**'],
   },
   integrations: {
     basePath: {},
     announcement: {
-      announcements: [{ id: 'n0ctane-v020-preview', content: 'N0ctane v0.2.0 preview — explore the theme, code blocks, blog, and versioned docs.' }],
+      announcements: [{ id: 'n0ctane-v100-release', content: 'Starlight-N0ct v1.0.0 is here — explore the theme system, component library, keyboard-first installer, and Blog + Docs template.' }],
     },
     // The keyboard layout selector appears in the header only when explicitly enabled.
     kbd: { globalPicker: true },
@@ -43,8 +43,8 @@ const config = {
       metrics: { readingTime: true, words: 'rounded' },
       authors: {
         team: {
-          name: 'N0ctane Team',
-          title: 'Theme maintainers',
+          name: 'N0ctane._.Dev',
+          title: 'Creator and maintainer',
           url: 'https://github.com/n0ctanedev',
         },
       },
@@ -56,10 +56,10 @@ const config = {
     include: { lucide: ['*'] },
   },
   footer: {
-    text: 'Built with N0ctOS · N0ctane Team',
+    text: 'Built with Starlight-N0ct',
     links: [
+      { label: 'N0ctane._.Dev', link: 'https://github.com/n0ctanedev', newTab: true },
       { label: 'GitHub', link: 'https://github.com/n0ctanedev/starlight-n0ct', newTab: true },
-      { label: 'N0ctOS', link: 'https://n0ctanedev.github.io', newTab: true },
       { label: 'Blog', link: '/blog/' },
     ],
     icons: [

@@ -1,0 +1,57 @@
+---
+title: FileTree
+description: Show a navigable project structure with Starlight's native file tree.
+---
+
+import FileTree from '@n0ctanedev/starlight-n0ct/components/docs/FileTree.astro';
+
+## Usage
+
+The wrapper forwards its slot to Starlight's FileTree component. Use the standard Starlight file-tree Markdown structure.
+
+~~~mdx
+import FileTree from '@n0ctanedev/starlight-n0ct/components/docs/FileTree.astro';
+
+<FileTree>
+- src/
+  - components/
+    - Header.astro
+    - Sidebar.astro
+  - styles/
+    - theme.css
+- astro.config.mjs
+- n0ct.config.mjs
+- package.json
+</FileTree>
+~~~
+
+<FileTree>
+- src/
+  - components/
+    - Header.astro
+    - Sidebar.astro
+  - styles/
+    - theme.css
+- astro.config.mjs
+- n0ct.config.mjs
+- package.json
+</FileTree>
+
+## Props
+
+The wrapper declares no additional props. It accepts the same slotted tree syntax as Starlight's native FileTree component.
+
+## CSS reference
+
+The outer wrapper is `.noct-file-tree`. The rendered element is Starlight's `starlight-file-tree`; N0ctane styles that native element inside Markdown content.
+
+| Selector | Purpose |
+|---|---|
+| `.noct-file-tree` | N0ctane wrapper |
+| `.sl-markdown-content starlight-file-tree` | Main surface, spacing, border and typography |
+| `starlight-file-tree .directory` | Directory entries |
+| `starlight-file-tree .file` | File entries |
+| `starlight-file-tree .highlight` | Highlighted entry |
+| `starlight-file-tree .comment` | File-tree comments |
+
+The tree uses `--n0ct-gradient-file-tree`, `--n0ct-surface-code`, `--n0ct-border`, `--n0ct-radius-md`, and semantic foreground roles. Expand/collapse behavior is provided by Starlight.

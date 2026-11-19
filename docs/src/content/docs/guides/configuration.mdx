@@ -1,125 +1,159 @@
 ---
 title: Configuration
-description: The concise N0ctane configuration API.
+description: Configure the site, sidebar, themes, footer, and advanced Starlight options.
 ---
 
-N0ctane keeps n0ct.config.mjs focused on the decisions most documentation sites make. It then converts those settings into Starlight's native configuration.
+The project configuration lives in n0ct.config.mjs. N0ctane expands the concise settings into native Starlight configuration.
 
 ## Minimal configuration
 
 ~~~js
+// @ts-check
+
+/** @satisfies {import('@n0ctanedev/starlight-n0ct').N0ctConfig} */
 export default {
   title: 'Project Docs',
-  description: 'Documentation for my project',
+  description: 'Documentation for my project.',
+  favicon: '/favicon.svg',
   sidebar: {
+    topicDisplay: 'collapsible',
     topics: ['guides', 'reference'],
-  },
-  theme: {
-    colors: {
-      dark: {
-        palette: { primary: '#F25CFF', accent: '#00E5FF' },
-      },
-      light: {
-        palette: { primary: '#B72DBF', accent: '#00AFC2' },
-      },
-    },
   },
 };
 ~~~
 
-A string topic creates a title-cased group and an autogenerate entry using that directory.
+The JSDoc satisfies annotation enables editor suggestions and validates your JavaScript config against N0ctConfig.
 
 ## Sidebar topics
 
-| Property | Description |
+The sidebar has three presentations:
+
+| topicDisplay | Behavior |
 |---|---|
-| label | Visible group label |
-| icon | Optional local or Iconify icon name |
-| dropdownIcon | Built-in Starlight icon for list/dropdown mode |
-| id | Stable topic identifier |
-| link | Internal page path or external URL |
-| directory | Content directory used for autogeneration |
-| `autogenerate` | `false`, `true`, or `{ directory }` |
-| items | Manually authored native Starlight entries |
-| collapsed | Whether the group starts collapsed |
-| `badge` | Badge text or `{ text, variant }` |
+| collapsible | Native Starlight groups and nested navigation |
+| list | Root topic list with the selected topic's navigation |
+| dropdown | Compact topic selector above the selected topic's navigation |
+
+String topics create title-cased groups with automatic directory children:
+
+~~~js
+sidebar: {
+  topicDisplay: 'collapsible',
+  topics: ['guides', 'reference'],
+},
+~~~
+
+Object topics support more control:
 
 ~~~js
 sidebar: {
   topics: [
-    'reference',
-    { label: 'Guides', icon: 'lucide:book-open', link: '/guides' },
     {
-      label: 'Manual links',
-      autogenerate: false,
-      items: [
-        { label: 'Overview', link: '/manual/' },
-        { label: 'Migration', link: '/manual/migration/' },
-      ],
+      label: 'Guides',
+      id: 'guides',
+      icon: 'lucide:book-open',
+      link: '/guides/',
+      directory: 'guides',
+      collapsed: false,
+    },
+    {
+      label: 'Reference',
+      id: 'reference',
+      icon: 'lucide:library',
+      link: '/reference/',
+      directory: 'reference',
+      badge: { text: 'API', variant: 'tip' },
     },
   ],
 },
 ~~~
 
-For list and dropdown modes, every topic needs a destination and the upstream Sidebar Topics plugin owns generated navigation. The collapsible mode keeps native Starlight sidebar rendering.
+Use link to identify a landing page, directory to choose the autogenerate source, items for manual entries, and autogenerate: false to prevent generated children. The icon property accepts local or Iconify names in the native collapsible presentation; dropdownIcon uses a built-in Starlight icon name.
 
-## Colors and code palettes
+List and dropdown modes delegate navigation to the upstream Sidebar Topics plugins. They require the topic schema extension and a destination for each topic. Advanced starlight.sidebar configuration cannot be combined with these plugin-backed modes.
 
-Light and dark color roles are configured independently. Syntax highlighting has its own optional palette in each mode:
+## Named themes
+
+A palette is a named identity with its own dark and light configuration:
 
 ~~~js
 theme: {
-  colors: {
-    dark: {
-      palette: { primary: '#F25CFF', accent: '#00E5FF' },
-      codePalette: {
-        background: '#0D1020',
-        foreground: '#E6EAF8',
-        keyword: '#FF8DD6',
-        string: '#9FE6B8',
-      },
-    },
-    light: {
-      palette: { primary: '#B72DBF', accent: '#00AFC2' },
-      codePalette: {
-        background: '#F3F1F8',
-        foreground: '#29253D',
-        keyword: '#92247E',
-        string: '#08764D',
+  defaultTheme: 'n0ctane',
+  themes: {
+    n0ctane: {
+      label: 'N0ctane',
+      favicon: '/favicons/n0ctane.svg',
+      colors: {
+        dark: {
+          palette: {
+            primary: '#F25CFF',
+            secondary: '#8C42FF',
+            accent: '#00E5FF',
+            surface: '#131626',
+            text: '#E6EAF8',
+          },
+        },
+        light: {
+          palette: {
+            primary: '#B72DBF',
+            secondary: '#7540CE',
+            accent: '#00AFC2',
+            surface: '#FFFFFF',
+            text: '#211D32',
+          },
+        },
       },
     },
   },
 },
 ~~~
 
-See the [theme reference](/reference/theme/) for every syntax color and the mode-qualified CSS token convention.
+The four required design decisions are primary, accent, surface, and text. Secondary, highlight, highlight text, and background can be supplied or derived. Use codePalette when syntax colors need to differ from UI roles.
 
-## Icons
-
-Lucide is included and enabled by default. Additional Iconify collections can be installed by your site and included here:
+## Global and themed favicon
 
 ~~~js
-icons: {
-  iconDir: './src/icons',
-  include: { lucide: ['*'] },
-},
+export default {
+  favicon: '/favicon.svg',
+  theme: {
+    themes: {
+      n0ctane: { favicon: '/favicons/n0ctane.svg' },
+      nord: { favicon: '/favicons/nord.svg' },
+    },
+  },
+};
 ~~~
 
-Sidebar topic icons and the site title accept the set:name format, such as lucide:book-open.
+The root favicon is the fallback for every theme without an override. Paths are root-relative URLs to files in your project's public/ directory. Switching the active theme updates the browser favicon and the footer mark.
 
 ## Footer
 
 ~~~js
 footer: {
-  text: 'Built with N0ctOS',
-  links: [{ label: 'GitHub', link: 'https://github.com/example/project', newTab: true }],
-  icons: [{ icon: 'lucide:github', link: 'https://github.com/example/project', label: 'GitHub', newTab: true }],
+  text: 'Built with Starlight-N0ct',
+  links: [
+    { label: 'GitHub', link: 'https://github.com/example/project', newTab: true },
+    { label: 'Blog', link: '/blog/' },
+  ],
+  icons: [
+    { icon: 'lucide:github', link: 'https://github.com/example/project', label: 'GitHub', newTab: true },
+  ],
 },
 ~~~
 
-## Advanced Starlight options
+## Layout and glow
 
-Use starlight when a native option does not need a N0ctane shorthand:
+~~~js
+theme: {
+  contentWidth: '58rem',
+  sidebarWidth: '17rem',
+  glow: 'balanced', // subtle | balanced | strong
+},
+~~~
+
+## Native Starlight escape hatch
+
+Use starlight for native settings that do not have a N0ctane shorthand:
 
 ~~~js
 starlight: {
@@ -128,4 +162,4 @@ starlight: {
 },
 ~~~
 
-Advanced settings are merged after N0ctane defaults. You can deliberately override components, custom CSS, plugins, or the sidebar.
+Advanced Starlight options are merged after N0ctane defaults. Custom components, CSS, sidebar, and plugins can intentionally replace defaults. See the [complete config reference](/reference/config-api/).

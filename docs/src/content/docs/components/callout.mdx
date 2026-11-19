@@ -1,0 +1,58 @@
+---
+title: Callout
+description: Highlight contextual information with semantic tone variants.
+---
+
+import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
+
+## When to use it
+
+Use a callout when information should interrupt the reading flow: a prerequisite, recommended practice, warning, or extra context. Pick the tone based on meaning, not on the color you want.
+
+## Usage
+
+~~~mdx
+import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
+
+<Callout tone="note" title="Before you begin">
+  Back up the configuration file before changing it.
+</Callout>
+<Callout tone="tip">A title is optional and gets a tone-specific default.</Callout>
+<Callout tone="warning" title="Heads up">This operation changes the deployed output.</Callout>
+<Callout tone="danger" title="Destructive">Do not remove an archive until the new version is verified.</Callout>
+<Callout tone="info" title="Compatibility">The legacy type prop is still accepted.</Callout>
+~~~
+
+<Callout tone="note" title="Before you begin">Back up the configuration file before changing it.</Callout>
+<Callout tone="tip">A title is optional and gets a tone-specific default.</Callout>
+<Callout tone="warning" title="Heads up">This operation changes the deployed output.</Callout>
+<Callout tone="danger" title="Destructive">Do not remove an archive until the new version is verified.</Callout>
+<Callout tone="info" title="Compatibility">The legacy type prop is still accepted.</Callout>
+
+## Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| title | string | Tone-specific label | Heading shown above the body |
+| tone | note, tip, warning, danger, info | note | Preferred semantic variant |
+| type | note, tip, warning, danger, info | note | Legacy Starlight-compatible alias; tone wins if both are present |
+
+All children are rendered in the body, so paragraphs, links, inline code, lists, and code fences can be composed inside it.
+
+## CSS reference
+
+| Selector | Purpose |
+|---|---|
+| `.noct-callout` | Outer panel, spacing, border and shadow |
+| `.noct-callout[data-tone="tip"]` | Tip accent |
+| `.noct-callout[data-tone="warning"]` | Warning accent |
+| `.noct-callout[data-tone="danger"]` | Danger accent |
+| `.noct-callout[data-tone="info"]` | Information accent |
+| `.noct-callout-title` | Heading |
+| `.noct-callout-content` | Slotted content |
+
+The panel uses `--callout`, `--n0ct-border`, `--n0ct-gradient-callout`, `--n0ct-surface`, and `--n0ct-shadow-callout`. Tones map to semantic theme tokens: `--n0ct-success`, `--n0ct-warning`, `--n0ct-danger`, and `--n0ct-info`. Note uses muted text.
+
+## Accessibility
+
+Warning and danger tones are exposed as alerts. Note, tip, and info use note semantics. Do not rely on color alone to communicate severity.

@@ -2,7 +2,7 @@
 
 /**
  * N0ctane Starlight configuration.
- * Run `npx n0ct init` to generate this file interactively.
+ * Run `npx @n0ctanedev/starlight-n0ct init` to scaffold a configured project.
  * @satisfies {import('@n0ctanedev/starlight-n0ct').N0ctConfig}
  */
 const config = {
@@ -45,7 +45,7 @@ const config = {
     llmActions: false,
     sidebarSwipe: {},
     linksValidator: false,
-    blog: {},
+    blog: false,
     imageZoom: {},
   },
 

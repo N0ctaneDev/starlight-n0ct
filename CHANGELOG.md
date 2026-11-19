@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.0
+
+First stable release of N0ctane for Astro Starlight.
+
+- Rework the documentation information architecture and add dedicated component references with usage and CSS hooks.
+- Replace the theme playground with a focused editor, live component preview, reset controls, and copyable configuration.
+- Add keyboard-driven installer menus for template and integration selection, with descriptions for every optional integration.
+- Add a dedicated Blog + Documentation template alongside the general documentation starter.
+- Add global and per-theme favicon selection, matching footer branding, and palette-aware brand gradients.
+- Compose LLM Page Actions with Starlight Versions so both page features can render together.
+- Refresh the README, screenshots section, homepage, and release metadata.
+
 ## 0.2.0
 
 - Add stable mode-qualified color tokens such as `--n0ct-dark-base` and `--n0ct-light-surface`.

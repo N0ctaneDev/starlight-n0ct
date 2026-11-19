@@ -1,4 +1,4 @@
-# Deploying your N0ctane documentation
+# Deploying your Starlight-N0ct documentation
 
 The starter builds a static Astro site into `dist/`. Set the canonical site URL and base path before building.
 
@@ -15,15 +15,15 @@ The workflow detects npm, pnpm, Yarn, or Bun from the lockfile, then derives `SI
 - User or organization site (`owner.github.io`): the base path is `/`.
 - Project site (`owner.github.io/repository`): the base path is `/repository`.
 
-The `basePath` integration is enabled automatically when the installer receives a non-root base path.
+When the installer is given a non-root base path, it preselects the Base path rewriting integration. You can disable it in `n0ct.config.mjs` if you handle root-relative links another way.
 
 ## Other static hosts
 
 Run:
 
-```sh
+~~~sh
 npm run build
-```
+~~~
 
 Publish the generated `dist/` directory. Configure your host's build settings with:
 

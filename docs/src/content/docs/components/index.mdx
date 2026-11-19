@@ -1,147 +1,44 @@
 ---
-title: Components
-description: Reusable N0ctane components, native Starlight elements, and expressive code blocks.
+title: Component library
+description: Every custom N0ctane documentation component, with examples and styling references.
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
+import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
+import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
+
+The component kit is intentionally small. Each component solves one documentation-layout problem and follows the active named theme and appearance mode.
+
+<Callout tone="tip" title="Copy the examples">
+  The examples below are real MDX usage. Open a component page for the full prop table, behavior, CSS selectors, and theme tokens.
+</Callout>
+
+<DocGrid columns={2}>
+  <DocCard title="Callout" eyebrow="Messaging" description="Semantic note, tip, warning, danger, and information panels." href="/components/callout/" />
+  <DocCard title="DocCard" eyebrow="Navigation" description="A linked or static card for guides, references, and related content." href="/components/doc-card/" />
+  <DocCard title="DocGrid" eyebrow="Layout" description="A responsive grid for cards and other MDX content." href="/components/doc-grid/" />
+  <DocCard title="FileTree" eyebrow="Structure" description="A theme-styled wrapper around Starlight's interactive file tree." href="/components/file-tree/" />
+  <DocCard title="Kbd" eyebrow="Input" description="A compact, theme-aware keyboard keycap." href="/components/kbd/" />
+  <DocCard title="Steps and Step" eyebrow="Guidance" description="Numbered instructions and a small list-item helper." href="/components/steps/" />
+  <DocCard title="Code frames and tabs" eyebrow="Code" description="Expressive Code frames, terminal headers, language tabs, and diffs." href="/components/code-frames/" />
+</DocGrid>
+
+## Components are composable
+
+Use the components where they help readers, not as decoration on every page. Cards work well for navigation, grids group related destinations, callouts highlight information that changes how a reader should proceed, and steps are best for ordered procedures.
+
+## Import paths
+
+All custom documentation components are exported from the package:
+
+~~~mdx
+import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
 import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
 import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
 import FileTree from '@n0ctanedev/starlight-n0ct/components/docs/FileTree.astro';
 import Kbd from '@n0ctanedev/starlight-n0ct/components/docs/Kbd.astro';
+import Step from '@n0ctanedev/starlight-n0ct/components/docs/Step.astro';
 import Steps from '@n0ctanedev/starlight-n0ct/components/docs/Steps.astro';
-import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
-
-N0ctane keeps native Starlight semantics and adds a small set of reusable components. Component details and a broader visual tour are available in the [showcase](/showcase/).
-
-## Callouts
-
-<Callout tone="note">A neutral note for contextual information.</Callout>
-<Callout tone="tip">A recommended practice.</Callout>
-<Callout tone="warning">A warning for things that may need attention.</Callout>
-<Callout tone="danger">An important warning for potentially destructive actions.</Callout>
-<Callout tone="info">An informational callout.</Callout>
-
-The type prop remains supported for compatibility; tone takes precedence when both are provided.
-
-## Link cards
-
-<DocGrid columns={2}>
-  <DocCard title="Getting started" eyebrow="Learn" description="A linked card with a subtle chain watermark." href="/getting-started/" />
-  <DocCard title="Configuration" eyebrow="Reference" description="A static card can hold extra content without navigating." />
-</DocGrid>
-
-## Native Starlight cards
-
-<CardGrid>
-  <Card title="Native card" icon="open-book">
-    Native Starlight cards keep their standard MDX API and receive the N0ctane surface and gradient styling.
-  </Card>
-  <Card title="Another native card" icon="setting">
-    Use built-in Card and CardGrid components when their standard semantics fit.
-  </Card>
-</CardGrid>
-
-## Steps
-
-<Steps>
-  1. Install the dependencies:
-
-     ~~~sh
-     npm install
-     ~~~
-
-  2. Start the development server:
-
-     ~~~sh
-     npm run dev
-     ~~~
-
-  3. Build the production site:
-
-     ~~~sh
-     npm run build
-     ~~~
-</Steps>
-
-## File tree
-
-<FileTree>
-- src/
-  - components/
-    - docs/
-      - Callout.astro
-      - DocCard.astro
-      - DocGrid.astro
-      - FileTree.astro
-      - Kbd.astro
-      - Steps.astro
-  - styles/
-    - components.css
-    - interface.css
-    - theme.css
-- astro.config.mjs
-- n0ct.config.mjs
-- package.json
-</FileTree>
-
-## Keyboard hints
-
-Use <Kbd>Ctrl</Kbd> + <Kbd>K</Kbd> to open the command palette. The starlight-kbd integration selects the right keyboard convention for macOS, Windows, and Linux.
-
-## Code frames
-
-Standard fenced code blocks retain Expressive Code's copy controls and built-in frame behavior. N0ctane supplies the syntax palette and a single outer frame border.
-
-~~~bash title="Build the documentation" frame="terminal"
-npm run build
 ~~~
 
-## Editor tabs
-
-The :::code-tabs directive combines variants into one interactive code frame. Keep only fenced code blocks between the directive markers.
-
-:::code-tabs{sync="n0ct-package-manager"}
-
-~~~bash label="npm"
-npm install @n0ctanedev/starlight-n0ct
-~~~
-
-~~~bash label="pnpm"
-pnpm add @n0ctanedev/starlight-n0ct
-~~~
-
-~~~bash label="yarn"
-yarn add @n0ctanedev/starlight-n0ct
-~~~
-
-:::
-
-## Diff highlighting
-
-The diff language marks removed rows in red and added rows in green.
-
-~~~diff title="theme config"
-- glow: 'subtle'
-+ glow: 'balanced'
-~~~
-
-## Focus and line highlighting
-
-Use Expressive Code attributes to focus a small range of lines without changing the code itself.
-
-~~~ts title="src/config.ts" {2-3}
-export default {
-  theme: {
-    glow: 'balanced',
-    contentWidth: '58rem',
-  },
-};
-~~~
-
-## Tailwind utilities
-
-Tailwind v4 is enabled by the theme. Its role-based tokens are available without additional Vite setup.
-
-<div class="rounded-xl border border-n0ct-accent-500/40 bg-n0ct-surface p-4 text-n0ct-text-primary">
-  This panel uses Tailwind utilities from the N0ctane palette.
-</div>
+These are presentation components, not replacements for Starlight's semantic page structure. Native Starlight components such as Card, CardGrid, Tabs, Steps, and FileTree remain available and receive N0ctane styling where applicable.

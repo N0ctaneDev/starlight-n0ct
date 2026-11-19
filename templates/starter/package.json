@@ -2,7 +2,7 @@
   "name": "n0ctane-docs",
   "private": true,
   "type": "module",
-  "version": "0.2.0",
+  "version": "0.1.0",
   "scripts": {
     "dev": "astro dev --host",
     "build": "astro build",
@@ -20,7 +20,7 @@
   "dependencies": {
     "@astrojs/starlight": "^0.43.1",
     "@iconify-json/lucide": "^1.2.155",
-    "@n0ctanedev/starlight-n0ct": "^0.2.0",
+    "@n0ctanedev/starlight-n0ct": "^1.0.0",
     "astro": "^7.4.12",
     "starlight-blog": "^0.30.2",
     "starlight-sidebar-topics": "^0.9.0",

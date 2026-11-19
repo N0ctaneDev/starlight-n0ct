@@ -1,21 +1,17 @@
 ---
-title: Config API
-description: Public properties exposed by n0ct.config.mjs.
+title: Configuration API
+description: The public N0ctConfig shape accepted by n0ct.config.mjs.
 ---
 
-## Editor IntelliSense
-
-N0ctane exports the N0ctConfig TypeScript interface. Add a JSDoc @satisfies annotation to your JavaScript config to enable property suggestions and diagnostics:
+The package exports the N0ctConfig and N0ctaneOptions TypeScript interfaces. Add a JSDoc satisfies annotation to a JavaScript config to get editor completion and type checking.
 
 ~~~js
 // @ts-check
 
 /** @satisfies {import('@n0ctanedev/starlight-n0ct').N0ctConfig} */
 const config = {
-  title: 'My Documentation',
-  sidebar: {
-    topicDisplay: 'dropdown',
-  },
+  title: 'Project docs',
+  sidebar: { topics: ['guides', 'reference'] },
 };
 
 export default config;
@@ -23,51 +19,74 @@ export default config;
 
 ## Root properties
 
-| Property | Type | Description |
+| Property | Type | Default | Notes |
+|---|---|---|---|
+| title | string | Required | Starlight site title |
+| description | string | — | Site description and metadata |
+| favicon | string | /favicon.svg at runtime | Root-relative path to a file in public/ |
+| sidebar | object | Starlight defaults | Topic display, topics, and extra entries |
+| versioning | false or N0ctVersioningConfig | false | Native Starlight Versions options |
+| integrations | object | All built-in integrations enabled unless false | Per-plugin options |
+| footer | object | Theme footer | Footer text, links, and icon links |
+| icons | object | src/icons and bundled Lucide | Local icon directory and Iconify allowlist |
+| theme | N0ctThemeConfig | N0ctane defaults | Named palettes, layout, and effects |
+| starlight | `Partial<StarlightUserConfig>` | — | Advanced native Starlight escape hatch |
+
+## Sidebar
+
+| Property | Type | Purpose |
 |---|---|---|
-| title | string | Required Starlight site title |
-| favicon | string | Global favicon path relative to `public/`; theme-specific overrides are optional |
-| description | string | Site description |
-| sidebar.topics | N0ctSidebarTopic[] | Simplified sidebar declarations |
-| sidebar.topicDisplay | collapsible, list, or dropdown | Native sidebar, topic list, or dropdown |
-| sidebar.topicOptions | object | Route exclusions and route-to-topic mappings |
-| sidebar.extra | N0ctNativeSidebarItem[] | Additional native Starlight entries |
-| versioning | false or N0ctVersioningConfig | Native Starlight Versions options |
-| integrations | object | Bundled plugin options or false to disable |
-| footer | object | Footer text, links, and icons |
-| icons | object | Iconify collection and icon directory |
-| theme | N0ctThemeConfig | Palette, code colors, width, and glow |
-| `starlight` | `Partial<StarlightUserConfig>` | Advanced Starlight escape hatch |
+| topicDisplay | collapsible, list, dropdown | Select native groups, upstream list, or dropdown |
+| topics | N0ctSidebarTopic[] | Root topics, shorthand directories, or manual groups |
+| topicOptions.exclude | string[] | Route patterns excluded from plugin-backed topic routing |
+| topicOptions.topics | `Record<string, string[]>` | Map otherwise-unlisted route patterns to topic IDs |
+| extra | N0ctNativeSidebarItem[] | Append native Starlight entries |
 
-## Theme configuration
+A topic may be a directory string or an object with label, id, icon, dropdownIcon, link, directory, autogenerate, items, collapsed, badge, attrs, and translations. A string such as guides creates a title-cased group with children generated from that content directory.
 
-The theme.colors.dark and theme.colors.light objects each accept:
-- palette — primary, secondary, accent, surface, text, highlight, and background colors.
-- codePalette — independent syntax colors for code blocks.
-- semantic — success, warning, danger, and info colors.
-- overrides — role-level surface, text, border, interaction, highlight, and editor refinements.
+## Footer and icons
 
-See the [theme reference](/reference/theme/) for the complete schema and mode-qualified token list.
+~~~js
+footer: {
+  text: 'Built with Starlight-N0ct',
+  links: [
+    { label: 'GitHub', link: 'https://github.com/example/project', newTab: true },
+  ],
+  icons: [
+    { icon: 'lucide:github', link: 'https://github.com/example/project', label: 'GitHub', newTab: true },
+  ],
+},
+
+icons: {
+  iconDir: './src/icons',
+  include: { lucide: ['*'] },
+},
+~~~
+
+Footer links accept label, link, and optional newTab. Footer icon links accept icon, link, label, and optional newTab. The icons setting controls the local SVG directory and Iconify collection allowlist.
+
+## Integrations
+
+Each integration entry accepts false or an options object. The available keys are basePath, announcement, kbd, llmsTxt, scrollToTop, llmActions, sidebarSwipe, linksValidator, blog, and imageZoom. N0ctane forwards options to the upstream plugin; see the [integration reference](/reference/integrations/).
 
 ## Versioning
 
-N0ctane forwards the native starlight-versions configuration:
+N0ctVersioningConfig mirrors the relevant upstream options:
 
 ~~~js
 versioning: {
   versions: [
-    { slug: '0.1.4', label: 'v0.1.4', redirect: 'same-page' },
+    { slug: '0.2.0', label: 'v0.2.0', redirect: 'same-page' },
   ],
-  current: {
-    label: 'v0.2.0',
-    redirect: 'same-page',
-  },
+  current: { label: 'v1.0.0', redirect: 'same-page' },
   exclude: ['blog/**'],
 },
 ~~~
 
-The content configuration must register docsVersionsLoader() from starlight-versions/loader in a versions collection. The demo and generated starter include that collection. When a configured archive is missing, the plugin creates it from current docs during the next development server start or build. Add one new version at a time.
+The versions array is required when versioning is enabled. Each version accepts slug, label, and redirect. current accepts label and redirect. exclude contains source-file glob patterns.
 
-## Native escape hatch
+When versioning is enabled, register docsVersionsLoader() in a versions content collection. The installer templates include the loader.
 
-starlight is merged after N0ctane defaults. Use it for integrations, component overrides, or any Starlight option that does not have a simplified N0ctane setting. Advanced sidebar, components, customCss, and plugins intentionally override theme defaults.
+## Theme
+
+N0ctThemeConfig supports defaultTheme, themes, legacy colors, contentWidth, sidebarWidth, and glow. Each named theme supports label, favicon, and colors. See the detailed [theme reference](/reference/theme/).

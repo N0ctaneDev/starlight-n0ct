@@ -1,0 +1,33 @@
+---
+title: Welcome
+description: Your publication and documentation space.
+template: splash
+hero:
+  title: "__N0CT_SITE_TITLE__"
+  tagline: A home for project notes, release updates, and the practical documentation behind them.
+  actions:
+    - text: Read the latest post
+      link: /blog/
+      icon: right-arrow
+    - text: Browse documentation
+      link: /guides/
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="The blog" icon="pencil">
+    Publish release notes, engineering updates, tutorials, and project announcements.
+  </Card>
+  <Card title="Documentation" icon="open-book">
+    Keep installation guides, reference material, and tutorials close to the publication.
+  </Card>
+  <Card title="Your voice" icon="users">
+    Configure author profiles, tags, featured posts, and reading-time information.
+  </Card>
+</CardGrid>
+
+## Make this publication yours
+
+Start by updating the author profile and site details in n0ct.config.mjs. Replace the sample articles in src/content/docs/blog/ with your own work, then organize documentation under guides and reference.

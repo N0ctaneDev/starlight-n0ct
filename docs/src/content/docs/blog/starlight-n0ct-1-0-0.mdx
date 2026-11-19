@@ -1,0 +1,47 @@
+---
+title: Starlight-N0ct 1.0.0 — the first stable release
+description: The first stable release brings a rebuilt docs site, a usable theme lab, a keyboard-first installer, and two ready-to-customize templates.
+date: 2026-11-19
+authors: [team]
+tags: [Release, Starlight-N0ct, 1.0.0]
+featured: true
+excerpt: Starlight-N0ct 1.0.0 brings a cohesive component system, stronger theme tooling, and a faster route from a blank folder to a working docs or blog site.
+---
+
+Today marks the first stable release of **Starlight-N0ct 1.0.0**.
+
+This release is about making the theme easier to understand, easier to customize, and easier to start using in a real project.
+
+## Documentation that explains the system
+
+The demo documentation has been rebuilt around focused guides, reference pages, a component library, and a more useful homepage. Every component now has its own usage page with props and CSS hooks, while the theme reference explains the palette model and semantic token system.
+
+## A more practical theme playground
+
+The new theme playground separates the editor from the live preview. Pick a named palette, switch between Dark and Light, edit the core colors or syntax tokens, tune brand gradients, reset a mode, and copy or download the generated configuration.
+
+## A keyboard-first installer
+
+The installer now presents actual selection lists instead of asking you to remember numeric choices. Use the arrows to move, Space to toggle optional integrations, and Enter to confirm. Each plugin has a short description beside its name.
+
+## Two project templates
+
+You can start with either a focused documentation site or a **Blog + Documentation** template with author metadata and sample posts already configured:
+
+~~~sh
+# Documentation
+npx @n0ctanedev/starlight-n0ct init my-docs
+
+# Blog + documentation
+npx @n0ctanedev/starlight-n0ct init my-publication --template blog
+~~~
+
+## A more complete theme system
+
+Named palettes support separate dark and light values, dedicated syntax palettes, semantic roles, gradients, and themed favicons. The footer identity, browser favicon, and component styling follow the active palette.
+
+The package keeps Starlight's content model and its accessible native components, then adds a consistent design system on top.
+
+**Thank you for exploring Starlight-N0ct.** The next step is yours: build your docs, launch your publication, and make the theme your own.
+
+Read the [getting-started guide](/getting-started/), explore the [components](/components/), or open the [theme playground](/reference/theme/#live-theme-playground).

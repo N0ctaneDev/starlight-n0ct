@@ -1,0 +1,39 @@
+---
+title: Getting started
+description: Replace the sample content and publish your first post.
+---
+
+This starter combines a Starlight documentation site with a Starlight Blog publication.
+
+## Personalize the site
+
+1. Set the site title, description, favicon, and sidebar in n0ct.config.mjs.
+2. Replace the example author under integrations.blog.authors.
+3. Edit the sample posts under src/content/docs/blog/.
+4. Update the public site URL and base path in .env.
+5. Run a production build before deploying.
+
+## Write a post
+
+Create an MDX file inside src/content/docs/blog/ and add post frontmatter:
+
+~~~yaml
+---
+title: A useful update
+description: A short summary for the blog index.
+date: 2026-11-19
+authors: [team]
+tags: [updates, project]
+excerpt: A one-sentence introduction to the article.
+---
+~~~
+
+The team author ID maps to integrations.blog.authors.team in n0ct.config.mjs. Use tags to group posts and featured: true to highlight an important article.
+
+## Start the site
+
+~~~sh
+npm run dev
+~~~
+
+Open /blog/ to browse the publication and /guides/ for the docs.

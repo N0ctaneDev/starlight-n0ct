@@ -1,95 +1,110 @@
 ---
-topic: start
 title: Getting started
-description: Install N0ctane and use it in a Starlight project.
+description: Install Starlight-N0ct and get a polished documentation site running.
 ---
 
-import { Steps } from '@astrojs/starlight/components';
-import { FileTree } from '@astrojs/starlight/components';
+Starlight-N0ct is an Astro Starlight theme, component kit, and project installer. Start with a generated project or add it to an existing Starlight site.
 
-## Requirements
+## Recommended: create a project
 
-- Node.js 22.22 or newer is required.
-- Astro 7.2.10 or newer within the 7.x line.
-- Starlight 0.42.10 or 0.43.x.
+~~~sh
+npx @n0ctanedev/starlight-n0ct init my-docs
+~~~
 
-## Install
+The installer asks for the site title, description, public URL, deployment base path, and sidebar style. It then presents two keyboard-driven selectors.
 
-For a new project, the easiest route is the [interactive installer](/guides/installer/).
+- Choose **Documentation starter** for a focused docs site.
+- Choose **Blog + documentation** for docs with a configured blog, author profile, and sample posts.
+- Toggle optional integrations with Space and confirm with Enter.
 
-For an existing project, install N0ctane and Lucide directly:
+The selector also supports arrow-key navigation, select-all, and clear-all. The installer detects npm, pnpm, yarn, or bun, and you can override the choice.
 
-```sh
+~~~sh
+# Blog template without prompts
+npx @n0ctanedev/starlight-n0ct init my-publication --template blog --yes
+
+# Scaffold files without installing dependencies
+npx @n0ctanedev/starlight-n0ct init my-docs --no-install
+
+# Use pnpm
+npx @n0ctanedev/starlight-n0ct init my-docs --pm pnpm
+~~~
+
+## Install in an existing project
+
+~~~sh
 npm install @n0ctanedev/starlight-n0ct @iconify-json/lucide
-```
+~~~
 
-## Create `n0ct.config.mjs`
+Create n0ct.config.mjs:
 
-```js n0ct.config.mjs
-export default {
-  title: 'Project Docs',
-  description: 'Documentation for my project',
+~~~js
+// @ts-check
+
+/** @satisfies {import('@n0ctanedev/starlight-n0ct').N0ctConfig} */
+const config = {
+  title: 'My project docs',
+  description: 'Documentation for my project.',
+  favicon: '/favicon.svg',
   sidebar: {
+    topicDisplay: 'collapsible',
     topics: ['guides', 'reference'],
   },
   integrations: {
-    announcement: false,
     blog: false,
+    llmsTxt: {},
+    scrollToTop: {},
   },
 };
-```
 
-## Connect N0ctane to Starlight
+export default config;
+~~~
 
-```js
+Configure Astro in astro.config.mjs:
+
+~~~js
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import n0ctConfig from './n0ct.config.mjs';
 import { n0ctane } from '@n0ctanedev/starlight-n0ct';
 
 export default defineConfig({
-  integrations: [
-    starlight({
-      ...n0ctane(n0ctConfig),
-    }),
-  ],
+  integrations: [starlight(n0ctane(n0ctConfig))],
 });
-```
+~~~
 
-The theme function returns native Starlight configuration. Keep Astro-level settings such as `site`, `base`, `output` and adapters in `defineConfig()`.
+## Configure the content collection
 
-## Create your content
+A basic docs-only site needs Starlight's docs and i18n collections:
 
-Create the content directories referenced by the sidebar configuration inside `src/content/docs/`:
+~~~ts
+import { defineCollection } from 'astro:content';
+import { docsLoader, i18nLoader } from '@astrojs/starlight/loaders';
+import { docsSchema, i18nSchema } from '@astrojs/starlight/schema';
 
-<FileTree>
-- src/content/docs/
-  - guides/
-    - index.mdx
-  - reference/
-    - index.mdx
-</FileTree>
+export const collections = {
+  docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
+  i18n: defineCollection({ loader: i18nLoader(), schema: i18nSchema() }),
+};
+~~~
 
-## Run and build
+If you enable list/dropdown sidebar topics, extend the docs schema with topicSchema. If you enable Blog, merge blogSchema too. If you enable documentation versioning, register docsVersionsLoader() in a versions collection. The generated templates include the corresponding schema and loader setup.
 
-<Steps>
-  1. Install the dependencies:
+## Run it
 
-     ```sh
-     npm install
-     ```
+~~~sh
+npm run dev
+~~~
 
-  2. Start the development server:
+Then open the local URL printed by Astro. Build the static site with:
 
-     ```sh
-     npm run dev
-     ```
+~~~sh
+npm run build
+~~~
 
-  3. Build the production site:
+## Next
 
-     ```sh
-     npm run build
-     ```
-</Steps>
-
-N0ctane does not replace Astro or Starlight. It provides a design system, configuration expansion, component overrides and a curated set of Starlight plugins.
+- Set up [sidebar and theme configuration](/guides/configuration/).
+- Explore the [component library](/components/).
+- Enable [integrations](/guides/integrations/).
+- Tune colors and syntax in the [theme playground](/reference/theme/#live-theme-playground).

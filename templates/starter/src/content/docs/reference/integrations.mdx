@@ -1,21 +1,35 @@
 ---
 title: Built-in integrations
-description: Optional features included with the N0ctane theme.
+description: Optional features included with Starlight-N0ct.
 ---
 
-The theme bundles its integrations, so the starter project does not need to install each plugin separately.
+The package bundles its integrations, so you do not need to install each upstream plugin separately. Enable an integration with an options object or disable it with `false`.
 
 | Config key | Feature |
 |---|---|
-| `basePath` | Root-relative links respect Astro's configured base path |
+| `basePath` | Prefix supported root-relative links for subpath deployments |
 | `announcement` | Announcement banners |
-| `kbd` | Keyboard shortcuts and layout support |
+| `kbd` | Keyboard shortcuts and keycap support |
 | `llmsTxt` | LLM-friendly documentation indexes |
 | `scrollToTop` | Scroll-to-top control |
-| `llmActions` | LLM actions and related tooling |
+| `llmActions` | Copy/view Markdown, print to PDF, and open-in-LLM actions |
 | `sidebarSwipe` | Mobile sidebar swipe gestures |
 | `linksValidator` | Build-time internal link validation |
-| `blog` | Blog support and frontmatter |
+| `blog` | Blog posts, author pages, tags, and RSS |
 | `imageZoom` | Image zoom |
 
-Set an integration to `false` in `n0ct.config.mjs` to disable it.
+The documentation starter disables Blog by default and does not include sample posts. Its content schema is already extended with Blog frontmatter, so you can enable it later:
+
+~~~js
+integrations: {
+  blog: {},
+},
+~~~
+
+For a ready-to-publish blog and documentation site with author metadata and sample posts, use the Blog + Documentation installer template:
+
+~~~sh
+npx @n0ctanedev/starlight-n0ct init my-publication --template blog
+~~~
+
+Set an integration to `false` in `n0ct.config.mjs` to disable it. Plugin-specific options are forwarded to the corresponding upstream integration.
