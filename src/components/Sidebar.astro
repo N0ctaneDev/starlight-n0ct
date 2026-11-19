@@ -28,27 +28,74 @@ const settings = (Astro.locals as any).n0ctane ?? {};
 
 <script>
   const mobileMenuMedia = window.matchMedia('(max-width: 49.999rem)');
-  let n0ctSidebarPanel: HTMLElement | null = null;
+  const sidebarWindow = window as typeof window & { __n0ctSidebarMenuBound?: boolean };
 
-  function syncN0ctMobileMenuState() {
-    const isOpen = Boolean(
-      n0ctSidebarPanel &&
-      mobileMenuMedia.matches &&
-      n0ctSidebarPanel.matches(':popover-open')
-    );
-    document.documentElement.toggleAttribute('data-n0ct-mobile-menu-open', isOpen);
-  }
+  if (!sidebarWindow.__n0ctSidebarMenuBound) {
+    sidebarWindow.__n0ctSidebarMenuBound = true;
+    let n0ctSidebarPanel: HTMLElement | null = null;
 
-  function bindN0ctSidebarPanel() {
-    const panel = document.getElementById('starlight__sidebar');
-    if (panel && panel !== n0ctSidebarPanel) {
-      n0ctSidebarPanel = panel;
-      panel.addEventListener('toggle', syncN0ctMobileMenuState);
+    function isMobileMenuOpen() {
+      return Boolean(
+        mobileMenuMedia.matches &&
+        n0ctSidebarPanel &&
+        n0ctSidebarPanel.matches(':popover-open')
+      );
     }
-    syncN0ctMobileMenuState();
-  }
 
-  mobileMenuMedia.addEventListener('change', syncN0ctMobileMenuState);
-  document.addEventListener('astro:page-load', bindN0ctSidebarPanel);
-  bindN0ctSidebarPanel();
+    function relocateScrollToTopButton() {
+      const button = document.getElementById('scroll-to-top-button');
+      const mainFrame = document.querySelector<HTMLElement>('.main-frame');
+      // The upstream plugin appends its fixed button to body. Put it inside
+      // Starlight's main frame so the sidebar's native inert state also covers it.
+      if (button && mainFrame && button.parentElement !== mainFrame) {
+        mainFrame.appendChild(button);
+      }
+    }
+
+    function syncN0ctMobileMenuState() {
+      relocateScrollToTopButton();
+      const open = isMobileMenuOpen();
+      document.documentElement.toggleAttribute('data-n0ct-mobile-menu-open', open);
+
+      const button = document.getElementById('scroll-to-top-button');
+      if (button) {
+        button.setAttribute('aria-hidden', String(open));
+        button.inert = open;
+      }
+    }
+
+    function bindN0ctSidebarPanel() {
+      const panel = document.getElementById('starlight__sidebar');
+      if (panel !== n0ctSidebarPanel) {
+        n0ctSidebarPanel?.removeEventListener('toggle', syncN0ctMobileMenuState);
+        n0ctSidebarPanel?.removeEventListener('beforetoggle', syncN0ctMobileMenuState);
+        n0ctSidebarPanel = panel;
+        n0ctSidebarPanel?.addEventListener('toggle', syncN0ctMobileMenuState);
+        n0ctSidebarPanel?.addEventListener('beforetoggle', syncN0ctMobileMenuState);
+      }
+      syncN0ctMobileMenuState();
+    }
+
+    const scrollButtonObserver = new MutationObserver(() => {
+      relocateScrollToTopButton();
+      syncN0ctMobileMenuState();
+    });
+    scrollButtonObserver.observe(document.body, { childList: true });
+
+    // Capture the popover event as well as Starlight's own panel toggle. This
+    // covers the open/close sequence even when the button is inserted later.
+    document.addEventListener('toggle', (event) => {
+      if (event.target === n0ctSidebarPanel) requestAnimationFrame(syncN0ctMobileMenuState);
+    }, true);
+    document.addEventListener('click', (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      if (!target) return;
+      const trigger = target.closest('[popovertarget="starlight__sidebar"], [aria-controls="starlight__sidebar"]');
+      if (trigger) requestAnimationFrame(syncN0ctMobileMenuState);
+    }, true);
+
+    mobileMenuMedia.addEventListener('change', syncN0ctMobileMenuState);
+    document.addEventListener('astro:page-load', bindN0ctSidebarPanel);
+    bindN0ctSidebarPanel();
+  }
 </script>

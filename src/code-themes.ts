@@ -1,9 +1,9 @@
-import type { N0ctThemeColors } from './types.js';
-import { resolveN0ctThemeColors } from './theme-colors.js';
+import type { N0ctThemeColors, N0ctThemeConfig } from './types.js';
+import { resolveN0ctThemeColors, resolveN0ctThemeConfig } from './theme-colors.js';
 
 type Mode = 'dark' | 'light';
 
-function createTheme(mode: Mode, variables: Record<string, string>) {
+function createTheme(mode: Mode, variables: Record<string, string>, themeName: string) {
   const get = (name: string) => variables['--n0ct-' + name]!;
   const codeBackground = get('code-background');
   const codeForeground = get('code-foreground');
@@ -45,7 +45,7 @@ function createTheme(mode: Mode, variables: Record<string, string>) {
   ];
 
   return {
-    name: mode === 'dark' ? 'N0ctane Night' : 'N0ctane Day',
+    name: themeName,
     type: mode,
     colors,
     tokenColors,
@@ -55,7 +55,19 @@ function createTheme(mode: Mode, variables: Record<string, string>) {
 export function createN0ctaneCodeThemes(input?: N0ctThemeColors) {
   const resolved = resolveN0ctThemeColors(input);
   return [
-    createTheme('dark', resolved.dark.variables),
-    createTheme('light', resolved.light.variables),
+    createTheme('dark', resolved.dark.variables, 'n0ctane-dark'),
+    createTheme('light', resolved.light.variables, 'n0ctane-light'),
   ] as const;
+}
+
+/** Build one Expressive Code theme for every named palette and appearance mode. */
+export function createN0ctaneCodeThemeSet(input?: N0ctThemeConfig) {
+  const themeSet = resolveN0ctThemeConfig(input);
+  return Object.entries(themeSet.themes).flatMap(([id, theme]) => {
+    const resolved = resolveN0ctThemeColors(theme.colors);
+    return [
+      createTheme('dark', resolved.dark.variables, id + '-dark'),
+      createTheme('light', resolved.light.variables, id + '-light'),
+    ];
+  });
 }

@@ -47,11 +47,15 @@
     },
     "./components/*": "./dist/components/*",
     "./styles.css": "./dist/styles/theme.css",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./theme-playground": {
+      "types": "./dist/theme-playground.d.ts",
+      "import": "./dist/theme-playground.js"
+    }
   },
   "scripts": {
     "clean": "node ./scripts/clean.mjs",
-    "build": "npm run clean && tsup && node ./scripts/copy-assets.mjs",
+    "build": "npm run clean && tsup && tsup --config tsup.playground.config.ts && node ./scripts/copy-assets.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

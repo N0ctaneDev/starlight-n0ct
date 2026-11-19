@@ -5,7 +5,7 @@ import { createN0ctIntegrations, createN0ctVersioning } from './integrations.js'
 import { normalizeN0ctConfig } from './config.js';
 import { createN0ctanePlugin } from './plugin.js';
 import { createN0ctSidebarTopics } from './sidebar-topics.js';
-import { createN0ctaneCodeThemes } from './code-themes.js';
+import { createN0ctaneCodeThemeSet } from './code-themes.js';
 import type { N0ctConfig, N0ctaneOptions } from './types.js';
 
 export type {
@@ -24,7 +24,7 @@ export type {
 export { normalizeN0ctConfig, topicToSidebar } from './config.js';
 export { createN0ctIntegrations, createN0ctVersioning } from './integrations.js';
 export { createN0ctSidebarTopics } from './sidebar-topics.js';
-export { resolveN0ctThemeColors, generateN0ctThemeCss, validateN0ctThemeColors } from './theme-colors.js';
+export { resolveN0ctThemeColors, resolveN0ctThemeConfig, generateN0ctThemeCss, generateN0ctThemeSetCss, validateN0ctThemeColors } from './theme-colors.js';
 export type {
   N0ctThemeColors,
   N0ctThemeMode,
@@ -35,6 +35,7 @@ export type {
   N0ctThemeCodeOverrides,
   N0ctThemeCodePalette,
   N0ctThemeConfig,
+  N0ctThemeDefinition,
 } from './types.js';
 
 /**
@@ -149,8 +150,11 @@ export function n0ctane(config: N0ctaneOptions): StarlightUserConfig {
     : {};
   const expressiveCode = (advanced.expressiveCode === false ? false : {
     ...advancedExpressiveCode,
-    themes: advancedExpressiveCode.themes ?? createN0ctaneCodeThemes(config.theme?.colors),
-    useStarlightDarkModeSwitch: advancedExpressiveCode.useStarlightDarkModeSwitch ?? true,
+    themes: advancedExpressiveCode.themes ?? createN0ctaneCodeThemeSet(config.theme),
+    useStarlightDarkModeSwitch: advancedExpressiveCode.useStarlightDarkModeSwitch ?? false,
+    useDarkModeMediaQuery: advancedExpressiveCode.useDarkModeMediaQuery ?? false,
+    themeCssSelector: advancedExpressiveCode.themeCssSelector ?? ((theme: { name: string }) =>
+      '[data-n0ct-code-theme="' + theme.name + '"]'),
     frames: {
       ...advancedFrames,
     },

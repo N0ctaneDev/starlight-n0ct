@@ -1,33 +1,94 @@
 ---
-title: Theme reference
-description: Semantic color roles, mode-qualified tokens, typography, and syntax palettes.
+title: Theme system
+description: Named palettes, two-state appearance preferences, semantic tokens, and live palette design.
 ---
 
-## Typography
+import ThemePlayground from '../../../components/ThemePlayground.astro';
 
-The theme uses **Space Grotesk Variable** for interface and body text and **Space Mono** for code.
+N0ctane separates **palette identity** from **appearance mode**. A visitor chooses a named palette such as N0ctane or GitHub, then chooses Light or Dark. Both settings apply to the site UI and the matching Expressive Code syntax theme.
 
-## Semantic color system
+## Live palette playground
 
-N0ctane exposes design roles rather than hue-named variables. The original brand identity maps to stable roles:
+Use the controls to edit the four main palette colors for either appearance. The current page is the preview: cards, callouts, controls, navigation surfaces, links, borders, and text update together. Fine-grained overrides and syntax token colors are intentionally outside this editor.
 
-| Role | Purpose |
+<ThemePlayground />
+
+## Named themes
+
+Define multiple named palettes under `theme.themes`. Each theme has its own dark and light values, and `theme.defaultTheme` chooses the palette used for visitors without a saved preference.
+
+~~~js
+theme: {
+  defaultTheme: 'n0ctane',
+  themes: {
+    n0ctane: {
+      label: 'N0ctane',
+      colors: {
+        dark: {
+          palette: {
+            primary: '#F25CFF',
+            accent: '#00E5FF',
+            surface: '#131626',
+            text: '#E6EAF8',
+          },
+        },
+        light: {
+          palette: {
+            primary: '#B72DBF',
+            accent: '#00AFC2',
+            surface: '#FFFFFF',
+            text: '#211D32',
+          },
+        },
+      },
+    },
+    github: {
+      label: 'GitHub',
+      colors: {
+        dark: {
+          palette: {
+            primary: '#4493F8',
+            accent: '#3FB950',
+            surface: '#161B22',
+            text: '#E6EDF3',
+          },
+        },
+        light: {
+          palette: {
+            primary: '#0969DA',
+            accent: '#1A7F37',
+            surface: '#FFFFFF',
+            text: '#1F2328',
+          },
+        },
+      },
+    },
+  },
+},
+~~~
+
+Theme IDs must start with a lowercase letter and may contain lowercase letters, numbers, hyphens, and underscores. Labels are optional; when omitted, N0ctane formats the ID for display.
+
+Each mode requires only four core colors:
+
+| Color | Used for |
 |---|---|
-| primary | Brand identity, links, and primary gradients |
-| secondary | Supporting brand color |
-| accent | Focus, active controls, and interactive highlights |
-| highlight | Selected or emphasized content |
-| base | Main page background |
-| surface | Cards, panels, and content surfaces |
-| text.primary | Main readable text |
-| text.secondary | Body copy |
-| text.muted | Supporting and metadata text |
-| border | Separators and component outlines |
-| success, warning, danger, info | Semantic status colors |
+| `primary` | Brand identity, links, and primary gradients |
+| `accent` | Focus, active controls, and interactive highlights |
+| `surface` | Main card and panel surface |
+| `text` | Main readable foreground |
 
-Dark and light values are tuned independently. The default light palette uses a darker primary text accent and stronger neutral contrast for readability.
+Secondary, highlight, highlight text, and page background are derived when omitted. You can still provide those optional palette values to fine-tune the result.
 
-## Configuration
+## Appearance and saved preferences
+
+The theme switcher has two independent controls. Its icon cycles between **Dark** and **Light**; its dropdown selects the named palette. Choosing GitHub while Dark is active applies GitHub's dark palette and GitHub's dark syntax theme. Changing to Light then selects GitHub's light values.
+
+Preferences are saved in `localStorage` under `n0ct-theme-preferences` as a `{ mode, theme }` object. There is no automatic/system mode. The previous `starlight-theme` value is kept in sync for compatibility with integrations that read Starlight's appearance key.
+
+## Backwards-compatible configuration
+
+The original `theme.colors` shape continues to configure the built-in `n0ctane` palette when `theme.themes.n0ctane` is not supplied:
 
 ~~~js
 theme: {
@@ -35,130 +96,112 @@ theme: {
     dark: {
       palette: {
         primary: '#F25CFF',
-        secondary: '#8C42FF',
         accent: '#00E5FF',
         surface: '#131626',
         text: '#E6EAF8',
-        highlight: '#2A85FF',
-        highlightText: '#080A15',
-        background: '#0B0D17',
       },
     },
     light: {
       palette: {
         primary: '#B72DBF',
-        secondary: '#7540CE',
         accent: '#00AFC2',
         surface: '#FFFFFF',
         text: '#211D32',
-        highlight: '#286DCE',
-        highlightText: '#FFFFFF',
-        background: '#F6F5FB',
       },
     },
   },
-}
+},
 ~~~
 
-The four core palette values are primary, accent, surface, and text. Secondary, highlight, highlightText, and background are optional and are derived when omitted.
+New projects should use `theme.themes`; legacy configuration can be migrated one palette at a time.
 
 ## Mode-qualified color tokens
 
 Every resolved role is available under a mode-specific prefix, regardless of the active theme:
 
-- --n0ct-dark-base, --n0ct-dark-surface, --n0ct-dark-text-primary
-- --n0ct-light-base, --n0ct-light-surface, --n0ct-light-text-primary
-- --n0ct-dark-primary-500, --n0ct-light-primary-500
-- --n0ct-dark-code-background, --n0ct-light-code-background
+- `--n0ct-dark-base`, `--n0ct-dark-surface`, `--n0ct-dark-text-primary`
+- `--n0ct-light-base`, `--n0ct-light-surface`, `--n0ct-light-text-primary`
+- `--n0ct-dark-primary-500`, `--n0ct-light-primary-500`
+- `--n0ct-dark-code-background`, `--n0ct-light-code-background`
 
-The regular aliases (--n0ct-base, --n0ct-surface, --n0ct-text-primary, and so on) always follow Starlight's active color scheme. Both naming styles are available in CSS. The complete mode-qualified role set and all primary, secondary, and accent shade ramps are also registered as Tailwind tokens, for example bg-n0ct-dark-surface, text-n0ct-light-text-primary, and border-n0ct-dark-border.
+The regular aliases (`--n0ct-base`, `--n0ct-surface`, `--n0ct-text-primary`, and so on) follow the selected theme and mode. Both naming styles are available in CSS. The complete mode-qualified role set and the primary, secondary, and accent shade ramps are also registered as Tailwind tokens.
 
 ## Dedicated code palettes
 
-Code syntax colors are configured separately from the documentation UI palette. Each mode accepts its own codePalette. Values are literal hex colors so Expressive Code can generate independent Shiki themes with predictable contrast.
+Syntax highlighting is configured independently for each theme and appearance. When omitted, the built-in N0ctane code palette is used. Expressive Code receives a pair of named syntax themes for each palette: `<theme-id>-dark` and `<theme-id>-light`.
 
 ~~~js
 theme: {
-  colors: {
-    dark: {
-      codePalette: {
-        background: '#0D1020',
-        foreground: '#E6EAF8',
-        comment: '#A3AED1',
-        keyword: '#FF8DD6',
-        string: '#9FE6B8',
-        number: '#FFD18A',
-        function: '#79DDF8',
-        type: '#BDAAFF',
-        variable: '#E8ECFA',
-        tag: '#72DCEB',
-        attribute: '#F6A8D8',
-        punctuation: '#C0CBE5',
-        invalid: '#FF829A',
-      },
-    },
-    light: {
-      codePalette: {
-        background: '#F3F1F8',
-        foreground: '#29253D',
-        comment: '#68627F',
-        keyword: '#92247E',
-        string: '#08764D',
-        number: '#875400',
-        function: '#00688F',
-        type: '#5D3BA5',
-        variable: '#29253D',
-        tag: '#006F88',
-        attribute: '#92266B',
-        punctuation: '#514B64',
-        invalid: '#B42345',
+  themes: {
+    github: {
+      colors: {
+        dark: {
+          codePalette: {
+            background: '#0D1117',
+            foreground: '#E6EDF3',
+            keyword: '#FF7B72',
+            string: '#A5D6FF',
+            comment: '#8B949E',
+          },
+        },
+        light: {
+          codePalette: {
+            background: '#FFFFFF',
+            foreground: '#1F2328',
+            keyword: '#CF222E',
+            string: '#0A3069',
+            comment: '#6E7781',
+          },
+        },
       },
     },
   },
-}
+},
 ~~~
 
-You can omit any field and N0ctane will use the built-in mode default. The previous overrides.code API remains available and takes precedence for detailed cursor, selection, line-number, diff, and tab controls.
+The full code palette supports `background`, `foreground`, `comment`, `keyword`, `string`, `number`, `function`, `type`, `variable`, `tag`, `attribute`, `punctuation`, and `invalid`.
 
 ## Fine-grained role overrides
 
-Place these under either mode's overrides object. Every field is optional.
+Main palette colors are the starting point. Use `overrides` when a component needs a specific role that should not be derived from the four core colors. Overrides can be set independently for each theme and mode.
 
 | Group | Available roles |
 |---|---|
-| brand | primary, secondary, accent, highlight, highlightText |
-| surfaces | void, base, surface, elevated, sunken, overlay, navigation, sidebar, code |
-| text | primary, secondary, muted, subtle, inverse, accent, highlight, onAccent |
-| borders | subtle, default, strong, focus |
-| interactive | hover, active, selected |
-| highlight | background, text, border, selectionBackground, selectionText |
-| code | background, foreground, cursor, selectionBackground, lineHighlight, lineNumber, lineNumberActive, diffAdded, diffRemoved, tabs |
+| `brand` | primary, secondary, accent, highlight, highlightText |
+| `surfaces` | void, base, surface, elevated, sunken, overlay, navigation, sidebar, code |
+| `text` | primary, secondary, muted, subtle, inverse, accent, highlight, onAccent |
+| `borders` | subtle, default, strong, focus |
+| `interactive` | hover, active, selected |
+| `highlight` | background, text, border, selectionBackground, selectionText |
+| `code` | background, foreground, cursor, selectionBackground, lineHighlight, lineNumber, lineNumberActive, diffAdded, diffRemoved, tabs |
 
-The code override group also accepts:
-- diffAdded and diffRemoved: foreground, background, border, text.
-- tabs: background, activeBackground, foreground, activeForeground, border.
+The code override group also accepts `diffAdded` and `diffRemoved` (foreground, background, border, text), and `tabs` (background, activeBackground, foreground, activeForeground, border).
 
 ## Semantic status colors
 
-Statuses can be overridden independently in each mode:
+Statuses can be overridden independently in each theme and mode:
 
 ~~~js
 theme: {
-  colors: {
-    light: {
-      semantic: {
-        success: { foreground: '#087F5B' },
-        warning: { foreground: '#875400' },
-        danger: { foreground: '#B42345' },
-        info: { foreground: '#A85A00' },
+  themes: {
+    github: {
+      colors: {
+        light: {
+          semantic: {
+            success: { foreground: '#1A7F37' },
+            warning: { foreground: '#9A6700' },
+            danger: { foreground: '#CF222E' },
+            info: { foreground: '#0969DA' },
+          },
+        },
       },
     },
   },
-}
+},
 ~~~
 
 ## Layout and effects
 
-The defaults use a 55rem reading width and a 17rem sidebar. Override theme.contentWidth and theme.sidebarWidth to change layout. Glow strength accepts subtle, balanced, or strong; the default is balanced.
+The defaults use a 58rem reading width and a 17rem sidebar. Override `theme.contentWidth` and `theme.sidebarWidth` to change layout. Glow strength accepts `subtle`, `balanced`, or `strong`; the default is balanced.
 
-The background glow is fixed to the viewport rather than scrolling with the document. Focus states remain visible and animations respect prefers-reduced-motion.
+The background glow is fixed to the viewport rather than scrolling with the document. Focus states remain visible and animations respect `prefers-reduced-motion`.

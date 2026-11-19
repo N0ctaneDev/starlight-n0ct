@@ -1,88 +1,366 @@
 ---
+const themeSettings = (Astro.locals as any).n0ctane?.theme ?? {};
+const defaultTheme = themeSettings.defaultTheme ?? 'n0ctane';
+const themes = Array.isArray(themeSettings.themes) && themeSettings.themes.length
+  ? themeSettings.themes
+  : [{ id: 'n0ctane', label: 'N0ctane' }];
 ---
-<button class="n0ct-theme-toggle" type="button" data-mode="auto" aria-label="Color theme: Auto. Activate to switch to Light." title="Color theme: Auto">
-  <svg class="n0ct-theme-toggle__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <g class="icon-auto" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M8 10l2.5 3 2-2 3.5 4"/>
-    </g>
-    <g class="icon-light" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
-      <circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>
-    </g>
-    <path class="icon-dark" d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-  <span class="n0ct-sr-only" data-theme-announcement>Theme: Auto</span>
-</button>
+<div
+  class="n0ct-theme-control"
+  data-n0ct-theme-control
+  data-default-theme={defaultTheme}
+  data-available-themes={themes.map((theme: { id: string }) => theme.id).join(',')}
+>
+  <script is:inline>
+    (() => {
+      const control = document.currentScript?.closest('[data-n0ct-theme-control]');
+      if (!control) return;
+      const root = document.documentElement;
+      const allowedThemes = (control.getAttribute('data-available-themes') || '').split(',').filter(Boolean);
+      const fallbackTheme = control.getAttribute('data-default-theme') || allowedThemes[0] || 'n0ctane';
+      let preferences = null;
+      let legacyMode = null;
+      try {
+        preferences = JSON.parse(localStorage.getItem('n0ct-theme-preferences') || 'null');
+        legacyMode = localStorage.getItem('starlight-theme');
+      } catch {}
+      const mode = preferences?.mode === 'light' || (!preferences && legacyMode === 'light') ? 'light' : 'dark';
+      const theme = typeof preferences?.theme === 'string' && allowedThemes.includes(preferences.theme)
+        ? preferences.theme
+        : fallbackTheme;
+      root.dataset.theme = mode;
+      root.dataset.n0ctTheme = theme;
+      root.dataset.n0ctCodeTheme = theme + '-' + mode;
+    })();
+  </script>
+  <button
+    class="n0ct-theme-mode"
+    type="button"
+    data-n0ct-mode-toggle
+    data-mode="dark"
+    aria-label="Switch to light mode"
+    title="Switch to light mode"
+  >
+    <svg class="mode-icon mode-icon-light" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" />
+    </svg>
+    <svg class="mode-icon mode-icon-dark" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" />
+    </svg>
+    <span class="n0ct-sr-only" data-n0ct-mode-label>Dark mode</span>
+  </button>
+  <details class="n0ct-theme-menu" data-n0ct-theme-menu>
+    <summary
+      class="n0ct-theme-menu-trigger"
+      aria-label="Choose a color theme"
+      title="Choose a color theme"
+    >
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="m3.5 6 4.5 4 4.5-4" />
+      </svg>
+    </summary>
+    <div class="n0ct-theme-menu-panel" role="menu" aria-label="Color themes">
+      <p class="n0ct-theme-menu-heading">Color theme</p>
+      {themes.map((theme: { id: string; label: string }) => (
+        <button
+          class="n0ct-theme-option"
+          type="button"
+          role="menuitemradio"
+          aria-checked="false"
+          data-n0ct-theme-option
+          data-theme-id={theme.id}
+        >
+          <span>{theme.label}</span>
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path d="m3 8 3 3 7-7" />
+          </svg>
+        </button>
+      ))}
+    </div>
+  </details>
+  <span class="n0ct-sr-only" aria-live="polite" data-n0ct-theme-announcement></span>
+</div>
+
 <script>
-  type ThemeMode = 'auto' | 'light' | 'dark';
-  const modes: ThemeMode[] = ['auto', 'light', 'dark'];
-  const themeKey = 'starlight-theme';
-  const media = window.matchMedia('(prefers-color-scheme: dark)');
+  type ThemeMode = 'dark' | 'light';
+  type ThemePreferences = { mode: ThemeMode; theme: string };
+  const preferenceKey = 'n0ct-theme-preferences';
+  const legacyModeKey = 'starlight-theme';
+  const themeWindow = window as typeof window & { __n0ctThemePreferencesBound?: boolean };
 
-  function getSavedMode(): ThemeMode {
+  function getThemeIds(): string[] {
+    return Array.from(document.querySelectorAll<HTMLElement>('[data-n0ct-theme-option]'))
+      .map((option) => option.dataset.themeId ?? '')
+      .filter(Boolean);
+  }
+
+  function getDefaultTheme(): string {
+    return document.querySelector<HTMLElement>('[data-n0ct-theme-control]')?.dataset.defaultTheme
+      ?? getThemeIds()[0]
+      ?? 'n0ctane';
+  }
+
+  function readPreferences(): ThemePreferences {
+    const validThemes = getThemeIds();
     try {
-      const saved = localStorage.getItem(themeKey);
-      return saved === 'light' || saved === 'dark' ? saved : 'auto';
+      const saved = localStorage.getItem(preferenceKey);
+      if (saved) {
+        const parsed = JSON.parse(saved) as Partial<ThemePreferences>;
+        return {
+          mode: parsed.mode === 'light' ? 'light' : 'dark',
+          theme: parsed.theme && validThemes.includes(parsed.theme) ? parsed.theme : getDefaultTheme(),
+        };
+      }
+      const oldMode = localStorage.getItem(legacyModeKey);
+      return {
+        mode: oldMode === 'light' ? 'light' : 'dark',
+        theme: getDefaultTheme(),
+      };
     } catch {
-      return 'auto';
+      return { mode: 'dark', theme: getDefaultTheme() };
     }
   }
 
-  function setTheme(mode: ThemeMode) {
+  function writePreferences(preferences: ThemePreferences): void {
     try {
-      // Match Starlight's own storage contract: an empty string represents Auto.
-      localStorage.setItem(themeKey, mode === 'auto' ? '' : mode);
+      localStorage.setItem(preferenceKey, JSON.stringify(preferences));
+      // Keep Starlight's existing mode key in sync for integrations that read it.
+      localStorage.setItem(legacyModeKey, preferences.mode);
     } catch {
-      // The page still works when browser storage is unavailable.
+      // The active page still updates when browser storage is unavailable.
     }
+  }
 
-    const activeTheme = mode === 'auto' ? (media.matches ? 'dark' : 'light') : mode;
-    document.documentElement.dataset.theme = activeTheme;
+  function applyPreferences(preferences: ThemePreferences, persist = true): void {
+    const validThemes = getThemeIds();
+    const theme = validThemes.includes(preferences.theme) ? preferences.theme : getDefaultTheme();
+    const mode: ThemeMode = preferences.mode === 'light' ? 'light' : 'dark';
+    const next = { mode, theme };
 
-    document.querySelectorAll<HTMLButtonElement>('.n0ct-theme-toggle').forEach((button) => {
-      button.dataset.mode = mode;
-      const next = modes[(modes.indexOf(mode) + 1) % modes.length];
-      const displayMode = (value: ThemeMode) => value[0].toUpperCase() + value.slice(1);
-      const label = `Color theme: ${displayMode(mode)}. Activate to switch to ${displayMode(next)}.`;
-      button.setAttribute('aria-label', label);
-      button.title = label;
-      const announcement = button.querySelector<HTMLElement>('[data-theme-announcement]');
-      if (announcement) announcement.textContent = `Theme: ${displayMode(mode)}`;
+    document.documentElement.dataset.theme = mode;
+    document.documentElement.dataset.n0ctTheme = theme;
+    document.documentElement.dataset.n0ctCodeTheme = theme + '-' + mode;
+
+    document.querySelectorAll<HTMLElement>('[data-n0ct-theme-control]').forEach((control) => {
+      const modeButton = control.querySelector<HTMLButtonElement>('[data-n0ct-mode-toggle]');
+      const menu = control.querySelector<HTMLDetailsElement>('[data-n0ct-theme-menu]');
+      const announcement = control.querySelector<HTMLElement>('[data-n0ct-theme-announcement]');
+      const nextMode: ThemeMode = mode === 'dark' ? 'light' : 'dark';
+
+      if (modeButton) {
+        modeButton.dataset.mode = mode;
+        modeButton.setAttribute('aria-label', 'Switch to ' + nextMode + ' mode');
+        modeButton.title = 'Switch to ' + nextMode + ' mode';
+        const label = modeButton.querySelector<HTMLElement>('[data-n0ct-mode-label]');
+        if (label) label.textContent = mode === 'dark' ? 'Dark mode' : 'Light mode';
+      }
+
+      if (menu) {
+        menu.querySelectorAll<HTMLButtonElement>('[data-n0ct-theme-option]').forEach((option) => {
+          const selected = option.dataset.themeId === theme;
+          option.setAttribute('aria-checked', String(selected));
+          option.classList.toggle('is-selected', selected);
+        });
+      }
+
+      const selectedOption = document.querySelector<HTMLElement>(
+        '[data-n0ct-theme-option][data-theme-id="' + theme + '"]',
+      );
+      if (announcement) {
+        announcement.textContent = (selectedOption?.textContent?.trim() ?? theme)
+          + ', ' + mode + ' mode';
+      }
     });
+
+    if (persist) writePreferences(next);
+    window.dispatchEvent(new CustomEvent('n0ct:theme-change', { detail: next }));
   }
 
-  // Event delegation supports both the desktop header and mobile menu footer,
-  // including Astro client-side page transitions.
-  const themeWindow = window as typeof window & { __n0ctThemeToggleBound?: boolean };
-  if (!themeWindow.__n0ctThemeToggleBound) {
-    themeWindow.__n0ctThemeToggleBound = true;
+  if (!themeWindow.__n0ctThemePreferencesBound) {
+    themeWindow.__n0ctThemePreferencesBound = true;
+
+    document.addEventListener('pointerdown', (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      if (target?.closest('[data-n0ct-theme-menu]')) return;
+      document.querySelectorAll<HTMLDetailsElement>('[data-n0ct-theme-menu]').forEach((menu) => {
+        menu.open = false;
+      });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      document.querySelectorAll<HTMLDetailsElement>('[data-n0ct-theme-menu]').forEach((menu) => {
+        if (!menu.open) return;
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      });
+    });
+
     document.addEventListener('click', (event) => {
-      const button = event.target instanceof Element
-        ? event.target.closest<HTMLButtonElement>('.n0ct-theme-toggle')
-        : null;
-      if (!button) return;
-      const current = getSavedMode();
-      setTheme(modes[(modes.indexOf(current) + 1) % modes.length]);
+      const target = event.target instanceof Element ? event.target : null;
+      if (!target) return;
+
+      const modeButton = target.closest<HTMLButtonElement>('[data-n0ct-mode-toggle]');
+      if (modeButton) {
+        const current = readPreferences();
+        applyPreferences({
+          mode: current.mode === 'dark' ? 'light' : 'dark',
+          theme: current.theme,
+        });
+        return;
+      }
+
+      const themeOption = target.closest<HTMLButtonElement>('[data-n0ct-theme-option]');
+      if (themeOption?.dataset.themeId) {
+        const current = readPreferences();
+        applyPreferences({ ...current, theme: themeOption.dataset.themeId });
+        document.querySelectorAll<HTMLDetailsElement>('[data-n0ct-theme-menu]').forEach((menu) => {
+          menu.open = false;
+        });
+      }
     });
-    media.addEventListener('change', () => {
-      if (getSavedMode() === 'auto') setTheme('auto');
+
+    window.addEventListener('n0ct-theme:set-mode', (event) => {
+      const mode = (event as CustomEvent).detail;
+      if (mode === 'dark' || mode === 'light') applyPreferences({ ...readPreferences(), mode });
     });
-    document.addEventListener('astro:page-load', () => setTheme(getSavedMode()));
+
+    window.addEventListener('n0ct-theme:set-theme', (event) => {
+      const theme = (event as CustomEvent).detail;
+      if (typeof theme === 'string' && getThemeIds().includes(theme)) {
+        applyPreferences({ ...readPreferences(), theme });
+      }
+    });
+
+    document.addEventListener('astro:page-load', () => applyPreferences(readPreferences()));
   }
 
-  setTheme(getSavedMode());
+  applyPreferences(readPreferences());
 </script>
+
 <style>
-  .n0ct-theme-toggle {
-    display:grid; place-items:center; width:2.35rem; height:2.35rem;
-    border:1px solid var(--sl-color-hairline); border-radius:.72rem;
-    color:var(--sl-color-text); background:var(--sl-color-bg-nav);
-    cursor:pointer; transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+  .n0ct-theme-control {
+    position: relative;
+    display: inline-flex;
+    align-items: stretch;
+    height: 2.35rem;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 0.72rem;
+    color: var(--sl-color-text);
+    background: var(--sl-color-bg-nav);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.07);
   }
-  .n0ct-theme-toggle:hover { border-color:var(--sl-color-accent); box-shadow:0 0 .9rem color-mix(in srgb,var(--sl-color-accent) var(--n0ct-glow-strength, 24%),transparent); }
-  .n0ct-theme-toggle:focus-visible { outline:2px solid var(--sl-color-accent); outline-offset:3px; }
-  .n0ct-theme-toggle:active { transform:scale(.94); }
-  .n0ct-theme-toggle__icon { width:1.12rem; height:1.12rem; }
-  .n0ct-theme-toggle .icon-auto,.n0ct-theme-toggle .icon-light,.n0ct-theme-toggle .icon-dark { display:none; }
-  .n0ct-theme-toggle[data-mode="auto"] .icon-auto,.n0ct-theme-toggle[data-mode="light"] .icon-light,.n0ct-theme-toggle[data-mode="dark"] .icon-dark { display:initial; }
-  .n0ct-sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .n0ct-theme-mode,
+  .n0ct-theme-menu-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.3rem;
+    padding: 0;
+    border: 0;
+    color: inherit;
+    background: transparent;
+    cursor: pointer;
+    transition: color 160ms ease, background-color 160ms ease;
+  }
+
+  .n0ct-theme-mode {
+    border-radius: 0.68rem 0 0 0.68rem;
+  }
+
+  .n0ct-theme-menu {
+    position: relative;
+    display: flex;
+    border-inline-start: 1px solid var(--sl-color-hairline);
+  }
+
+  .n0ct-theme-menu-trigger {
+    min-width: 1.85rem;
+    border-radius: 0 0.68rem 0.68rem 0;
+    list-style: none;
+  }
+
+  .n0ct-theme-menu-trigger::-webkit-details-marker { display: none; }
+  .n0ct-theme-menu-trigger svg { width: 0.8rem; height: 0.8rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .mode-icon { display: none; width: 1.08rem; height: 1.08rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .n0ct-theme-mode[data-mode="dark"] .mode-icon-light,
+  .n0ct-theme-mode[data-mode="light"] .mode-icon-dark { display: block; }
+
+  .n0ct-theme-mode:hover,
+  .n0ct-theme-menu-trigger:hover,
+  .n0ct-theme-menu[open] .n0ct-theme-menu-trigger {
+    color: var(--sl-color-accent);
+    background: color-mix(in srgb, var(--sl-color-accent) 9%, transparent);
+  }
+
+  .n0ct-theme-mode:focus-visible,
+  .n0ct-theme-menu-trigger:focus-visible,
+  .n0ct-theme-option:focus-visible {
+    position: relative;
+    z-index: 1;
+    outline: 2px solid var(--sl-color-accent);
+    outline-offset: -3px;
+  }
+
+  .n0ct-theme-menu-panel {
+    position: absolute;
+    z-index: 120;
+    inset-block-start: calc(100% + 0.5rem);
+    inset-inline-end: 0;
+    min-width: 10.5rem;
+    padding: 0.35rem;
+    border: 1px solid var(--n0ct-border);
+    border-radius: 0.75rem;
+    color: var(--n0ct-text-primary);
+    background: var(--n0ct-surface-elevated);
+    box-shadow: 0 12px 32px rgb(0 0 0 / 0.24);
+  }
+
+  .n0ct-theme-menu-heading {
+    margin: 0;
+    padding: 0.45rem 0.65rem;
+    color: var(--n0ct-text-muted);
+    font-size: 0.68rem;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .n0ct-theme-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 2.15rem;
+    padding: 0.4rem 0.65rem;
+    border: 0;
+    border-radius: 0.45rem;
+    color: inherit;
+    background: transparent;
+    text-align: start;
+    font-size: 0.84rem;
+    cursor: pointer;
+  }
+
+  .n0ct-theme-option:hover,
+  .n0ct-theme-option.is-selected {
+    color: var(--n0ct-text-primary);
+    background: var(--n0ct-interactive-selected);
+  }
+
+  .n0ct-theme-option svg {
+    display: none;
+    width: 0.9rem;
+    height: 0.9rem;
+    fill: none;
+    stroke: var(--n0ct-accent-500);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .n0ct-theme-option.is-selected svg { display: block; }
+  .n0ct-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 </style>

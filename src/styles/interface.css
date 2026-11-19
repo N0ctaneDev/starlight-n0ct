@@ -382,12 +382,18 @@ starlight-toc a:hover,
 @media (max-width: 49.999rem) {
   .sidebar-pane {
     inset-block-start: var(--sl-nav-height) !important;
+    z-index: 1100 !important;
     width: 100% !important;
     min-height: 0;
   }
 
   .sidebar-content {
     padding: 0.85rem 1rem 1rem !important;
+  }
+
+  /* The scroll control is moved into .main-frame and must remain below the popover. */
+  .main-frame #scroll-to-top-button {
+    z-index: 99 !important;
   }
 }
 

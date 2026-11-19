@@ -234,7 +234,23 @@ export interface N0ctThemeColors {
   light?: N0ctThemeMode;
 }
 
+/** A named color theme. Both modes are independently derived from the main palette fields. */
+export interface N0ctThemeDefinition {
+  /** Label shown in the theme picker. Defaults to a title-cased theme ID. */
+  label?: string;
+  /** Dark and light values for this theme. */
+  colors?: N0ctThemeColors;
+}
+
 export interface N0ctThemeConfig {
+  /** Theme ID selected when a visitor has no saved preference. Defaults to `n0ctane`. */
+  defaultTheme?: string;
+  /** Named palettes available in the theme picker, keyed by a stable lowercase ID. */
+  themes?: Record<string, N0ctThemeDefinition>;
+  /**
+   * Backwards-compatible colors for the built-in `n0ctane` theme.
+   * New projects should define colors inside `themes`.
+   */
   colors?: N0ctThemeColors;
   /** Main content width, e.g. `58rem` or `900px`. */
   contentWidth?: string;
@@ -314,7 +330,7 @@ export interface N0ctConfig {
     /** Iconify collection names and allowlisted icon names. Lucide is included by default. */
     include?: Record<string, string[]>;
   };
-  /** Palette-driven dark/light theme with individually overridable semantic roles. */
+  /** Named light/dark palettes with individually overridable semantic roles. */
   theme?: N0ctThemeConfig;
   /** Advanced native Starlight settings. These are merged after N0ctane defaults. */
   starlight?: Partial<StarlightUserConfig>;

@@ -5,7 +5,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { N0ctConfig } from './types.js';
-import { generateN0ctThemeCss, validateN0ctThemeColors } from './theme-colors.js';
+import { generateN0ctThemeSetCss, resolveN0ctThemeConfig, validateN0ctThemeColors } from './theme-colors.js';
 import { createRemarkCodeFilenamesIntegration } from './remark-code-filenames.js';
 
 const safeLength = (value: string) => {
@@ -38,7 +38,7 @@ function tokenStyles(config: N0ctConfig) {
     ...(theme.contentWidth ? ['--sl-content-width: ' + theme.contentWidth + ';'] : []),
     ...(theme.sidebarWidth ? ['--sl-sidebar-width: ' + theme.sidebarWidth + ';'] : []),
   ];
-  return generateN0ctThemeCss(theme.colors) + '\n:root { ' + layout.join(' ') + ' }\n';
+  return generateN0ctThemeSetCss(theme) + '\n:root { ' + layout.join(' ') + ' }\n';
 }
 
 export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
@@ -50,10 +50,19 @@ export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
         const runtimeDir = join(projectRoot, '.astro', 'n0ctane');
         await mkdir(runtimeDir, { recursive: true });
 
+        const themeSet = resolveN0ctThemeConfig(config.theme);
         const runtimeSettings = {
           footer: config.footer ?? {},
           sidebar: { topicDisplay: config.sidebar?.topicDisplay ?? 'collapsible' },
           versioning: config.versioning ?? false,
+          theme: {
+            defaultTheme: themeSet.defaultTheme,
+            themes: Object.entries(themeSet.themes).map(([id, theme]) => ({
+              id,
+              label: theme.label,
+              colors: theme.colors,
+            })),
+          },
         };
         const settingsLiteral = JSON.stringify(runtimeSettings).replace(/</g, '\\u003c');
         const middlewarePath = join(runtimeDir, 'route-middleware.mjs');
@@ -97,8 +106,12 @@ export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
           }));
         }
 
-        for (const warning of validateN0ctThemeColors(config.theme?.colors)) logger.warn(warning);
-        logger.info('N0ctane palette, snapshot components, and runtime settings are ready.');
+        for (const [themeId, theme] of Object.entries(themeSet.themes)) {
+          for (const warning of validateN0ctThemeColors(theme.colors)) {
+            logger.warn('Theme "' + themeId + '": ' + warning);
+          }
+        }
+        logger.info('N0ctane named palettes, snapshot components, and runtime settings are ready.');
       },
     },
   };
