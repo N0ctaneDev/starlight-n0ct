@@ -32,6 +32,10 @@ export default config;
 | theme | N0ctThemeConfig | N0ctane defaults | Named palettes, layout, and effects |
 | starlight | `Partial<StarlightUserConfig>` | — | Advanced native Starlight escape hatch |
 
+## Astro site settings
+
+`site` and `base` are configured in Astro's `astro.config.mjs`, not in `N0ctConfig`. Set `site` to the canonical deployment URL and `base` to the deployment subpath (or `/` at the domain root). Astro exposes `base` as `import.meta.env.BASE_URL`; N0ctane's `DocCard` uses that value when resolving root-relative internal destinations.
+
 ## Sidebar
 
 | Property | Type | Purpose |

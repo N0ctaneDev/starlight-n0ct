@@ -3,7 +3,7 @@ title: Configuration
 description: Configure the site, sidebar, themes, footer, and advanced Starlight options.
 ---
 
-The project configuration lives in n0ct.config.mjs. N0ctane expands the concise settings into native Starlight configuration.
+The project configuration lives in `n0ct.config.mjs`. N0ctane expands the concise settings into native Starlight configuration. The public site URL and deployment base path are Astro settings, configured in `astro.config.mjs` with `site` and `base`; they are not N0ctane options.
 
 ## Minimal configuration
 
@@ -23,6 +23,20 @@ export default {
 ~~~
 
 The JSDoc satisfies annotation enables editor suggestions and validates your JavaScript config against N0ctConfig.
+
+## Site URL and base path
+
+Configure the canonical site URL and deployment subpath in `astro.config.mjs`, not in `n0ct.config.mjs`:
+
+~~~js
+export default defineConfig({
+  site: 'https://example.com',
+  base: '/docs', // use '/' when deploying at the domain root
+  integrations: [starlight(n0ctane(n0ctConfig))],
+});
+~~~
+
+Astro exposes this base path as `import.meta.env.BASE_URL`. N0ctane components such as `DocCard` use it to prefix root-relative internal links automatically. The optional `basePath` integration is separate: it rewrites supported Markdown and frontmatter links; it does not own or configure Astro's `site` or `base`.
 
 ## Sidebar topics
 

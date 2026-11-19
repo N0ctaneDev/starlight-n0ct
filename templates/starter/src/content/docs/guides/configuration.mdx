@@ -33,9 +33,9 @@ sidebar: {
 
 List and dropdown use the Sidebar Topics integration. Keep a `link` or `directory` on each root topic. The starter's content schema already includes `topicSchema`. Do not also set `starlight.sidebar` when using these plugin-backed modes.
 
-## Base path
+## Site URL and base path
 
-Set `SITE_URL` and `BASE_PATH` in `.env` when deploying below a subpath, for example `/docs` or `/project-name`:
+Astro owns the public site URL and deployment base path. They are not configured by N0ctane or `n0ct.config.mjs`. Set `SITE_URL` and `BASE_PATH` in `.env`; the template's `astro.config.mjs` passes them to Astro as `site` and `base`. For example, to deploy at `https://example.com/docs`:
 
 ~~~sh
 SITE_URL=https://example.com
@@ -50,7 +50,9 @@ integrations: {
 },
 ~~~
 
-The template's Astro config reads the environment values and passes `base` to Astro.
+Astro exposes the configured path as `import.meta.env.BASE_URL`. N0ctane's `DocCard` automatically prefixes root-relative `href` values with this base, so `href="/guides/"` resolves to `/docs/guides/`. Absolute external URLs and fragment links are not changed.
+
+The optional N0ctane `basePath` integration is separate: keep it enabled only if you also want its Markdown/frontmatter link rewriting. It does not set Astro's `site` or `base`.
 
 ## Integrations
 

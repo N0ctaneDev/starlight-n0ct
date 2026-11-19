@@ -60,6 +60,8 @@ const config = {
 export default config;
 ~~~
 
+Configure the public URL and optional deployment subpath in `astro.config.mjs`. These are Astro settings, not N0ctane settings. For a site deployed at `https://example.com/docs`, use `site: 'https://example.com'` and `base: '/docs'`. Astro's `base` is also used by `DocCard` to prefix root-relative internal links.
+
 Configure Astro in astro.config.mjs:
 
 ~~~js
@@ -69,6 +71,8 @@ import n0ctConfig from './n0ct.config.mjs';
 import { n0ctane } from '@n0ctanedev/starlight-n0ct';
 
 export default defineConfig({
+  site: 'https://example.com',
+  base: '/', // use '/docs' when deploying below a subpath
   integrations: [starlight(n0ctane(n0ctConfig))],
 });
 ~~~

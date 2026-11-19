@@ -315,8 +315,8 @@ const config = {
   },
   starlight: {
     logo: {
-      src: './src/assets/star-orbit.svg',
-      alt: 'N0ctane Star-Orbit logo',
+      src: './src/assets/n0ctane.svg',
+      alt: 'N0ctane logo',
     },
     lastUpdated: true,
     editLink: { baseUrl: 'https://github.com/n0ctanedev/starlight-n0ct/edit/main/docs/' },
