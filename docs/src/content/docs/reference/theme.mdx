@@ -29,6 +29,10 @@ theme: {
     n0ctane: {
       label: 'N0ctane',
       favicon: '/favicons/n0ctane.svg',
+      logo: {
+        dark: '/logos/n0ctane-dark.svg',
+        light: '/logos/n0ctane-light.svg',
+      },
       colors: {
         dark: {
           palette: {
@@ -164,6 +168,42 @@ Gradient roles include brand, brandSoft, monochrome, accent, canvas, shimmer, ca
 Shadow roles include soft, float, callout, card, cardHover, control, popover, sidebar, sidebarActive, scrollbar, scrollbarHover, focus, tab, wordmark, and step.
 
 Values are CSS values. N0ctane rejects declarations, URLs, and executable CSS expressions.
+
+## Theme-aware logos
+
+Each named palette can define a separate logo for dark and light appearance modes. Paths are root-relative files in your site's `public/` directory:
+
+~~~js
+theme: {
+  themes: {
+    n0ctane: {
+      logo: {
+        dark: '/logos/n0ctane-dark.svg',
+        light: '/logos/n0ctane-light.svg',
+      },
+    },
+    flexoki: {
+      logo: {
+        dark: '/logos/flexoki-dark.svg',
+        light: '/logos/flexoki-light.svg',
+      },
+    },
+  },
+},
+~~~
+
+The header logo updates when either the selected palette or appearance mode changes. When one mode is omitted, the other mode's image is used as its fallback. If a named theme has no logo configured, Starlight's `starlight.logo` remains in use.
+
+The homepage hero can use the same runtime switch by marking its image with `data-n0ct-themed-logo`:
+
+~~~yaml
+hero:
+  image:
+    alt: Project logo
+    html: '<img data-n0ct-themed-logo src="/logos/n0ctane-dark.svg" alt="Project logo" />'
+~~~
+
+The paths are prefixed with Astro's configured `base` at runtime, so this also works when the site is deployed below a subpath.
 
 ## Global and themed favicons
 
