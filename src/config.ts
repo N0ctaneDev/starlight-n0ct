@@ -115,8 +115,24 @@ export function topicToSidebar(topic: N0ctSidebarTopic): N0ctNormalizedSidebarIt
   };
 }
 
+function validateFaviconPath(value: string, context: string) {
+  const normalized = value.trim();
+  if (
+    !normalized.startsWith('/') ||
+    normalized.startsWith('//') ||
+    /[?#\\\\\s\u0000-\u001f]/.test(normalized) ||
+    normalized.split('/').some((segment) => segment === '.' || segment === '..')
+  ) {
+    throw new Error(`N0ctane ${context} must be a root-relative path to a file in public/ (for example, "/favicon.svg").`);
+  }
+}
+
 export function normalizeN0ctConfig(input: N0ctConfig): N0ctNormalizedConfig {
   if (!input.title?.trim()) throw new Error('N0ctane config requires a non-empty title.');
+  if (input.favicon !== undefined) validateFaviconPath(input.favicon, 'favicon');
+  for (const [id, theme] of Object.entries(input.theme?.themes ?? {})) {
+    if (theme.favicon !== undefined) validateFaviconPath(theme.favicon, 'theme.themes.' + id + '.favicon');
+  }
   const hasSidebar = input.sidebar?.topics !== undefined || input.sidebar?.extra !== undefined;
   const sidebarTopicDisplay = input.sidebar?.topicDisplay ?? 'collapsible';
   if (!['collapsible', 'list', 'dropdown'].includes(sidebarTopicDisplay)) {
