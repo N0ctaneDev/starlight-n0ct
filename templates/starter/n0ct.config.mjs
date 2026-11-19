@@ -51,7 +51,7 @@ const config = {
 
   starlight: {
     logo: {
-      src: '/favicon.svg',
+      src: './src/assets/star-orbit.svg',
       alt: 'Documentation Star-Orbit logo',
     },
   },

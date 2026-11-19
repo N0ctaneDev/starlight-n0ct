@@ -315,7 +315,7 @@ const config = {
   },
   starlight: {
     logo: {
-      src: '/favicons/n0ctane.svg',
+      src: './src/assets/star-orbit.svg',
       alt: 'N0ctane Star-Orbit logo',
     },
     lastUpdated: true,
