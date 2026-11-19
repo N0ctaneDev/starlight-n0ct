@@ -5,6 +5,7 @@
  */
 const config = {
   favicon: '/favicons/n0ctane.svg',
+        logo: { dark: '/logos/n0ctane-dark.svg', light: '/logos/n0ctane-light.svg' },
   title: 'N0ctane',
   description: 'A modern, readable documentation theme for Astro Starlight.',
   sidebar: {
@@ -72,6 +73,7 @@ const config = {
       n0ctane: {
         label: 'N0ctane',
         favicon: '/favicons/n0ctane.svg',
+        logo: { dark: '/logos/n0ctane-dark.svg', light: '/logos/n0ctane-light.svg' },
         colors: {
           dark: {
             brandGradient: 'linear-gradient(115deg, #F25CFF 0%, #8C42FF 52%, #00E5FF 100%)',
@@ -108,6 +110,7 @@ const config = {
       github: {
         label: 'GitHub',
         favicon: '/favicons/github.svg',
+        logo: { dark: '/logos/github-dark.svg', light: '/logos/github-light.svg' },
         colors: {
           dark: {
             brandGradient: 'linear-gradient(115deg, #4493F8 0%, #8957E5 52%, #3FB950 100%)',
@@ -131,6 +134,7 @@ const config = {
       catppuccin: {
         label: 'Catppuccin',
         favicon: '/favicons/catppuccin.svg',
+        logo: { dark: '/logos/catppuccin-dark.svg', light: '/logos/catppuccin-light.svg' },
         colors: {
           dark: {
             brandGradient: 'linear-gradient(115deg, #CBA6F7 0%, #F5C2E7 52%, #89DCEB 100%)',
@@ -167,6 +171,7 @@ const config = {
       'rose-pine': {
         label: 'Rosé Pine',
         favicon: '/favicons/rose-pine.svg',
+        logo: { dark: '/logos/rose-pine-dark.svg', light: '/logos/rose-pine-light.svg' },
         colors: {
           dark: {
             brandGradient: 'linear-gradient(115deg, #C4A7E7 0%, #EBBCBA 52%, #9CCFD8 100%)',
@@ -203,6 +208,7 @@ const config = {
       dracula: {
         label: 'Dracula',
         favicon: '/favicons/dracula.svg',
+        logo: { dark: '/logos/dracula-dark.svg', light: '/logos/dracula-light.svg' },
         colors: {
           dark: {
             brandGradient: 'linear-gradient(115deg, #BD93F9 0%, #FF79C6 52%, #8BE9FD 100%)',
@@ -239,6 +245,7 @@ const config = {
       nord: {
         label: 'Nord',
         favicon: '/favicons/nord.svg',
+        logo: { dark: '/logos/nord-dark.svg', light: '/logos/nord-light.svg' },
         colors: {
           dark: {
             brandGradient: 'linear-gradient(110deg, #88C0D0 0%, #81A1C1 55%, #8FBCBB 100%)',
@@ -275,6 +282,7 @@ const config = {
       flexoki: {
         label: 'Flexoki',
         favicon: '/favicons/flexoki.svg',
+        logo: { dark: '/logos/flexoki-dark.svg', light: '/logos/flexoki-light.svg' },
         colors: {
           dark: {
             brandGradient: 'linear-gradient(110deg, #DA702C 0%, #D0A215 52%, #879A39 100%)',
