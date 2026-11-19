@@ -155,7 +155,7 @@ const config = {
           },
         },
       },
-      rose-pine: {
+      'rose-pine': {
         label: 'Rosé Pine',
         colors: {
           dark: {
