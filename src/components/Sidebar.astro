@@ -61,9 +61,8 @@ const settings = (Astro.locals as any).n0ctane ?? {};
     function handleN0ctSidebarBeforeToggle(event: Event) {
       if (!mobileMenuMedia.matches) return;
       const nextState = (event as ToggleEvent).newState;
-      if (nextState === 'open' || nextState === 'closed') {
-        setN0ctMobileMenuState(nextState === 'open');
-      }
+      // Hide before opening; let the post-toggle event restore the button after closing.
+      if (nextState === 'open') setN0ctMobileMenuState(true);
     }
 
     function bindN0ctSidebarPanel() {
