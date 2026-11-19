@@ -1,0 +1,85 @@
+---
+import '../styles/home.css';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  tagline: string;
+  primaryLabel?: string;
+  primaryHref?: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+  version?: string;
+}
+const {
+  eyebrow = 'A theme and toolkit for Astro Starlight',
+  title,
+  tagline,
+  primaryLabel = 'Get started',
+  primaryHref = '/getting-started/',
+  secondaryLabel = 'Explore components',
+  secondaryHref = '/components/',
+  version = 'v1.0.0',
+} = Astro.props;
+---
+<section class="n0ct-home-hero">
+  <div class="n0ct-home-hero__top">
+    <span class="n0ct-home-hero__eyebrow"><span class="n0ct-home-hero__dot"></span>{eyebrow}</span>
+    <span class="n0ct-home-hero__version">{version}</span>
+  </div>
+  <h1>{title}</h1>
+  <p class="n0ct-home-hero__tagline">{tagline}</p>
+  <div class="n0ct-home-hero__actions">
+    <a class="n0ct-home-hero__primary" href={primaryHref}>{primaryLabel}<span aria-hidden="true">↗</span></a>
+    <a class="n0ct-home-hero__secondary" href={secondaryHref}>{secondaryLabel}<span aria-hidden="true">→</span></a>
+  </div>
+  <div class="n0ct-home-hero__meta">
+    <span>Named palettes</span><i></i><span>Dark + light</span><i></i><span>Keyboard-first installer</span>
+  </div>
+</section>
+<style>
+  .n0ct-home-hero {
+    position: relative;
+    isolation: isolate;
+    margin: 0 0 2rem;
+    padding: clamp(1.45rem, 4vw, 2.6rem);
+    overflow: hidden;
+    border: 1px solid var(--n0ct-border);
+    border-radius: 1.15rem;
+    background:
+      radial-gradient(ellipse at 2% 0%, color-mix(in srgb, var(--n0ct-primary-500) 17%, transparent), transparent 48%),
+      radial-gradient(ellipse at 98% 100%, color-mix(in srgb, var(--n0ct-accent-500) 12%, transparent), transparent 44%),
+      var(--n0ct-surface);
+    box-shadow: var(--n0ct-shadow-soft);
+  }
+  .n0ct-home-hero::after {
+    position: absolute;
+    z-index: -1;
+    inset: 0 0 auto;
+    height: 2px;
+    background: var(--n0ct-gradient-brand);
+    content: '';
+  }
+  .n0ct-home-hero__top,.n0ct-home-hero__actions,.n0ct-home-hero__meta {
+    display:flex; flex-wrap:wrap; align-items:center; gap:.7rem;
+  }
+  .n0ct-home-hero__top { justify-content:space-between; }
+  .n0ct-home-hero__eyebrow,.n0ct-home-hero__version {
+    color:var(--n0ct-text-muted); font-family:var(--sl-font-mono); font-size:.72rem; letter-spacing:.04em;
+  }
+  .n0ct-home-hero__eyebrow { display:inline-flex; align-items:center; gap:.55rem; }
+  .n0ct-home-hero__dot { width:.48rem; height:.48rem; border-radius:50%; background:var(--n0ct-accent-500); box-shadow:0 0 1rem color-mix(in srgb,var(--n0ct-accent-500) 70%,transparent); }
+  .n0ct-home-hero__version { padding:.25rem .58rem; border:1px solid var(--n0ct-border); border-radius:999px; background:var(--n0ct-surface-elevated); }
+  .n0ct-home-hero h1 { max-width:16ch; margin:1.5rem 0 .6rem; color:var(--n0ct-text-primary); font-size:clamp(2.2rem,6vw,4.1rem); font-weight:800; line-height:1.02; letter-spacing:-.055em; }
+  .n0ct-home-hero h1::first-line { color:transparent; background:var(--n0ct-gradient-brand); background-clip:text; -webkit-background-clip:text; }
+  .n0ct-home-hero__tagline { max-width:55ch; margin:0 0 1.5rem; color:var(--n0ct-text-secondary); font-size:clamp(1rem,2vw,1.12rem); line-height:1.7; }
+  .n0ct-home-hero__primary,.n0ct-home-hero__secondary { display:inline-flex; align-items:center; justify-content:center; gap:.7rem; min-height:2.7rem; padding:.6rem .95rem; border-radius:.7rem; font-size:.88rem; font-weight:700; text-decoration:none; transition:transform 160ms ease,border-color 160ms ease,box-shadow 160ms ease; }
+  .n0ct-home-hero__primary { color:var(--n0ct-text-on-accent); background:var(--n0ct-gradient-brand); box-shadow:var(--n0ct-shadow-control); }
+  .n0ct-home-hero__secondary { color:var(--n0ct-text-primary); border:1px solid var(--n0ct-border); background:var(--n0ct-surface-elevated); }
+  .n0ct-home-hero__primary:hover,.n0ct-home-hero__secondary:hover { transform:translateY(-2px); text-decoration:none; }
+  .n0ct-home-hero__secondary:hover { border-color:var(--n0ct-border-focus); }
+  .n0ct-home-hero__meta { margin-top:1.65rem; color:var(--n0ct-text-muted); font-size:.72rem; }
+  .n0ct-home-hero__meta i { width:3px; height:3px; border-radius:50%; background:var(--n0ct-primary-500); }
+  @media (max-width: 38rem) { .n0ct-home-hero__meta { gap:.45rem; } .n0ct-home-hero__meta i { display:none; } }
+  @media (prefers-reduced-motion: reduce) { .n0ct-home-hero__primary,.n0ct-home-hero__secondary { transition:none; } }
+</style>

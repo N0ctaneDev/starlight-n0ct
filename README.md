@@ -1,65 +1,156 @@
-# @n0ctanedev/starlight-n0ct
+<div align="center">
 
-A role-based dark/light theme and integration bundle for [Astro Starlight](https://starlight.astro.build/), based on the N0ctOS visual identity.
+# Starlight-N0ct
 
-- Space Grotesk Variable and Space Mono.
-- Role-based dark and light palettes that preserve the original N0ctane four-color identity.
-- A single icon button cycles **Auto → Light → Dark**.
-- Ion-inspired icon syntax for sidebar labels and footer icons, powered by `astro-icon`.
-- Ion-inspired spacing, recursive sidebar navigation and footer links.
-- Native Starlight Cards, Steps and FileTree components with gradient surfaces and readable selection states.
-- Ten opt-out integrations, configured from one `n0ct.config.mjs` file.
-- Reduced-motion support.
+**A full-featured visual system, component kit, and project installer for Astro Starlight.**
 
-## Requirements
+A carefully tuned docs experience with named themes, genuinely independent light and dark palettes, beautiful code frames, reusable components, and optional Starlight integrations.
 
-- Node.js 22.22+
-- Astro 7.2.10 or newer within the 7.x line
-- Starlight 0.42.10 or 0.43.x
+[![npm version](https://img.shields.io/npm/v/@n0ctanedev/starlight-n0ct?label=npm&color=cb4bdb)](https://www.npmjs.com/package/@n0ctanedev/starlight-n0ct)
+[![npm downloads](https://img.shields.io/npm/dm/@n0ctanedev/starlight-n0ct?label=downloads&color=8657e8)](https://www.npmjs.com/package/@n0ctanedev/starlight-n0ct)
+[![GitHub stars](https://img.shields.io/github/stars/n0ctanedev/starlight-n0ct?style=flat&color=21c5d8)](https://github.com/n0ctanedev/starlight-n0ct/stargazers)
+[![Last commit](https://img.shields.io/github/last-commit/n0ctanedev/starlight-n0ct?label=updated)](https://github.com/n0ctanedev/starlight-n0ct/commits/main)
+[![CI](https://github.com/n0ctanedev/starlight-n0ct/actions/workflows/ci.yml/badge.svg)](https://github.com/n0ctanedev/starlight-n0ct/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/n0ctanedev/starlight-n0ct)](LICENSE)
+[![Node](https://img.shields.io/badge/Node.js-%3E%3D22.22-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 
-## Installation
+[Documentation](https://n0ctanedev.github.io/starlight-n0ct/) · [npm package](https://www.npmjs.com/package/@n0ctanedev/starlight-n0ct) · [Report an issue](https://github.com/n0ctanedev/starlight-n0ct/issues)
 
-For an existing Astro/Starlight site:
+</div>
 
-```sh
-npm install @n0ctanedev/starlight-n0ct @iconify-json/lucide
-```
+---
 
-For a new, deploy-ready documentation project, use the interactive installer:
+## Screenshots
 
-```sh
+Full-width product shots will live in /assets. Add your screenshots as 1.png, 2.png, 3.png, and so on; each image is intentionally displayed on its own row.
+
+<p align="center"><img src="assets/1.png" alt="Starlight-N0ct documentation homepage" width="100%"></p>
+
+<p align="center"><img src="assets/2.png" alt="Starlight-N0ct theme playground" width="100%"></p>
+
+<p align="center"><img src="assets/3.png" alt="Starlight-N0ct component documentation" width="100%"></p>
+
+<p align="center"><img src="assets/4.png" alt="Starlight-N0ct code frames and tabs" width="100%"></p>
+
+<p align="center"><img src="assets/5.png" alt="Starlight-N0ct light appearance" width="100%"></p>
+
+---
+
+## Why Starlight-N0ct?
+
+Starlight-N0ct (N0ctane) gives Astro Starlight a coherent visual language without replacing the underlying documentation platform. It keeps Starlight's content model, navigation, accessibility conventions, and component ecosystem, while adding a theme system and a set of practical project tools.
+
+- **Named themes, two modes.** Visitors choose a palette and independently choose Dark or Light. Both modes are authored separately.
+- **A real design-token system.** Palette colors resolve into surfaces, text, borders, focus states, semantic colors, code colors, gradients, shadows, and Tailwind utilities.
+- **Code frames that feel native.** Expressive Code retains copy controls, titles, terminal frames, syntax highlighting, line focus, diffs, and interactive code tabs.
+- **Reusable documentation components.** Callouts, link cards, grids, file trees, keyboard keycaps, and step lists share the active theme.
+- **Useful integrations.** Enable blog, image zoom, LLM page actions, Markdown indexes, keyboard helpers, swipe navigation, link validation, announcements, and scroll-to-top.
+- **A project installer.** Generate a documentation site or a blog + documentation site, choose integrations with a keyboard menu, and install with npm, pnpm, yarn, or bun.
+
+## Get started
+
+### Option A — use the interactive installer
+
+~~~sh
 npx @n0ctanedev/starlight-n0ct init my-docs
-```
+~~~
 
-It asks for the site URL, base path, sidebar mode, and optional integrations; creates the Astro/Starlight config, content schemas, starter pages, 404 page, and deployment workflow; explicitly adds Lucide; and installs dependencies. Use `--yes` for defaults, `--no-install` to scaffold only, or `--pm pnpm` to select a package manager.
+The installer asks for the project details, then opens keyboard-driven selectors for the template and optional integrations. Base-path rewriting is preselected when you configure a subpath deployment.
 
-## Quick start
+| Key | Action |
+|---|---|
+| ↑ / ↓ | Move through the list |
+| Space | Toggle an integration |
+| Enter | Confirm the selection |
+| A / N | Select all / clear all integrations |
 
-Create `n0ct.config.mjs` beside `astro.config.mjs`:
+Choose one of the included templates:
 
-```js
-export default {
-  title: 'My Docs',
-  favicon: '/favicon.svg', // global favicon in public/; named themes may override it
-  description: 'Documentation for my project',
+- **Documentation starter** — a clean docs site with guides and reference pages.
+- **Blog + documentation** — the same foundation with Blog enabled, author metadata, and example posts.
+
+The installer also supports non-interactive setups:
+
+~~~sh
+# Recommended starter defaults
+npx @n0ctanedev/starlight-n0ct init my-docs --yes
+
+# Choose the blog template explicitly
+npx @n0ctanedev/starlight-n0ct init my-blog --template blog --yes
+
+# Scaffold only; install dependencies later
+npx @n0ctanedev/starlight-n0ct init my-docs --no-install
+
+# Choose a package manager
+npx @n0ctanedev/starlight-n0ct init my-docs --pm pnpm
+~~~
+
+### Option B — add it to an existing Starlight project
+
+Install the theme and Lucide collection:
+
+~~~sh
+npm install @n0ctanedev/starlight-n0ct @iconify-json/lucide
+~~~
+
+Create n0ct.config.mjs:
+
+~~~js
+// @ts-check
+
+/** @satisfies {import('@n0ctanedev/starlight-n0ct').N0ctConfig} */
+const config = {
+  title: 'Project documentation',
+  description: 'Documentation for my project.',
+  favicon: '/favicon.svg',
+
   sidebar: {
-    topicDisplay: 'collapsible', // 'list' or 'dropdown' are also available
-    topics: [
-      { label: 'Guides', id: 'guides', link: '/guides', directory: 'guides' },
-      { label: 'Reference', id: 'reference', link: '/reference', directory: 'reference' },
-      { label: 'API', id: 'api', link: '/api', autogenerate: false },
-    ],
+    topicDisplay: 'collapsible',
+    topics: ['guides', 'reference'],
   },
+
   integrations: {
-    announcement: false,
     blog: false,
+    llmsTxt: {},
+    scrollToTop: {},
+  },
+
+  theme: {
+    defaultTheme: 'n0ctane',
+    themes: {
+      n0ctane: {
+        label: 'N0ctane',
+        colors: {
+          dark: {
+            palette: {
+              primary: '#F25CFF',
+              secondary: '#8C42FF',
+              accent: '#00E5FF',
+              surface: '#131626',
+              text: '#E6EAF8',
+            },
+          },
+          light: {
+            palette: {
+              primary: '#B72DBF',
+              secondary: '#7540CE',
+              accent: '#00AFC2',
+              surface: '#FFFFFF',
+              text: '#211D32',
+            },
+          },
+        },
+      },
+    },
   },
 };
-```
 
-Configure Astro:
+export default config;
+~~~
 
-```js
+Connect it in astro.config.mjs:
+
+~~~js
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import n0ctConfig from './n0ct.config.mjs';
@@ -67,275 +158,122 @@ import { n0ctane } from '@n0ctanedev/starlight-n0ct';
 
 export default defineConfig({
   integrations: [
-    starlight({
-      ...n0ctane(n0ctConfig),
-    }),
+    starlight(n0ctane(n0ctConfig)),
   ],
 });
-```
+~~~
 
-`n0ctane()` expands the short config into native Starlight options. Site deployment settings such as `site`, `base`, and `output` remain in Astro's `defineConfig()` because they are Astro settings, not Starlight settings.
+Start the development server:
 
-### npm 11 install-script approval
+~~~sh
+npm run dev
+~~~
 
-The theme repository explicitly allows the `esbuild` postinstall script. npm 11 applies install-script allowlists at the consuming project root, so a documentation site may need this in its own `package.json`:
+## Theme system
 
-```json
-{
-  "allowScripts": { "esbuild": true }
-}
-```
+A theme is a named palette with independent dark and light definitions. The active palette and appearance mode are kept separate, so switching from GitHub Dark to GitHub Light does not change the selected palette.
 
-Alternatively, approve it interactively with `npm install-scripts approve esbuild`. This is needed only when your npm version and configuration block dependency lifecycle scripts.
+The built-in demo includes **N0ctane, GitHub, Catppuccin, Rosé Pine, Dracula, Nord, and Flexoki**.
 
-## Sidebar shorthand
+Each mode can define:
 
-A string topic expands into a title-cased group with automatically generated children. Starlight sidebar groups do not have a separate landing-page link; the directory's `index.mdx` page appears as a generated entry:
+- Core palette colors: primary, secondary, accent, surface, text, plus optional highlight and background colors.
+- An independent syntax palette for Expressive Code.
+- Semantic status colors: success, warning, danger, and info.
+- Fine-grained overrides for surfaces, text, borders, interactive states, highlights, and code frames.
+- Brand gradients, additional gradients, and shadows.
 
-```js
-sidebar: {
-  topics: ['reference'],
-}
-```
+The optional favicon on the root config is the fallback. A named theme can set theme.themes.<id>.favicon to replace it; the browser icon and footer brand mark follow the active theme.
 
-This becomes a Starlight group similar to:
+See the [theme reference](https://n0ctanedev.github.io/starlight-n0ct/reference/theme/) and use the live [theme playground](https://n0ctanedev.github.io/starlight-n0ct/reference/theme/#live-theme-playground) to edit a palette and copy its configuration.
 
-```js
-{
-  label: 'Reference',
-  items: [{ autogenerate: { directory: 'reference' } }],
-}
-```
+## Components
 
-Object topics infer their content directory from their link:
+The package includes reusable MDX/Astro components:
 
-```js
-sidebar: {
-  topics: [
-    { label: 'Guides', icon: 'lucide:book-open', link: '/guides' },
-    { label: 'Manual', link: '/manual', directory: 'handbook', collapsed: true },
-  ],
-}
-```
-
-Use `autogenerate: false` for a manually authored group or `autogenerate: true` to append generated entries to its manual `items`. `sidebar.extra` appends native Starlight entries. The `icon` shorthand prefixes the label with `[icon-name]`, using the icon syntax documented below.
-
-Set `sidebar.topicDisplay` to one of three presentations:
-
-- `collapsible` (default): uses the snapshot's recursive sidebar structure with native collapsible groups.
-- `list`: uses the upstream `starlight-sidebar-topics` topic list above the selected topic's sidebar.
-- `dropdown`: uses `starlight-sidebar-topics-dropdown` to render each root topic as a selector above the selected topic's sidebar.
-
-Both plugin-backed modes require each root topic to have a destination: a root `link`, a `directory`, or a manual sidebar item with a destination. `dropdownIcon` is a built-in Starlight icon name used by the upstream topic list/dropdown; `icon` remains the local/Iconify icon shorthand for N0ctane's native collapsible mode. Give topics stable `id` values when assigning otherwise-unlisted pages with the `topic` frontmatter field.
-
-The upstream plugin also accepts route exclusions and custom route-to-topic mappings. N0ctane forwards these through `sidebar.topicOptions`:
-
-```js
-sidebar: {
-  topicDisplay: 'list',
-  topics: [
-    { label: 'Guides', id: 'guides', link: '/guides/' },
-    { label: 'Reference', id: 'reference', link: '/reference/' },
-  ],
-  topicOptions: {
-    exclude: ['/api/**', '/search'],
-    topics: { reference: ['/generated-api/**'] },
-  },
-},
-```
-
-When Blog is enabled, N0ctane automatically excludes the configured Blog route prefix (default `/blog`) so Blog retains its own generated sidebar. The Sidebar Topics plugin runs before Blog's route middleware: regular documentation pages get the selected topic sidebar and Blog can then add its mobile navigation link; generated Blog routes remain under Blog's control. If another plugin generates routes with its own sidebar, add those routes to `topicOptions.exclude` or associate them through `topicOptions.topics`. N0ctane keeps Starlight's native header structure and composes Blog's public `ThemeSelect` and `SiteTitle` components into the corresponding native header slots when Blog is enabled.
-
-Plugin-backed modes take ownership of Starlight's top-level `sidebar` configuration and `Sidebar` component. Do not set `starlight.sidebar` or `starlight.components.Sidebar` when `topicDisplay` is `list` or `dropdown`; use `collapsible` if you want Starlight's native sidebar or need to provide a custom one. `sidebar.extra` is appended to every topic's sidebar in plugin-backed modes.
-
-### Content schema for list/dropdown topics and Blog
-
-The starter and installer use the `topicSchema` extension for pages that are associated by frontmatter. Existing projects importing that schema should add `starlight-sidebar-topics` as a direct dependency:
-
-```sh
-npm install starlight-sidebar-topics
-```
-
-If you also use Blog frontmatter fields, install `starlight-blog` directly. Merge both extensions into Starlight's existing docs schema (the installer already does this):
-
-```ts src/content.config.ts
-import { defineCollection } from 'astro:content';
-import { docsLoader, i18nLoader } from '@astrojs/starlight/loaders';
-import { docsSchema, i18nSchema } from '@astrojs/starlight/schema';
-import { blogSchema } from 'starlight-blog/schema';
-import { topicSchema } from 'starlight-sidebar-topics/schema';
-
-export const collections = {
-  docs: defineCollection({
-    loader: docsLoader(),
-    schema: docsSchema({
-      extend: (context) => blogSchema(context).merge(topicSchema),
-    }),
-  }),
-  i18n: defineCollection({ loader: i18nLoader(), schema: i18nSchema() }),
-};
-```
-
-For a site that does not use Blog, omit `blogSchema` and extend with `topicSchema` alone. Pages outside a configured topic directory can opt into a topic with `topic: <topic-id>` in frontmatter. The schema is relevant to both `list` and `dropdown` modes; native `collapsible` mode does not use this topic-assignment field.
-
-## Code blocks
-
-A bare filename after the fence language becomes a title tab. Shell-language fences get a terminal-style title bar with window controls, while JavaScript, TypeScript, JSON, YAML, and other fences use the same framed code-card treatment:
-
-```js n0ct.config.mjs
-export default { title: 'My Docs' };
-```
-
-N0ctane uses dedicated `theme.colors.dark.codePalette` and `theme.colors.light.codePalette` settings for syntax colors, separate from the UI palette. Mode-qualified CSS variables such as `--n0ct-dark-base` and `--n0ct-light-surface` are available alongside active-mode aliases. Regular Expressive Code metadata such as `title=`, line highlighting, and wrapping remains available. Expressive Code's built-in copy controls and terminal titlebar behavior remain enabled; the frame uses one border without an extra shadow outline.
-
-## Icons
-
-N0ctane uses `astro-icon`, following the same convenient icon model as Ion. By default it looks for local SVGs in `src/icons`. Iconify collections can be installed as packages, for example:
-
-```sh
-npm install @iconify-json/lucide
-```
-
-Then configure:
-
-```js
-icons: {
-  iconDir: './src/icons',
-  include: { lucide: ['*'] },
-},
-sidebar: {
-  topics: [
-    { label: 'Guides', icon: 'lucide:book-open', link: '/guides' },
-  ],
-},
-footer: {
-  icons: [{ icon: 'lucide:github', link: 'https://github.com/example/project', label: 'GitHub', newTab: true }],
-},
-```
-
-Sidebar labels and the site title also accept `[icon-name] Label` directly. Lucide is a required peer dependency. Keeping `@iconify-json/lucide` at the consuming Astro project level allows `astro-icon` to discover the collection when the theme supplies its integration. Modern npm versions install peer dependencies automatically. With package managers that do not, install it explicitly: 
-```bash
-npm install @iconify-json/lucide
-```
-Additional collections must be installed by the consuming project (for example, `npm install @iconify-json/tabler`). `astro-icon` is also a theme dependency. For a site title icon, set `title: '[lucide:terminal] N0ctOS'`.
-
-## Built-in integrations
-
-All ten integrations are installed with the theme and enabled by default. Set an entry to `false` to disable it or pass the upstream options object to configure it.
-
-| Config key | Package |
+| Component | Purpose |
 |---|---|
-| `basePath` | `starlight-base-path` |
-| `announcement` | `starlight-announcement` |
-| `kbd` | `starlight-kbd` |
-| `llmsTxt` | `starlight-llms-txt` |
-| `scrollToTop` | `starlight-scroll-to-top` |
-| `llmActions` | `starlight-llm-actions` |
-| `sidebarSwipe` | `starlight-sidebar-swipe` |
-| `linksValidator` | `starlight-links-validator` |
-| `blog` | `starlight-blog` |
-| `imageZoom` | `starlight-image-zoom` |
+| Callout | Semantic note, tip, warning, danger, and info panels |
+| DocCard | Linked or static documentation card |
+| DocGrid | Responsive grid for documentation cards and content |
+| FileTree | N0ctane-styled wrapper around Starlight's FileTree |
+| Kbd | Themed keyboard keycap |
+| Steps | Starlight's accessible numbered step list with N0ctane styling |
+| Step | Lightweight list-item helper for composed step content |
 
-Example:
+Detailed examples, component props, and CSS hooks are in the [component documentation](https://n0ctanedev.github.io/starlight-n0ct/components/).
 
-```js
-integrations: {
-  basePath:{},
-  announcement: { announcements: [{ content: 'Welcome!' }] },
-  scrollToTop: { smoothScroll: true, position: 'right' },
-  llmsTxt: {},
-  llmActions: {},
+## Included integrations
+
+The integrations below can be enabled with an empty object, disabled with false, or configured with their native upstream options. The versioning option is configured separately.
+
+| Config key | What it adds |
+|---|---|
+| basePath | Prefixes root-relative content links using Astro's configured base path |
+| announcement | Announcement banner |
+| kbd | Keyboard shortcut notation and keycap rendering |
+| llmsTxt | LLM-friendly documentation index files |
+| scrollToTop | Floating scroll-to-top control |
+| llmActions | Copy/view Markdown, PDF printing, and open-in-LLM page actions |
+| sidebarSwipe | Touch-swipe sidebar navigation |
+| linksValidator | Build-time internal link checks |
+| blog | Posts, author pages, tags, RSS, and reading metrics |
+| imageZoom | Accessible image zoom |
+
+See the [integration guide](https://n0ctanedev.github.io/starlight-n0ct/guides/integrations/) for configuration examples and upstream references.
+
+## Requirements
+
+- Node.js **22.22.0 or newer**
+- Astro **7.2.10 or newer** (Astro 7)
+- Astro Starlight **0.42.0 or newer**, before 1.0
+
+The package uses npm's allowScripts policy for esbuild. On npm versions that enforce install-script approval, the consuming project may need:
+
+~~~json
+{
+  "allowScripts": {
+    "esbuild": true
+  }
 }
-```
-
-For the global keyboard layout selector in the header, explicitly set `integrations.kbd.globalPicker: true`; N0ctane keeps it hidden when the option is omitted or false.
-
-The dedicated `llmsTxt` plugin owns site-level indexes by default. To use the LLM Actions plugin for those indexes instead, set `llmsTxt: false`; N0ctane then enables `llmActions.llmsTxt` by default. Enabling both generators at once is rejected to prevent duplicate output routes. Each integration's options are forwarded to its upstream plugin; consult the linked upstream documentation for the exact option schema.
-
-## Documentation versioning
-
-N0ctane delegates documentation versioning to the upstream [`starlight-versions`](https://starlight-versions.vercel.app/) plugin. Its upstream `VersionSelect` component is rendered at the top of the recursive sidebar; the native Starlight header keeps only the theme toggle and site title. Configure its native options in `n0ct.config.mjs`:
-
-```js
-versioning: {
-  versions: [{ slug: '1.0', label: 'v1.0' }],
-  current: { label: 'Latest' },
-  exclude: ['blog/**'],
-},
-```
-
-The plugin archives the current docs into a missing version directory on the next `astro dev` or `astro build`. Add one new version at a time and let the plugin create its snapshot before configuring another. `versions` entries support `slug`, `label`, and `redirect`; `current` supports `label` and `redirect`; `exclude` accepts source-file glob patterns relative to `src/content/docs/`. Set `versioning: false` or omit the property to disable it.
-
-The project's `src/content.config.ts` must register `versions: defineCollection({ loader: docsVersionsLoader() })` from `starlight-versions/loader`. The N0ctane starter includes this collection and the installer can configure an initial archived version.
-
-## Custom components
-
-Use Starlight's built-in components in MDX:
-
-```mdx
-import { Steps, FileTree } from '@astrojs/starlight/components';
-
-<Steps>
-  1. Install the dependencies.
-  2. Run the dev server.
-  3. Build the site.
-</Steps>
-
-<FileTree>
-- src/
-  - components/
-    - **Sidebar.astro**
-  - styles/
-    - global.css
-</FileTree>
-```
-
-The theme styles these native components instead of replacing their Markdown/MDX API. A custom `Callout` is also available:
-
-```mdx
-import Callout from '@n0ctanedev/starlight-n0ct/components/Callout.astro';
-
-<Callout type="tip" title="Pro tip">
-  Start with the defaults and customize only what you need.
-</Callout>
-```
-
-Supported callout types: `note`, `tip`, `warning`, `danger`, `info`.
-
-## Advanced Starlight configuration
-
-Anything not simplified by N0ctane can be passed through the `starlight` property. It is merged after theme defaults; user-provided native `components`, `customCss`, `sidebar`, and `plugins` can intentionally override or extend those defaults.
-
-```js
-export default {
-  title: 'Project Docs',
-  sidebar: { topics: ['guides'] },
-  starlight: {
-    editLink: { baseUrl: 'https://github.com/example/project/edit/main/' },
-    lastUpdated: true,
-    tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 4 },
-  },
-};
-```
-
-## Editor IntelliSense
-
-Keep `n0ct.config.mjs` as JavaScript and add `// @ts-check` plus a JSDoc `@satisfies` annotation referencing `N0ctConfig` to enable autocomplete, hover documentation, and type diagnostics. New projects generated by `npx @n0ctanedev/starlight-n0ct init` include this automatically. See the [configuration reference](docs/src/content/docs/reference/config-api.mdx).
+~~~
 
 ## Development
 
-```sh
+Clone the repository and install dependencies:
+
+~~~sh
+git clone https://github.com/n0ctanedev/starlight-n0ct.git
+cd starlight-n0ct
 npm install
-npm run check
-npm run docs:dev
-```
+~~~
 
-`npm run check:all` also audits both full dependency trees and builds the documentation demo. It stops for any audit finding, including low-severity advisories. The demo uses a local `file:..` dependency to test the package before publication.
+Useful commands:
 
-## Publishing
+| Command | Purpose |
+|---|---|
+| npm run typecheck | TypeScript checks |
+| npm test | Unit and integration tests |
+| npm run build | Build package assets |
+| npm run docs:dev | Build the package, install docs dependencies, and start the demo |
+| npm run docs:build | Build package and demo documentation |
+| npm run check:all | Typecheck, tests, package build, docs build, and dependency audit |
+| npm pack --dry-run | Inspect the publishable package contents |
 
-The GitHub Actions release workflow is manually triggered and supports a dry run. Configure npm trusted publishing for this GitHub repository and workflow before publishing. GitHub Pages deployment is configured separately by `.github/workflows/docs.yml`. See [`PREPUBLISH.md`](./PREPUBLISH.md) for the repository setup and release checklist.
+## Contributing
+
+Bug reports, improvements, and documentation fixes are welcome. Please open an issue before proposing a significant API change, and run npm run check:all before submitting a pull request.
 
 ## License
 
-MIT. See [LICENSE](./LICENSE).
+MIT. See [LICENSE](LICENSE).
+
+---
+
+<div align="center">
+
+**Built with Starlight-N0ct · N0ctane._.Dev**
+
+[GitHub](https://github.com/n0ctanedev) · [Repository](https://github.com/n0ctanedev/starlight-n0ct)
+
+</div>

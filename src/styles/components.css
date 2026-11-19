@@ -237,6 +237,42 @@
 
 .sl-markdown-content ol.sl-steps > li:last-child::after { display: none; }
 
+.sl-markdown-content ol:has(> li.noct-step) {
+  counter-reset: noct-custom-step;
+  list-style: none;
+  padding-inline-start: 0;
+}
+
+.sl-markdown-content ol > li.noct-step {
+  position: relative;
+  counter-increment: noct-custom-step;
+  min-height: 2rem;
+  margin-block: .7rem;
+  padding-inline-start: 2.6rem;
+  list-style: none;
+}
+
+.sl-markdown-content ol > li.noct-step::before {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0;
+  display: grid;
+  width: 1.85rem;
+  height: 1.85rem;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--n0ct-steps-marker-text);
+  background: var(--n0ct-gradient-brand);
+  box-shadow: var(--n0ct-shadow-step);
+  font-size: .78rem;
+  font-weight: 750;
+  content: counter(noct-custom-step);
+}
+
+.sl-markdown-content ol > li.noct-step + li.noct-step {
+  margin-block-start: 1rem;
+}
+
 .noct-kbd {
   display: inline-flex;
   align-items: center;

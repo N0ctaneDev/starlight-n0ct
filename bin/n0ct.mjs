@@ -6,9 +6,10 @@ import { basename, dirname, join, resolve } from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { createInterface } from 'node:readline/promises';
+import { emitKeypressEvents } from 'node:readline';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const templateRoot = join(packageRoot, 'templates', 'starter');
+const templatesRoot = join(packageRoot, 'templates');
 const themePackage = JSON.parse(
   await readFile(join(packageRoot, 'package.json'), 'utf8'),
 );
@@ -24,6 +25,7 @@ Options:
   --yes, -y              Use recommended defaults without prompts
   --no-install           Scaffold files but do not install dependencies
   --pm <manager>         Package manager: npm, pnpm, yarn, or bun
+  --template <name>      Template: starter or blog (default: starter)
   --help, -h             Show this help
 
 Examples:
@@ -40,6 +42,7 @@ function parseArgs(argv) {
     yes: false,
     install: true,
     packageManager: undefined,
+    template: undefined,
   };
 
   for (let index = firstIsOption ? 0 : 1; index < argv.length; index += 1) {
@@ -51,6 +54,11 @@ function parseArgs(argv) {
       result.yes = true;
     } else if (argument === '--no-install') {
       result.install = false;
+    } else if (argument === '--template') {
+      result.template = argv[index + 1];
+      index += 1;
+    } else if (argument.startsWith('--template=')) {
+      result.template = argument.slice('--template='.length);
     } else if (argument === '--pm' || argument === '--package-manager') {
       result.packageManager = argv[index + 1];
       index += 1;
@@ -148,19 +156,105 @@ async function isDirectoryEmpty(path) {
   }
 }
 
-async function promptForAnswers(defaults, enabledByDefault, yes) {
-  if (yes || !process.stdin.isTTY || !process.stdout.isTTY) {
-    return { ...defaults, enabledIntegrations: enabledByDefault };
+
+async function interactiveList({ title, choices, selected = [], multiple = false, fallback = selected[0] }) {
+  if (!process.stdin.isTTY || !process.stdout.isTTY || typeof process.stdin.setRawMode !== 'function') {
+    return multiple ? [...selected] : fallback;
   }
 
-  const terminal = createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
+  emitKeypressEvents(process.stdin);
+  const initialRaw = Boolean(process.stdin.isRaw);
+  const picked = new Set(selected);
+  let cursor = Math.max(0, choices.findIndex((choice) => choice.value === fallback));
 
+  const render = () => {
+    const lines = [
+      '',
+      title,
+      multiple
+        ? '  ↑/↓ move   Space toggle   Enter confirm   A select all   N clear'
+        : '  ↑/↓ move   Enter select',
+      '',
+      ...choices.map((choice, index) => {
+        const active = index === cursor;
+        const checked = picked.has(choice.value);
+        const marker = multiple ? (checked ? '[✓]' : '[ ]') : (active ? '›' : ' ');
+        const pointer = active ? '\x1b[36m' : '\x1b[90m';
+        const label = active ? '\x1b[1;37m' : '\x1b[37m';
+        return '  ' + pointer + marker + '\x1b[0m ' + label + choice.label + '\x1b[0m  \x1b[90m— ' + choice.description + '\x1b[0m';
+      }),
+      '',
+    ];
+    process.stdout.write('\x1b[H\x1b[2J' + lines.join('\n'));
+  };
+
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+  render();
+
+  return await new Promise((resolvePromise, rejectPromise) => {
+    const cleanup = () => {
+      process.stdin.off('keypress', onKeypress);
+      process.stdin.setRawMode(initialRaw);
+      process.stdout.write('\n');
+    };
+
+    const finish = (value) => {
+      cleanup();
+      resolvePromise(value);
+    };
+
+    const onKeypress = (_character, key = {}) => {
+      if (key.ctrl && key.name === 'c') {
+        cleanup();
+        rejectPromise(new Error('Setup cancelled.'));
+        return;
+      }
+      if (key.name === 'up') cursor = (cursor - 1 + choices.length) % choices.length;
+      else if (key.name === 'down') cursor = (cursor + 1) % choices.length;
+      else if (multiple && key.name === 'space') {
+        const value = choices[cursor]?.value;
+        if (value && picked.has(value)) picked.delete(value);
+        else if (value) picked.add(value);
+      } else if (multiple && key.name === 'a') {
+        choices.forEach((choice) => picked.add(choice.value));
+      } else if (multiple && key.name === 'n') {
+        picked.clear();
+      } else if (key.name === 'return' || key.name === 'enter') {
+        finish(multiple ? choices.map((choice) => choice.value).filter((value) => picked.has(value)) : choices[cursor]?.value);
+        return;
+      } else if (!multiple && key.name === 'escape') {
+        finish(fallback);
+        return;
+      }
+      render();
+    };
+
+    process.stdin.on('keypress', onKeypress);
+  });
+}
+
+async function promptForAnswers(defaults, enabledByDefault, yes, requestedTemplate) {
+  if (yes || !process.stdin.isTTY || !process.stdout.isTTY) {
+    return {
+      ...defaults,
+      template: requestedTemplate ?? 'starter',
+      enabledIntegrations: requestedTemplate === 'blog'
+        ? [...new Set([...enabledByDefault, 'blog'])]
+        : enabledByDefault,
+    };
+  }
+
+  let terminal = createInterface({ input: process.stdin, output: process.stdout });
   const ask = async (question, fallback) => {
-    const answer = (await terminal.question(`${question} [${fallback}]: `)).trim();
+    const answer = (await terminal.question(question + ' [' + fallback + ']: ')).trim();
     return answer || fallback;
+  };
+  const runList = async (options) => {
+    terminal.close();
+    const result = await interactiveList(options);
+    terminal = createInterface({ input: process.stdin, output: process.stdout });
+    return result;
   };
 
   try {
@@ -171,49 +265,47 @@ async function promptForAnswers(defaults, enabledByDefault, yes) {
     const description = await ask('Description', defaults.description);
     const siteUrl = await ask('Public site URL', defaults.siteUrl);
     const basePath = await ask('Base path (use / for a domain root)', defaults.basePath);
-    const topicDisplay = await ask(
-      'Sidebar topics: collapsible, list, or dropdown',
-      defaults.topicDisplay,
-    );
+    const topicDisplay = await ask('Sidebar topics: collapsible, list, or dropdown', defaults.topicDisplay);
+
+    const templateChoices = [
+      { value: 'starter', label: 'Documentation starter', description: 'A focused docs site with guides, reference pages, and components.' },
+      { value: 'blog', label: 'Blog + documentation', description: 'Docs plus a ready-to-publish blog, authors, tags, and sample posts.' },
+    ];
+    const template = requestedTemplate
+      ? templateChoices.find((choice) => choice.value === requestedTemplate)?.value
+      : await runList({
+          title: 'Choose a project template',
+          choices: templateChoices,
+          selected: ['starter'],
+          fallback: 'starter',
+        });
+    if (!template) throw new Error('Unknown template. Choose "starter" or "blog".');
 
     const choices = [
-      ['announcement', 'Announcement banner'],
-      ['kbd', 'Keyboard shortcut helper'],
-      ['llmsTxt', 'LLMs.txt generator'],
-      ['scrollToTop', 'Scroll to top'],
-      ['llmActions', 'LLM actions'],
-      ['sidebarSwipe', 'Mobile sidebar swipe'],
-      ['linksValidator', 'Internal link validation'],
-      ['blog', 'Blog'],
-      ['imageZoom', 'Image zoom'],
+      { value: 'basePath', label: 'Base path rewriting', description: 'Prefix root-relative links with the deployment subpath when the site is not hosted at /.' },
+      { value: 'announcement', label: 'Announcement banner', description: 'Display dismissible or scheduled notices at the top of the docs.' },
+      { value: 'kbd', label: 'Keyboard shortcuts', description: 'Render keycaps and keyboard-aware shortcut labels.' },
+      { value: 'llmsTxt', label: 'LLMs.txt generator', description: 'Generate Markdown indexes designed for AI crawlers and assistants.' },
+      { value: 'scrollToTop', label: 'Scroll to top', description: 'Add a floating control for returning to the top of long pages.' },
+      { value: 'llmActions', label: 'LLM page actions', description: 'Copy Markdown, view source, print to PDF, and open pages in AI tools.' },
+      { value: 'sidebarSwipe', label: 'Mobile sidebar swipe', description: 'Open and close the navigation sidebar with touch gestures.' },
+      { value: 'linksValidator', label: 'Link validator', description: 'Check local documentation links during production builds.' },
+      { value: 'blog', label: 'Blog', description: 'Add posts, tags, author pages, RSS, and reading-time metadata.' },
+      { value: 'imageZoom', label: 'Image zoom', description: 'Open documentation images in an accessible zoom viewer.' },
     ];
-
-    console.log('\nOptional integrations included in the theme:');
-    choices.forEach(([key, label], index) => {
-      const checked = enabledByDefault.includes(key) ? ' *' : '';
-      console.log(`  ${index + 1}. ${label}${checked}`);
+    const selectedPlugins = await runList({
+      title: template === 'blog'
+        ? 'Choose additional integrations (Blog is included; Space toggles)'
+        : 'Choose optional integrations (Space toggles; Enter confirms)',
+      choices: template === 'blog'
+        ? choices.filter((choice) => choice.value !== 'blog')
+        : choices,
+      multiple: true,
+      selected: basePath === '/' ? enabledByDefault : [...new Set([...enabledByDefault, 'basePath'])],
     });
-    console.log('Enter numbers separated by commas; Enter keeps the recommended defaults.');
-    console.log('Enter "none" to disable every optional integration.');
-
-    const defaultsText = choices
-      .map(([key], index) => enabledByDefault.includes(key) ? String(index + 1) : null)
-      .filter(Boolean)
-      .join(',');
-
-    const selection = await ask('Enable integrations', defaultsText);
-    let enabledIntegrations = enabledByDefault;
-
-    if (/^none$/i.test(selection.trim())) {
-      enabledIntegrations = [];
-    } else if (selection !== defaultsText) {
-      const indices = selection
-        .split(',')
-        .map((value) => Number.parseInt(value.trim(), 10))
-        .filter((number) => Number.isInteger(number) && number >= 1 && number <= choices.length);
-
-      enabledIntegrations = [...new Set(indices)].map((number) => choices[number - 1][0]);
-    }
+    const enabledIntegrations = template === 'blog'
+      ? [...new Set([...selectedPlugins, 'blog'])]
+      : selectedPlugins;
 
     const enableVersioning = /^y(?:es)?$/i.test(
       await ask('Enable archived documentation versioning? (creates a snapshot on first dev/build)', 'no'),
@@ -221,15 +313,13 @@ async function promptForAnswers(defaults, enabledByDefault, yes) {
 
     let versioning = false;
     if (enableVersioning) {
-      const slug = (await ask('Initial archived version slug (for example 1.0)', '1.0')).trim();
+      const slug = (await ask('Initial archived version slug (for example 0.2.0)', '0.2.0')).trim();
       if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(slug) || slug === '.' || slug === '..') {
         throw new Error('Version slug must use letters, numbers, dots, underscores, or hyphens and cannot contain slashes.');
       }
-      const versionLabel = (await ask('Archived version label', `v${slug}`)).trim();
+      const versionLabel = (await ask('Archived version label', 'v' + slug)).trim();
       const currentLabel = (await ask('Current version label', 'Latest')).trim();
-      if (!versionLabel || !currentLabel) {
-        throw new Error('Version labels cannot be empty.');
-      }
+      if (!versionLabel || !currentLabel) throw new Error('Version labels cannot be empty.');
       versioning = {
         versions: [{ slug, label: versionLabel }],
         current: { label: currentLabel },
@@ -242,6 +332,7 @@ async function promptForAnswers(defaults, enabledByDefault, yes) {
       siteUrl,
       basePath,
       topicDisplay,
+      template,
       enabledIntegrations,
       versioning,
     };
@@ -253,7 +344,7 @@ async function promptForAnswers(defaults, enabledByDefault, yes) {
 function createN0ctConfig(answers) {
   const enabled = new Set(answers.enabledIntegrations);
   const integrations = {
-    basePath: answers.basePath === '/' ? false : {},
+    basePath: enabled.has('basePath') ? {} : false,
     announcement: enabled.has('announcement') ? {} : false,
     kbd: enabled.has('kbd') ? {} : false,
     llmsTxt: enabled.has('llmsTxt') ? {} : false,
@@ -261,12 +352,27 @@ function createN0ctConfig(answers) {
     llmActions: enabled.has('llmActions') ? {} : false,
     sidebarSwipe: enabled.has('sidebarSwipe') ? {} : false,
     linksValidator: enabled.has('linksValidator') ? {} : false,
-    blog: enabled.has('blog') ? {} : false,
+    blog: enabled.has('blog')
+      ? answers.template === 'blog'
+        ? {
+            navigation: 'header-start',
+            metrics: { readingTime: true, words: 'rounded' },
+            authors: {
+              team: {
+                name: answers.title,
+                title: 'Editorial team',
+                url: answers.siteUrl,
+              },
+            },
+          }
+        : {}
+      : false,
     imageZoom: enabled.has('imageZoom') ? {} : false,
   };
 
   const config = {
     title: answers.title,
+    favicon: '/favicon.svg',
     description: answers.description,
     sidebar: {
       topicDisplay: answers.topicDisplay,
@@ -401,14 +507,9 @@ async function main() {
     'scrollToTop',
     'sidebarSwipe',
     'imageZoom',
-    'blog',
   ];
 
-  const answers = await promptForAnswers(
-    defaults,
-    recommendedIntegrations,
-    options.yes,
-  );
+  const answers = await promptForAnswers(defaults, recommendedIntegrations, options.yes, options.template);
 
   answers.siteUrl = normalizeSiteUrl(answers.siteUrl);
   answers.basePath = normalizeBasePath(answers.basePath);
@@ -417,6 +518,8 @@ async function main() {
   if (!['collapsible', 'list', 'dropdown'].includes(answers.topicDisplay)) {
     throw new Error('Sidebar topic display must be "collapsible", "list", or "dropdown".');
   }
+
+  if (answers.template === 'blog' && !answers.enabledIntegrations.includes('blog')) answers.enabledIntegrations.push('blog');
 
   const manager = options.packageManager ?? detectPackageManager(targetParent);
   if (!['npm', 'pnpm', 'yarn', 'bun'].includes(manager)) {
@@ -442,7 +545,9 @@ async function main() {
     devDependencies: { vite: packageVersions().vite },
   };
 
-  await cp(templateRoot, target, { recursive: true });
+  const selectedTemplateRoot = join(templatesRoot, answers.template);
+  if (!existsSync(selectedTemplateRoot)) throw new Error('Template "' + answers.template + '" does not exist.');
+  await cp(selectedTemplateRoot, target, { recursive: true });
   await writeFile(
     join(target, 'package.json'),
     `${JSON.stringify(projectPackage, null, 2)}\n`,
@@ -460,7 +565,7 @@ async function main() {
   const homeContent = await readFile(homePage, 'utf8');
   await writeFile(
     homePage,
-    homeContent.replace('Your docs, **your way**.', `${answers.title}, **your way**.`),
+    homeContent.replace('"__N0CT_SITE_TITLE__"', JSON.stringify(answers.title)),
     'utf8',
   );
 
@@ -469,7 +574,8 @@ async function main() {
   console.log(`Base path: ${answers.basePath}`);
   console.log(`Sidebar topics: ${answers.topicDisplay}`);
   console.log('Lucide icons: explicitly added to project dependencies.');
-  console.log('Starter pages, blog examples, component showcase, content schemas, and GitHub Pages workflow are ready.');
+  console.log('Template: ' + answers.template);
+  console.log('Starter pages, content schemas, favicon, and GitHub Pages workflow are ready.');
   console.log(`Versioning: ${answers.versioning ? 'enabled (an initial archive will be created on first dev/build)' : 'disabled'}.`);
 
   if (!options.install) {

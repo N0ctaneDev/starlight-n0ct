@@ -1,0 +1,61 @@
+---
+title: DocCard
+description: A linked or static card for navigation and supporting content.
+---
+
+import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
+
+## Linked card
+
+Provide `href` to make the entire card a navigation link.
+
+~~~mdx
+import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
+
+<DocCard
+  title="Configuration"
+  eyebrow="Reference"
+  description="Understand the public n0ct.config.mjs API."
+  href="/reference/config-api/"
+/>
+~~~
+
+<DocCard title="Configuration" eyebrow="Reference" description="Understand the public n0ct.config.mjs API." href="/reference/config-api/" />
+
+## Static card
+
+Omit `href` to render an article container. This mode supports slotted content.
+
+~~~mdx
+<DocCard title="Compatibility" eyebrow="Platform">
+  Use a static card for a short explanation that is not itself a link.
+</DocCard>
+~~~
+
+<DocCard title="Compatibility" eyebrow="Platform">
+  Use a static card for a short explanation that is not itself a link.
+</DocCard>
+
+## Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| title | string | Required | Card heading |
+| description | string | — | Supporting summary |
+| eyebrow | string | — | Small label above the title |
+| href | string | — | Destination; when present the card becomes an anchor |
+| external | boolean | false | Opens a linked card in a new tab and adds safe rel attributes |
+
+The component does not validate or rewrite the destination. Use root-relative paths for local pages and complete HTTPS URLs for external destinations.
+
+## CSS reference
+
+| Selector | Purpose |
+|---|---|
+| `.noct-doc-card` | Outer anchor or article surface |
+| `.noct-doc-card-eyebrow` | Category label |
+| `.noct-doc-card-title` | Title |
+| `.noct-doc-card-description` | Supporting text |
+| `.noct-doc-card-chain` | Decorative linked-card watermark |
+
+The card uses `--n0ct-gradient-card`, `--n0ct-border`, and `--n0ct-radius-lg`. Hover styling uses `--n0ct-border-focus` and `--n0ct-shadow-card-hover`.

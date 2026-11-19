@@ -1,0 +1,30 @@
+---
+title: Kbd
+description: Render a keyboard keycap using the active theme's control and text colors.
+---
+
+import Kbd from '@n0ctanedev/starlight-n0ct/components/docs/Kbd.astro';
+
+## Usage
+
+~~~mdx
+import Kbd from '@n0ctanedev/starlight-n0ct/components/docs/Kbd.astro';
+
+Press <Kbd>Ctrl</Kbd> + <Kbd>K</Kbd> to open search.
+~~~
+
+Press <Kbd>Ctrl</Kbd> + <Kbd>K</Kbd> to open search.
+
+Use one component per key. Combine keycaps with plain text between them.
+
+## Props
+
+Kbd has no props. Its slot is the visible key label. Keep labels short: Ctrl, Shift, Alt, Enter, Esc, or a single character.
+
+## CSS reference
+
+| Selector | Purpose |
+|---|---|
+| `.noct-kbd` | Keycap element |
+
+The keycap uses `--n0ct-border-strong`, `--n0ct-radius-xs`, `--n0ct-text-primary`, `--n0ct-surface-elevated`, and the mono font token. Its border has a thicker bottom edge to suggest a physical key.

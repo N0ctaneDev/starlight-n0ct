@@ -1,53 +1,84 @@
 ---
 title: Project installer
-description: Scaffold a complete N0ctane + Starlight documentation project.
+description: Scaffold a docs site or blog publication with keyboard-driven setup.
 ---
 
-N0ctane ships a project generator so a new documentation site does not need to be assembled by hand. It copies a deploy-ready starter, creates a project-specific configuration, installs Astro, Starlight, N0ctane, Lucide, the Blog schema dependency, and Vite, then installs the selected packages.
+The installer creates a ready-to-run Astro Starlight project. It copies a selected template, writes the project-specific config and package.json, creates the deployment environment file, and can install dependencies automatically.
 
-## Create a project
+## Run the installer
 
-```sh
+~~~sh
 npx @n0ctanedev/starlight-n0ct init my-docs
-```
+~~~
 
-The interactive setup asks for the site title, description, canonical URL, deployment base path, sidebar presentation, and optional integrations. It generates the project and installs dependencies using the detected package manager.
+It gathers the project title, description, public URL, base path, and sidebar presentation. It then prompts for a template and optional integrations.
 
-Use the default answers without prompts:
+## Template picker
 
-```sh
+Use the arrow keys and Enter to choose:
+
+| Template | Includes |
+|---|---|
+| Documentation starter | Starter homepage, docs sections, guides, reference structure, and the theme defaults |
+| Blog + documentation | Docs plus Blog navigation, author configuration, tags, sample posts, and the Blog schema |
+
+The blog template enables the blog integration. You can still change its route, authors, metrics, and navigation in n0ct.config.mjs.
+
+## Integration picker
+
+The optional integration selector is a multi-select list:
+
+| Key | Action |
+|---|---|
+| Up / Down | Move the active row |
+| Space | Toggle the selected integration |
+| Enter | Confirm the selected set |
+| A | Select all integrations |
+| N | Clear all integrations |
+| Ctrl+C | Cancel setup |
+
+Each integration row includes a short description. A recommended set is selected by default. Base path rewriting is also preselected when the public site uses a subpath such as /docs; leave it enabled unless you intentionally manage those links yourself. Every unselected integration is written as false in the generated config.
+
+## Command options
+
+~~~sh
+# Skip all prompts and use recommended defaults
 npx @n0ctanedev/starlight-n0ct init my-docs --yes
-```
 
-Scaffold without installing dependencies:
+# Select a template without opening the template selector
+npx @n0ctanedev/starlight-n0ct init my-site --template blog
 
-```sh
+# Generate files without installing dependencies
 npx @n0ctanedev/starlight-n0ct init my-docs --no-install
-```
 
-Choose a package manager explicitly:
-
-```sh
+# Choose the package manager
 npx @n0ctanedev/starlight-n0ct init my-docs --pm pnpm
-```
 
-## What gets generated
+# Show options
+npx @n0ctanedev/starlight-n0ct --help
+~~~
 
-The starter includes an Astro configuration, `n0ct.config.mjs`, a Starlight `content.config.ts` using `docsSchema`, `i18nSchema`, and the Blog schema extension, a root translation file, Lucide icons, working example pages, a `404.mdx`, an environment example, and a GitHub Pages deployment workflow.
+Available package managers are npm, pnpm, yarn, and bun. Without --pm, the installer checks the current npm user agent and nearby lockfiles.
 
-The generated `package.json` explicitly includes `@iconify-json/lucide`, because `astro-icon` discovers Iconify collections from the consuming Astro project's dependencies. Vite is a direct development dependency so `loadEnv()` can read `.env` values inside `astro.config.mjs` even under strict package managers.
+## Generated files
 
-## Optional integrations
+The selected template contains:
 
-The generator lets you select the built-in integrations. Unselected integrations are written as `false` in `n0ct.config.mjs`; the theme packages still provide the plugin code. The base-path integration is selected automatically only when the configured base path is not `/`.
+- Astro and Starlight configuration.
+- n0ct.config.mjs and a site favicon.
+- Starlight docs and i18n collections.
+- Blog and Sidebar Topics schema extensions, ready for their respective integrations.
+- The versions collection loader, ready to enable when needed.
+- Example docs content and a custom 404 page.
+- A GitHub Pages workflow and deployment notes.
 
-After generation:
+The installer rewrites the project title, site URL, base path, sidebar, integrations, and package metadata for the new project.
 
-```sh
+## After generation
+
+~~~sh
 cd my-docs
 npm run dev
-```
+~~~
 
-Read the generated `DEPLOY.md` before publishing, especially when the site is hosted below a repository subpath.
-
-The generated `src/content.config.ts` merges Starlight's `docsSchema` with the Blog and Sidebar Topics schemas, and registers `i18nSchema` for translations. It also installs `starlight-blog` and `starlight-sidebar-topics` directly because the content config imports their schemas.
+Read DEPLOY.md before publishing, especially when deploying below a repository subpath.

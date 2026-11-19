@@ -1,0 +1,63 @@
+---
+title: Steps and Step
+description: Present a sequence of instructions using Starlight's native step semantics.
+---
+
+import Steps from '@n0ctanedev/starlight-n0ct/components/docs/Steps.astro';
+import Step from '@n0ctanedev/starlight-n0ct/components/docs/Step.astro';
+
+## Steps — recommended for procedures
+
+~~~mdx
+import Steps from '@n0ctanedev/starlight-n0ct/components/docs/Steps.astro';
+
+<Steps>
+  1. Install the package.
+  2. Add n0ctane() to your Starlight config.
+  3. Run the development server and inspect the result.
+</Steps>
+~~~
+
+<Steps>
+  1. Install the package.
+  2. Add n0ctane() to your Starlight config.
+  3. Run the development server and inspect the result.
+</Steps>
+
+Steps wraps Starlight's native Steps component. Use an ordered list as its content; Starlight supplies accessible numbering and connector behavior.
+
+## Step — list-item helper
+
+Step renders a single `li` element with the `noct-step` class. Use it when composing a custom ordered list.
+
+~~~mdx
+import Step from '@n0ctanedev/starlight-n0ct/components/docs/Step.astro';
+
+<ol>
+  <Step>Prepare the content collection.</Step>
+  <Step>Configure the sidebar topic.</Step>
+  <Step>Build the documentation site.</Step>
+</ol>
+~~~
+
+<ol>
+  <Step>Prepare the content collection.</Step>
+  <Step>Configure the sidebar topic.</Step>
+  <Step>Build the documentation site.</Step>
+</ol>
+
+## Props
+
+Neither component adds props. Both forward their slotted content. Steps expects an ordered list. Step should be placed inside an ordered list.
+
+## CSS reference
+
+| Selector | Purpose |
+|---|---|
+| `.sl-markdown-content ol.sl-steps` | Native Starlight step-list panel |
+| `.sl-markdown-content ol.sl-steps > li` | Step spacing and marker position |
+| `.sl-markdown-content ol.sl-steps > li::before` | Gradient step number |
+| `.sl-markdown-content ol.sl-steps > li::after` | Connector line |
+| `.noct-step` | Custom Step list item |
+
+The Steps appearance uses `--n0ct-gradient-steps`, `--n0ct-gradient-brand`, `--n0ct-steps-marker-text`, `--n0ct-steps-connector`, and `--n0ct-shadow-step`.

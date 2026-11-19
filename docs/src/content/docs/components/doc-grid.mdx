@@ -1,0 +1,41 @@
+---
+title: DocGrid
+description: Arrange documentation cards or arbitrary content in a responsive grid.
+---
+
+import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
+import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
+
+## Usage
+
+~~~mdx
+import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
+import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
+
+<DocGrid columns={2}>
+  <DocCard title="Guides" description="Step-by-step instructions." href="/guides/" />
+  <DocCard title="Reference" description="API and token details." href="/reference/" />
+</DocGrid>
+~~~
+
+<DocGrid columns={2}>
+  <DocCard title="Guides" description="Step-by-step instructions." href="/guides/" />
+  <DocCard title="Reference" description="API and token details." href="/reference/" />
+</DocGrid>
+
+## Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| columns | 2, 3, or 4 | Auto-fit | Maximum number of responsive columns |
+
+When omitted, the grid uses auto-fit with a minimum card width of approximately 15rem. Narrow viewports naturally collapse to fewer columns.
+
+## CSS reference
+
+| Selector | Purpose |
+|---|---|
+| `.noct-doc-grid` | Grid container |
+| `[data-columns]` | Reflects the explicit columns prop |
+
+The component sets `--n0ct-grid-columns` when columns is provided. The layout uses responsive minmax columns and a consistent gap. Override the custom property on a wrapper for a local adjustment.

@@ -1,55 +1,66 @@
 ---
 title: Versioning
-description: Configure and explore the upstream Starlight Versions plugin.
+description: Archive documentation releases and browse historical content.
 ---
 
-N0ctane uses the upstream starlight-versions plugin for documentation archives, version-aware URLs, sidebars, notices, search, and the version selector. Versioning is enabled in the demo.
+N0ctane forwards the native starlight-versions configuration. The plugin creates a snapshot when a configured version is missing, then provides a version selector, version-aware navigation, and notices on archived pages.
 
-The demo shows the current v0.2.0 documentation and an archived v0.1.4 snapshot. Use the version selector in the sidebar to switch between them.
+The demo now presents current documentation as **v1.0.0** and keeps **v0.2.0** as its archived reference.
 
-## Configuration
+## Configure versions
 
 ~~~js
 versioning: {
   versions: [
-    { slug: '0.1.4', label: 'v0.1.4', redirect: 'same-page' },
+    { slug: '0.2.0', label: 'v0.2.0', redirect: 'same-page' },
   ],
   current: {
-    label: 'v0.2.0',
+    label: 'v1.0.0',
     redirect: 'same-page',
   },
   exclude: ['blog/**'],
 },
 ~~~
 
-The versions array is required when versioning is enabled. Each archived version supports:
-- slug — URL directory and version identifier.
-- label — optional UI label; defaults to the slug.
-- redirect — same-page or root when switching versions.
+| Property | Description |
+|---|---|
+| versions | Required array of archived releases |
+| versions[].slug | URL directory and version identifier |
+| versions[].label | Optional selector label; defaults to the slug |
+| versions[].redirect | same-page or root when switching versions |
+| current.label | Label shown for the current, unarchived docs |
+| current.redirect | Redirect behavior for the current version |
+| exclude | Source-file glob patterns that remain outside the version archive |
 
-current accepts label and redirect. exclude is an array of source-file glob patterns relative to src/content/docs/; excluded content always uses the current documentation version.
+## Register the versions collection
 
-Set versioning: false or omit it to disable versioning.
-
-## Content collection setup
-
-Your project's src/content.config.ts must register the plugin's versions collection loader:
+Add docsVersionsLoader to your Astro content config:
 
 ~~~ts
+import { defineCollection } from 'astro:content';
 import { docsVersionsLoader } from 'starlight-versions/loader';
 
 export const collections = {
-  // Keep your existing docs and i18n collections.
+  // Keep your docs and i18n collections.
   versions: defineCollection({ loader: docsVersionsLoader() }),
 };
 ~~~
 
-The N0ctane starter and demo already include this collection.
+The installer templates already include the loader.
 
-## Creating a new archive
+## Create a release archive
 
-When a configured version slug has no matching directory under src/content/docs/, the plugin archives the current documentation during the next astro dev or astro build.
+When a configured slug does not exist under src/content/docs, the plugin creates the archive from current documentation on the next astro dev or astro build.
 
-Create one new version at a time: add one version entry, run the dev server or build so the plugin creates the archive, then add another version entry. This avoids the plugin's “Only one new version can be configured at a time” error.
+Create one new archive at a time:
 
-Blog routes are excluded from versioning in the demo so posts remain under the same /blog/ URL.
+1. Add one new version entry.
+2. Run the dev server or build once to let the plugin create its snapshot.
+3. Inspect the generated archive.
+4. Only then add another new version.
+
+Do not configure multiple missing versions at once; the upstream plugin intentionally handles one newly created version per run.
+
+## Blog routes
+
+Exclude the blog source from versioning when you want posts to keep stable URLs across documentation releases. The demo config uses blog/** in the exclude list.

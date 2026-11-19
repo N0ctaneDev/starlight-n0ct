@@ -1,0 +1,80 @@
+---
+title: Code frames and tabs
+description: Use Expressive Code fences with N0ctane's editor and terminal treatment.
+---
+
+N0ctane styles Expressive Code rather than replacing it. Standard fences keep built-in copy behavior, syntax highlighting, frame titles, line highlighting, and diff notations.
+
+## Titled editor frame
+
+~~~ts title="src/config.ts"
+export default {
+  title: 'Project docs',
+  theme: {
+    glow: 'balanced',
+  },
+};
+~~~
+
+A language fence with a title displays a title bar. The copy control remains available through Expressive Code.
+
+## Terminal frame
+
+~~~sh frame="terminal" title="Build the site"
+npm run build
+npm run preview
+~~~
+
+Shell fences use a terminal frame. If you do not supply a title, the frame avoids rendering an empty terminal header.
+
+## Interactive code tabs
+
+Use Starlight Codeblocks' code-tabs directive to group language alternatives.
+
+:::code-tabs{sync="install-method"}
+
+~~~sh label="npm"
+npm install @n0ctanedev/starlight-n0ct
+~~~
+
+~~~sh label="pnpm"
+pnpm add @n0ctanedev/starlight-n0ct
+~~~
+
+~~~sh label="bun"
+bun add @n0ctanedev/starlight-n0ct
+~~~
+
+:::
+
+Keep only fenced code blocks inside the code-tabs directive. The sync key links equivalent tab groups on the same page.
+
+## Diffs and line emphasis
+
+~~~diff title="theme config"
+- glow: 'subtle'
++ glow: 'balanced'
+~~~
+
+~~~ts title="n0ct.config.mjs" {2-4}
+export default {
+  theme: {
+    glow: 'balanced',
+    contentWidth: '58rem',
+  },
+};
+~~~
+
+## CSS reference
+
+| Selector | Purpose |
+|---|---|
+| `.expressive-code` | Frame wrapper spacing |
+| `.expressive-code .frame` | Outer frame radius and border ownership |
+| `.expressive-code .frame .header` | Editor/terminal title area |
+| `.expressive-code .frame pre` | Code surface |
+| `.scb-tabs-list` | Interactive language tab strip |
+| `.scb-tabs-list [role="tab"]` | Individual language tab |
+| `.expressive-code .frame.has-title:not(.is-terminal) > .header::after` | Gradient title separator for titled editor frames |
+
+The frame uses `--n0ct-code-background`, `--n0ct-code-foreground`, `--n0ct-border`, and the shared gradient divider. Tab colors use the code-tab token family. Change syntax colors through each mode's codePalette rather than the main UI palette.

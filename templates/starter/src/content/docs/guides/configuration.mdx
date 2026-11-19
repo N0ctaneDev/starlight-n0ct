@@ -1,15 +1,15 @@
 ---
 title: Configure your site
-description: Customize the sidebar, base path, integrations, and theme.
+description: Customize sidebar topics, base paths, integrations, themes, and documentation versioning.
 ---
 
-Edit `n0ct.config.mjs` to configure N0ctane.
+Edit `n0ct.config.mjs` to configure Starlight-N0ct. The file uses the public `N0ctConfig` shape and includes an editor hint through its JSDoc annotation.
 
 ## Sidebar topics
 
 The default presentation uses native collapsible groups:
 
-```js n0ct.config.mjs
+~~~js
 sidebar: {
   topicDisplay: 'collapsible',
   topics: [
@@ -17,71 +17,120 @@ sidebar: {
     { label: 'Reference', link: '/reference/', directory: 'reference' },
   ],
 },
-```
+~~~
 
-To render the upstream topic list above the selected topic's sidebar, use `list` instead:
+Use `list` to show root topics above the selected topic's navigation, or `dropdown` for a compact selector.
 
-```js n0ct.config.mjs
+~~~js
 sidebar: {
-  topicDisplay: 'list',
+  topicDisplay: 'dropdown',
   topics: [
     { label: 'Guides', id: 'guides', link: '/guides/', directory: 'guides' },
     { label: 'Reference', id: 'reference', link: '/reference/', directory: 'reference' },
   ],
 },
-```
+~~~
 
-To turn the root-level topics into a dropdown selector above the sidebar, use:
-
-```js n0ct.config.mjs
-sidebar: {
-  topicDisplay: 'dropdown',
-  topics: [
-    { label: 'Guides', link: '/guides/', directory: 'guides' },
-    { label: 'Reference', link: '/reference/', directory: 'reference' },
-  ],
-},
-```
-
-Every root topic becomes an entry in the selector. Keep a root `link` or `directory` on each topic. Both plugin-backed modes use `starlight-sidebar-topics`; dropdown additionally uses `starlight-sidebar-topics-dropdown`. Do not set `starlight.sidebar` in these modes. Use `sidebar.topicOptions.exclude` for generated routes that keep their own sidebar; the configured Blog prefix is excluded automatically.
+List and dropdown use the Sidebar Topics integration. Keep a `link` or `directory` on each root topic. The starter's content schema already includes `topicSchema`. Do not also set `starlight.sidebar` when using these plugin-backed modes.
 
 ## Base path
 
-Set `BASE_PATH` in `.env` when deploying below a subpath, for example `/docs` or `/project-name`. The starter's `astro.config.mjs` reads that value and the `basePath` integration rewrites supported root-relative content links.
+Set `SITE_URL` and `BASE_PATH` in `.env` when deploying below a subpath, for example `/docs` or `/project-name`:
 
-```sh .env
+~~~sh
 SITE_URL=https://example.com
 BASE_PATH=/docs
-```
+~~~
 
-Use `/` for a site hosted at the domain root.
+Use `/` for a domain-root site. The installer preselects the Base path rewriting integration when you enter a non-root base path. Keep it enabled when you want the plugin to prefix supported root-relative Markdown and frontmatter links:
+
+~~~js
+integrations: {
+  basePath: {},
+},
+~~~
+
+The template's Astro config reads the environment values and passes `base` to Astro.
 
 ## Integrations
 
-The installer lets you select optional integrations. You can also edit the `integrations` object manually. Set an integration to `false` to disable it.
+Optional integrations are configured inside `integrations`. Set a key to `false` to disable it or use an options object to enable it.
+
+~~~js
+integrations: {
+  llmsTxt: {},
+  scrollToTop: {},
+  sidebarSwipe: {},
+  imageZoom: {},
+  blog: false,
+},
+~~~
+
+The docs starter keeps Blog disabled and does not ship sample blog posts. Its content schema already includes `blogSchema`, so you can enable Blog later with `blog: {}`. To start with a configured publication and sample posts, create a project with:
+
+~~~sh
+npx @n0ctanedev/starlight-n0ct init my-publication --template blog
+~~~
+
+See the built-in integrations reference for the complete list.
+
+## Named themes
+
+You can define your own palette using a named theme. Dark and Light are independent:
+
+~~~js
+theme: {
+  defaultTheme: 'n0ctane',
+  themes: {
+    n0ctane: {
+      label: 'N0ctane',
+      colors: {
+        dark: {
+          palette: {
+            primary: '#F25CFF',
+            secondary: '#8C42FF',
+            accent: '#00E5FF',
+            surface: '#131626',
+            text: '#E6EAF8',
+          },
+        },
+        light: {
+          palette: {
+            primary: '#B72DBF',
+            secondary: '#7540CE',
+            accent: '#00AFC2',
+            surface: '#FFFFFF',
+            text: '#211D32',
+          },
+        },
+      },
+    },
+  },
+},
+~~~
+
+The root `favicon: '/favicon.svg'` points to the template's public icon. Each named theme may set its own `favicon` override. For the full token model, see the [theme reference](https://n0ctanedev.github.io/starlight-n0ct/reference/theme/).
 
 ## Icons
 
-Lucide is installed as a direct project dependency by the installer. Use it in labels with the `lucide:` prefix:
+Lucide is installed as a direct project dependency. Use its `lucide:` prefix in site titles and topic configuration:
 
-```js n0ct.config.mjs
+~~~js
 title: '[lucide:terminal] My Documentation',
-```
+~~~
 
 ## Documentation versioning
 
-N0ctane forwards the upstream `starlight-versions` options through `versioning`. The starter already registers the `versions` content collection. Versioning is disabled by default so no archive is created until you opt in.
+N0ctane forwards the upstream Starlight Versions options through `versioning`. The starter already registers `docsVersionsLoader()` in `src/content.config.ts`. Versioning is disabled by default.
 
-```js n0ct.config.mjs
+~~~js
 versioning: {
   versions: [{ slug: '1.0', label: 'v1.0', redirect: 'same-page' }],
   current: { label: 'Latest', redirect: 'same-page' },
   exclude: ['blog/**', 'internal/**'],
 },
-```
+~~~
 
-`versions` entries accept `slug`, `label`, and `redirect` (`same-page` or `root`). `current` accepts `label` and `redirect`. `exclude` accepts source-file glob patterns relative to `src/content/docs/`. Add one archived version at a time: start the dev server or run a build so the plugin creates that snapshot before configuring another. See the [Starlight Versions configuration reference](https://starlight-versions.vercel.app/configuration/) for details.
+Add one new archived version at a time. Run the dev server or a build so the plugin creates its snapshot before configuring another version. Exclude `blog/**` when blog posts should keep stable, unversioned URLs.
 
-## Blog
-
-The starter enables Starlight Blog and includes example posts under `src/content/docs/blog/`. Update or remove those posts when you add your own.
+For all configuration options, see the [N0ctConfig API](https://n0ctanedev.github.io/starlight-n0ct/reference/config-api/).

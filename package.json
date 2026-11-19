@@ -1,10 +1,10 @@
 {
   "name": "@n0ctanedev/starlight-n0ct",
-  "version": "0.2.0",
-  "description": "Role-based dark and light theme and integration bundle for Astro Starlight",
+  "version": "1.0.0",
+  "description": "A polished theme, component system, and project installer for Astro Starlight",
   "type": "module",
   "license": "MIT",
-  "author": "N0ctane",
+  "author": "N0ctane._.Dev",
   "homepage": "https://n0ctanedev.github.io/starlight-n0ct",
   "repository": {
     "type": "git",
@@ -28,13 +28,13 @@
     "dist/styles/theme.css"
   ],
   "files": [
+    "assets/**",
     "dist/**",
     "README.md",
     "LICENSE",
     "CHANGELOG.md",
     "CONTRIBUTING.md",
     "SECURITY.md",
-    "PREPUBLISH.md",
     "bin/**",
     "templates/**"
   ],
@@ -62,7 +62,7 @@
     "docs:install": "npm --prefix docs install --no-audit --no-fund",
     "docs:dev": "npm run build && npm run docs:install && npm --prefix docs run dev",
     "docs:build": "npm run build && npm run docs:install && npm run docs:build:site",
-    "check": "npm run typecheck && npm test && npm run build",
+    "check": "node --check bin/n0ct.mjs && npm run typecheck && npm test && npm run build",
     "check:all": "npm run check && npm run docs:install && npm run docs:build:site && npm run audit:full",
     "prepack": "npm run build",
     "audit": "node ./scripts/audit-deps.mjs",

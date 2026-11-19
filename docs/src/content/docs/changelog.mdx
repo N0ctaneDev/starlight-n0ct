@@ -1,47 +1,20 @@
 ---
 title: Changelog
-description: N0ctane theme releases.
-topic: start
+description: Release history for Starlight-N0ct.
 ---
 
-## 0.1.4 — Release validation hardening
+The complete package changelog is maintained in the repository's [CHANGELOG.md](https://github.com/n0ctanedev/starlight-n0ct/blob/main/CHANGELOG.md).
 
-- Normalize version matching across trailing-slash and base-path deployment variants.
-- Make the full root and demo dependency audit a required CI and publishing check.
+## v1.0.0 — First stable release
 
-## 0.1.3 — Security and release hardening
+- Rebuilt the documentation around focused guides, reference pages, and a complete component library.
+- Added a theme playground with a structured editor, live interface preview, reset, copy, and JSON download.
+- Added keyboard-driven project and integration selectors to the installer.
+- Added the Blog + Documentation template alongside the documentation starter.
+- Added themed favicons, palette-specific brand gradients, and a refreshed homepage and README.
+- Composed LLM Page Actions with Starlight Versions so page actions and archived-version notices coexist.
 
-- Force patched esbuild 0.28.x and add production dependency audit to the release checks.
-- Clarify npm 11 install-script approval for consuming projects.
-- Update Lucide icon collection dependency.
-- Preserve project custom CSS precedence over generated theme tokens.
-- Trim sidebar/version labels and reject duplicate historical version labels.
-- Reject unsafe footer/sidebar URL schemes and malformed path inputs.
+## Previous releases
 
-## 0.1.2 — Starlight compatibility and sidebar fixes
-
-- Corrected shorthand groups to use the supported Starlight sidebar schema.
-- Added Starlight sidebar restore-point markers for expanded group persistence.
-- Preserved native logo support alongside the icon-aware site title.
-- Added duplicate historical-version path and label validation.
-- Kept the theme switcher independent of Starlight's removed picker update API.
-
-## 0.1.1 — Configuration and compatibility fixes
-
-- Scope and repository identity set to `@n0ctanedev/starlight-n0ct` and `n0ctanedev/starlight-n0ct`.
-- TypeScript now uses bundler resolution and local Starlight plugin declaration shims, avoiding accidental checks of raw dependency TypeScript sources.
-- Fixed Expressive Code theme typing and strict sidebar test types.
-- Restored native Starlight sidebar state persistence and mobile-only menu footer behavior.
-- Added validation for unsafe sidebar/version paths and invalid theme tokens.
-- Prevented duplicate `llms.txt` generation across bundled integrations.
-- Corrected the demo's Getting started sidebar entry.
-
-## 0.1.0 — Initial release candidate
-
-- Logo-derived purple/blue palette with Space Grotesk and Space Mono.
-- Cycling Auto/Light/Dark theme icon.
-- Icon-aware sidebar and configurable footer.
-- Native Starlight Steps, FileTree and Asides styling.
-- Ten configurable Starlight plugin integrations, plus native Starlight Versions support.
-- Simple `n0ct.config.mjs` expansion and sidebar version selector.
-- Demo docs, CI, GitHub Pages and npm publishing workflows.
+- v0.2.0 — Role-based color tokens, independent syntax palettes, improved code frames, and a richer demo.
+- v0.1.4 and earlier — Package setup, compatibility improvements, sidebar work, and the original theme foundations.

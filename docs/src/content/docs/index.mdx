@@ -1,56 +1,87 @@
 ---
-title: N0ctane
-description: A readable, role-based Starlight theme with a neon edge.
-template: splash
-hero:
-  tagline: A modern design system and configuration layer for Astro Starlight.
-  actions:
-    - text: Get started
-      link: /getting-started/
-      icon: right-arrow
-    - text: Explore the showcase
-      link: /showcase/
-      variant: minimal
-topic: start
+title: Starlight-N0ct
+description: A visual system, component kit, and keyboard-first installer for Astro Starlight.
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import HomeHero from '../../components/HomeHero.astro';
+import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
 import DocCard from '@n0ctanedev/starlight-n0ct/components/docs/DocCard.astro';
 import DocGrid from '@n0ctanedev/starlight-n0ct/components/docs/DocGrid.astro';
-import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
+import Kbd from '@n0ctanedev/starlight-n0ct/components/docs/Kbd.astro';
 
+<HomeHero
+  title="Your docs, with a point of view."
+  tagline="A complete visual system for Astro Starlight: named themes, crisp code frames, reusable components, practical integrations, and an installer that gets a real project running."
+  primaryLabel="Build your docs"
+  primaryHref="/getting-started/"
+  secondaryLabel="Explore the components"
+  secondaryHref="/components/"
+  version="v1.0.0"
+/>
 
-<CardGrid>
-  <Card title="Readable by design" icon="pencil">
-    Carefully tuned text, surfaces, borders, and code syntax colors in both light and dark modes.
-  </Card>
-  <Card title="One config file" icon="setting">
-    Describe your sidebar, colors, integrations, and version history in n0ct.config.mjs.
-  </Card>
-  <Card title="Integrations included" icon="puzzle">
-    Blog, versioning, keyboard hints, image zoom, LLM actions, search indexes, and more.
-  </Card>
-</CardGrid>
+<div class="n0ct-home-metrics">
+  <div><strong>7</strong><span>named palettes in the demo</span></div>
+  <div><strong>2</strong><span>independent appearance modes</span></div>
+  <div><strong>10</strong><span>optional integrations</span></div>
+  <div><strong>2</strong><span>installer templates</span></div>
+</div>
 
-<Callout tone="tip" title="Try the live examples">
-  The [Showcase](/showcase/) page exercises the components and integrations included in this demo. The [Blog](/blog/) and version selector are enabled too.
+## A theme system, not just a color swap
+
+Choose a named palette and edit its dark and light appearances independently. Every palette resolves into semantic roles for surfaces, text, borders, focus states, status colors, code syntax, gradients, and shadows.
+
+<Callout tone="tip" title="Make it yours">
+  Open the [live theme playground](/reference/theme/#live-theme-playground), edit a palette, preview real components, and copy the generated configuration into your project.
 </Callout>
 
+## Start with the part you need
+
 <DocGrid columns={2}>
-  <DocCard title="Getting started" eyebrow="Start here" description="Install N0ctane and connect it to an Astro Starlight project." href="/getting-started/" />
-  <DocCard title="Theme configuration" eyebrow="Customize" description="Configure semantic palettes, code colors, layout, and visual intensity." href="/guides/configuration/" />
-  <DocCard title="Component gallery" eyebrow="Explore" description="See the custom documentation components and native Starlight elements." href="/components/" />
-  <DocCard title="Theme reference" eyebrow="Reference" description="Inspect the token system and independent light and dark code palettes." href="/reference/theme/" />
+  <DocCard title="Get started" eyebrow="01 · Setup" description="Install the package or scaffold a complete site with the interactive project installer." href="/getting-started/" />
+  <DocCard title="Theme playground" eyebrow="02 · Design" description="Tune colors and syntax, inspect component states, and copy a ready-to-use theme config." href="/reference/theme/#live-theme-playground" />
+  <DocCard title="Component library" eyebrow="03 · Build" description="Browse every custom component with MDX usage, prop details, and CSS references." href="/components/" />
+  <DocCard title="Integration guide" eyebrow="04 · Extend" description="Enable blog, page actions, Markdown indexes, keyboard helpers, image zoom, and more." href="/guides/integrations/" />
 </DocGrid>
 
-## Built around the N0ctane palette
+## Made for documentation workflows
 
-N0ctane maps its identity into semantic roles: primary, secondary, accent, highlight, surfaces, text, borders, and status colors. Both appearance modes are tuned independently instead of simply inverting one palette.
+<div class="n0ct-home-features">
+  <div><span class="n0ct-home-feature-icon">◈</span><h3>Independent light and dark palettes</h3><p>Each mode has its own colors, code syntax, gradient, and contrast tuning. No automatic color inversion.</p></div>
+  <div><span class="n0ct-home-feature-icon">⌘</span><h3>Expressive code frames</h3><p>Readable editor and terminal frames, copy controls, tabbed languages, syntax themes, and diff highlighting.</p></div>
+  <div><span class="n0ct-home-feature-icon">▦</span><h3>Reusable components</h3><p>Semantic callouts, link cards, responsive grids, keyboard caps, file trees, and accessible step lists.</p></div>
+  <div><span class="n0ct-home-feature-icon">⌥</span><h3>Keyboard-first installer</h3><p>Pick a docs or blog template, toggle integrations with Space, and confirm with Enter. No numbered lists to memorize.</p></div>
+</div>
 
-## Explore the project
+## Two templates. One config.
 
-- [Showcase the theme](/showcase/)
-- [Read the blog](/blog/)
-- [Configure integrations](/guides/integrations/)
-- [Set up versioning](/guides/versioning/)
-- [Browse the configuration API](/reference/config-api/)
+Start with a focused documentation site, or choose the Blog + Documentation template for posts, tags, authors, and reading metrics.
+
+~~~sh
+# Documentation site
+npx @n0ctanedev/starlight-n0ct init my-docs
+
+# Blog and docs site
+npx @n0ctanedev/starlight-n0ct init my-publication --template blog
+~~~
+
+The installer can also scaffold without installing packages, use your existing package manager, and run non-interactively with --yes.
+
+## Add the features you actually need
+
+Ten integrations are included and configurable individually. Turn each one on with an options object or off with false.
+
+<DocGrid columns={2}>
+  <DocCard title="Blog and versioning" eyebrow="Publishing" description="Publish author-led posts and keep documentation releases browsable." href="/guides/versioning/" />
+  <DocCard title="LLM page actions" eyebrow="AI workflows" description="Copy pages as Markdown, view raw Markdown, print to PDF, and open AI tools." href="/guides/integrations/" />
+  <DocCard title="Keyboard and navigation" eyebrow="Interaction" description="Keyboard notation, swipe navigation, announcement banners, and scroll-to-top." href="/guides/integrations/" />
+  <DocCard title="Validation and media" eyebrow="Quality" description="Check internal links during builds and zoom images accessibly." href="/guides/integrations/" />
+</DocGrid>
+
+## Useful next steps
+
+- Read [Getting started](/getting-started/) to install and connect the package.
+- Explore [every component](/components/) with copyable examples and CSS hooks.
+- Read the [configuration reference](/reference/config-api/) for the complete N0ctConfig API.
+- Visit the [showcase](/showcase/) for a live tour of the visual system.
+- Browse the [project on GitHub](https://github.com/n0ctanedev/starlight-n0ct) or [install from npm](https://www.npmjs.com/package/@n0ctanedev/starlight-n0ct).
+

@@ -1,26 +1,31 @@
 ---
 title: Integration reference
-description: The upstream plugins included with N0ctane.
+description: Bundled Starlight plugins, their roles, and configuration ownership.
 ---
 
-N0ctane wraps the following Starlight plugin packages and passes their native options through unchanged. Documentation versioning is also provided by `starlight-versions` through the root `versioning` option.
+Each integration is bundled as a dependency and registered as a Starlight plugin. N0ctane forwards the native option object unless it must supply a default or compose a component to prevent a known conflict.
 
-| Config key | Documentation |
-|---|---|
-| `announcement` | [starlight-announcement](https://github.com/frostybee/starlight-announcement) |
-| `kbd` | [starlight-kbd](https://github.com/HiDeoo/starlight-kbd) |
-| `llmsTxt` | [starlight-llms-txt](https://github.com/delucis/starlight-llms-txt) |
-| `scrollToTop` | [starlight-scroll-to-top](https://github.com/frostybee/starlight-scroll-to-top) |
-| `llmActions` | [starlight-llm-actions](https://holdenhewett.github.io/starlight-llm-actions/) |
-| `sidebarSwipe` | [starlight-sidebar-swipe](https://github.com/trueberryless-org/starlight-sidebar-swipe) |
-| `linksValidator` | [starlight-links-validator](https://github.com/HiDeoo/starlight-links-validator) |
-| `blog` | [starlight-blog](https://github.com/HiDeoo/starlight-blog) |
-| `imageZoom` | [starlight-image-zoom](https://github.com/HiDeoo/starlight-image-zoom) |
-| `versioning` | [starlight-versions](https://starlight-versions.vercel.app/) |
+| Config key | Package | Responsibility |
+|---|---|---|
+| basePath | starlight-base-path | Prefix base paths on links |
+| announcement | starlight-announcement | Announcement messages |
+| kbd | starlight-kbd | Keyboard shortcuts and keycaps |
+| llmsTxt | starlight-llms-txt | LLM-friendly Markdown indexes |
+| scrollToTop | starlight-scroll-to-top | Scroll-to-top control |
+| llmActions | starlight-llm-actions | Page action dropdown |
+| sidebarSwipe | starlight-sidebar-swipe | Mobile sidebar gestures |
+| linksValidator | starlight-links-validator | Internal link validation |
+| blog | starlight-blog | Blog routes and metadata |
+| imageZoom | starlight-image-zoom | Image zoom viewer |
 
-Disable any unused plugin with `false`. If an integration requires extra content directories, frontmatter fields or build configuration, follow its upstream installation guide.
+Set a key to false to disable it. An empty object enables upstream defaults. Use an options object for package-specific configuration.
 
+## Defaults supplied by N0ctane
 
-### LLM index ownership
+- kbd uses macOS, Windows, and Linux keyboard presets when types are omitted.
+- The global keyboard picker is not shown unless kbd.globalPicker is explicitly true.
+- llmsTxt owns the index routes by default. Set llmsTxt: false to let llmActions own them.
+- Blog and versioning route/component interactions are composed so their public components can both appear.
+- Blog route patterns should be excluded from versioning if posts need stable URLs.
 
-By default, `llmsTxt` is enabled and `llmActions.llmsTxt` is disabled. To let LLM Actions generate `/llms.txt` and `/llms-full.txt`, set `llmsTxt: false`. Do not enable both generators at the same time; N0ctane throws a configuration error instead of allowing duplicate routes.
+For actual option schemas, see each upstream project's documentation from the [integrations guide](/guides/integrations/).

@@ -1,21 +1,26 @@
 ---
 title: Theme system
-description: Named palettes, two-state appearance preferences, semantic tokens, and live palette design.
+description: Named palettes, semantic roles, typography, code syntax, gradients, shadows, and theme editing.
 ---
 
 import ThemePlayground from '../../../components/ThemePlayground.astro';
+import Callout from '@n0ctanedev/starlight-n0ct/components/docs/Callout.astro';
 
-N0ctane separates **palette identity** from **appearance mode**. A visitor chooses a named palette such as N0ctane, GitHub, Catppuccin, Rosé Pine, Dracula, Nord, or Flexoki, then chooses Light or Dark. Both settings apply to the site UI and the matching Expressive Code syntax theme.
+N0ctane separates **palette identity** from **appearance mode**. A visitor chooses a named theme such as N0ctane, GitHub, Catppuccin, Rosé Pine, Dracula, Nord, or Flexoki, then switches between Dark and Light. Each mode has its own independently configured colors.
 
-## Live palette playground
+## Live theme playground
 
-Use the controls to edit the entire theme for either appearance. Core colors are shown first; expandable groups expose surfaces, text, borders, semantic states, code-frame roles, syntax tokens, gradients, and shadows. The current page is the preview, including the theme picker, all N0ctane components, and actual Expressive Code frames.
+The playground below edits the selected theme's colors for one appearance at a time. It includes a live component preview, syntax-color controls, brand-gradient inputs, reset, copy, and JSON export.
 
 <ThemePlayground />
 
+<Callout tone="note" title="The playground edits the selected mode">
+  Dark and Light are independent. Change modes to tune both palettes. The generated output contains the full selected theme, including both modes already present in the demo configuration.
+</Callout>
+
 ## Named themes
 
-Define multiple named palettes under `theme.themes`. Each theme has its own dark and light values, and `theme.defaultTheme` chooses the palette used for visitors without a saved preference.
+Set the default palette and provide one or more named theme definitions:
 
 ~~~js
 theme: {
@@ -23,266 +28,185 @@ theme: {
   themes: {
     n0ctane: {
       label: 'N0ctane',
+      favicon: '/favicons/n0ctane.svg',
       colors: {
         dark: {
           palette: {
             primary: '#F25CFF',
+            secondary: '#8C42FF',
             accent: '#00E5FF',
             surface: '#131626',
             text: '#E6EAF8',
+            highlight: '#2A85FF',
+            highlightText: '#080A15',
+            background: '#0B0D17',
           },
+          brandGradient: 'linear-gradient(115deg, #F25CFF, #8C42FF, #00E5FF)',
         },
         light: {
           palette: {
             primary: '#B72DBF',
+            secondary: '#7540CE',
             accent: '#00AFC2',
             surface: '#FFFFFF',
             text: '#211D32',
+            highlight: '#286DCE',
+            highlightText: '#FFFFFF',
+            background: '#F6F5FB',
           },
+          brandGradient: 'linear-gradient(115deg, #B72DBF, #7540CE, #00AFC2)',
         },
       },
     },
     github: {
       label: 'GitHub',
+      favicon: '/favicons/github.svg',
       colors: {
-        dark: {
-          palette: {
-            primary: '#4493F8',
-            accent: '#3FB950',
-            surface: '#161B22',
-            text: '#E6EDF3',
-          },
-        },
-        light: {
-          palette: {
-            primary: '#0969DA',
-            accent: '#1A7F37',
-            surface: '#FFFFFF',
-            text: '#1F2328',
-          },
-        },
+        dark: { palette: { primary: '#4493F8', accent: '#3FB950', surface: '#161B22', text: '#E6EDF3' } },
+        light: { palette: { primary: '#0969DA', accent: '#1A7F37', surface: '#FFFFFF', text: '#1F2328' } },
       },
     },
   },
 },
 ~~~
 
-Theme IDs must start with a lowercase letter and may contain lowercase letters, numbers, hyphens, and underscores. Labels are optional; when omitted, N0ctane formats the ID for display.
+Theme IDs must begin with a lowercase letter and contain lowercase letters, numbers, hyphens, or underscores. Labels default to a title-cased theme ID. The defaultTheme must match a key in themes.
 
-Each mode requires only four core colors:
+## Core palette
 
-| Color | Used for |
+Every mode accepts the following fields:
+
+| Field | Purpose |
 |---|---|
-| `primary` | Brand identity, links, and primary gradients |
-| `accent` | Focus, active controls, and interactive highlights |
-| `surface` | Main card and panel surface |
-| `text` | Main readable foreground |
+| primary | Main brand identity, prominent links, and primary actions |
+| secondary | Supporting brand color; derived from primary and accent when omitted |
+| accent | Focus, active controls, and interactive highlights |
+| surface | Main panel/card surface |
+| text | Main readable foreground |
+| highlight | Highlighted surface |
+| highlightText | Text on the highlight surface |
+| background | Page background; derived from surface when omitted |
 
-Secondary, highlight, highlight text, and page background are derived when omitted. You can still provide those optional palette values to fine-tune the result.
+The resolver creates primary, secondary, and accent shade ramps from 50 through 950. It also derives secondary text, muted text, border, selection, interaction, and surface roles unless explicit overrides are provided.
 
-The demo also includes **Catppuccin** (Mocha dark / Latte light), **Rosé Pine** (Main dark / Dawn light), **Dracula** (Dracula Classic dark / Alucard Classic light), **Nord**, and **Flexoki**. These are complete starting presets with separate dark and light palettes; every color and effect remains editable.
+## Semantic colors
 
-## Themed favicons
+Semantic colors are independent of the brand palette and can be configured for each mode:
 
-Set one global favicon path on the root config. A named theme can override it with its own `favicon`; themes without an override use the global path. Paths are root-relative and point to files inside the consumer project's `public/` directory.
+~~~js
+colors: {
+  dark: {
+    semantic: {
+      success: { foreground: '#06D6A0' },
+      warning: { foreground: '#FFD166' },
+      danger: { foreground: '#FF4D6D' },
+      info: { foreground: '#FF9F1C' },
+    },
+  },
+},
+~~~
+
+Each semantic role accepts foreground, background, border, and text. When omitted, background and border are derived from the foreground and the active surface.
+
+## Code syntax palette
+
+Code colors are configured separately from the documentation UI. Each mode supports:
+
+| Field | Meaning |
+|---|---|
+| background, foreground | Code canvas and base text |
+| comment, keyword, string, number | Language syntax groups |
+| function, type, variable | Identifiers and declarations |
+| tag, attribute, punctuation | Markup and syntax punctuation |
+| invalid | Invalid or illegal token highlight |
+
+~~~js
+colors: {
+  dark: {
+    codePalette: {
+      background: '#0D1020',
+      foreground: '#E6EAF8',
+      comment: '#A3AED1',
+      keyword: '#FF8DD6',
+      string: '#9FE6B8',
+      number: '#FFD18A',
+      function: '#79DDF8',
+      type: '#BDAAFF',
+    },
+  },
+},
+~~~
+
+Expressive Code receives a dark and light syntax theme for every named palette. Theme IDs are formed as theme-id-dark and theme-id-light. N0ctane disables automatic system appearance switching for code themes so the code palette follows the active N0ctane preference.
+
+## Fine-grained overrides
+
+Use overrides when a semantic role needs a value that should not be derived from the core palette.
+
+| Group | Roles |
+|---|---|
+| brand | primary, secondary, accent, highlight, highlightText |
+| surfaces | void, base, surface, elevated, sunken, overlay, navigation, sidebar, code |
+| text | primary, secondary, muted, subtle, inverse, accent, highlight, onAccent |
+| borders | subtle, default, strong, focus |
+| interactive | hover, active, selected |
+| highlight | background, text, border, selectionBackground, selectionText |
+| code | background, foreground, cursor, selectionBackground, lineHighlight, lineNumber, lineNumberActive, diffAdded, diffRemoved, tabs |
+
+The code group includes diffAdded and diffRemoved (foreground, background, border, text) plus tabs (background, activeBackground, foreground, activeForeground, border).
+
+## Brand gradients and effects
+
+Set brandGradient inside each mode to control the default branded gradient used for text and divider lines. An explicit effects.gradients.brand or effects.gradients.divider can override the corresponding role.
+
+Gradient roles include brand, brandSoft, monochrome, accent, canvas, shimmer, callout, card, cardHover, steps, fileTree, sidebar, sidebarActive, versionSelect, scrollbar, scrollbarHover, and divider.
+
+Shadow roles include soft, float, callout, card, cardHover, control, popover, sidebar, sidebarActive, scrollbar, scrollbarHover, focus, tab, wordmark, and step.
+
+Values are CSS values. N0ctane rejects declarations, URLs, and executable CSS expressions.
+
+## Global and themed favicons
+
+The root favicon is the fallback for all palettes. Each named theme may override it:
 
 ~~~js
 export default {
-  favicon: '/favicons/default.svg',
+  favicon: '/favicon.svg',
   theme: {
     themes: {
-      n0ctane: {
-        favicon: '/favicons/n0ctane.svg',
-        colors: {
-          dark: { brandGradient: 'linear-gradient(110deg, #F25CFF, #8C42FF, #00E5FF)' },
-          light: { brandGradient: 'linear-gradient(110deg, #B72DBF, #7540CE, #00AFC2)' },
-        },
-      },
-      github: {
-        favicon: '/favicons/github.svg',
-      },
+      n0ctane: { favicon: '/favicons/n0ctane.svg' },
+      github: { favicon: '/favicons/github.svg' },
     },
   },
 };
 ~~~
 
-The active theme updates the browser favicon and the footer brand mark together. The footer falls back to the global favicon when the selected theme has no override.
+Paths are root-relative and refer to files in the consuming site's public directory. The browser favicon and footer brand mark update when the active named theme changes.
 
-## Appearance and saved preferences
-
-The theme switcher has two independent controls. Its icon cycles between **Dark** and **Light**; a native HTML select chooses the named palette. Choosing GitHub while Dark is active applies GitHub's dark palette and GitHub's dark syntax theme. Changing to Light then selects GitHub's light values.
-
-Preferences are saved in `localStorage` under `n0ct-theme-preferences` as a `{ mode, theme }` object. There is no automatic/system mode. The previous `starlight-theme` value is kept in sync for compatibility with integrations that read Starlight's appearance key.
-
-## Backwards-compatible configuration
-
-The original `theme.colors` shape continues to configure the built-in `n0ctane` palette when `theme.themes.n0ctane` is not supplied:
+## Layout and glow
 
 ~~~js
 theme: {
-  colors: {
-    dark: {
-      palette: {
-        primary: '#F25CFF',
-        accent: '#00E5FF',
-        surface: '#131626',
-        text: '#E6EAF8',
-      },
-    },
-    light: {
-      palette: {
-        primary: '#B72DBF',
-        accent: '#00AFC2',
-        surface: '#FFFFFF',
-        text: '#211D32',
-      },
-    },
-  },
+  contentWidth: '58rem',
+  sidebarWidth: '17rem',
+  glow: 'balanced', // subtle | balanced | strong
 },
 ~~~
 
-New projects should use `theme.themes`; legacy configuration can be migrated one palette at a time.
+contentWidth and sidebarWidth accept positive CSS lengths. glow controls the strength of the ambient page treatment.
 
-## Mode-qualified color tokens
+## Mode-qualified CSS tokens
 
-Every resolved role is available under a mode-specific prefix, regardless of the active theme:
+Every resolved token is available both as an active alias and as a mode-specific token. Examples:
 
-- `--n0ct-dark-base`, `--n0ct-dark-surface`, `--n0ct-dark-text-primary`
-- `--n0ct-light-base`, `--n0ct-light-surface`, `--n0ct-light-text-primary`
-- `--n0ct-dark-primary-500`, `--n0ct-light-primary-500`
-- `--n0ct-dark-code-background`, `--n0ct-light-code-background`
+- --n0ct-base and --n0ct-dark-base
+- --n0ct-surface and --n0ct-light-surface
+- --n0ct-primary-500 and --n0ct-dark-primary-500
+- --n0ct-code-background and --n0ct-light-code-background
+- --n0ct-gradient-brand and --n0ct-dark-gradient-brand
 
-The regular aliases (`--n0ct-base`, `--n0ct-surface`, `--n0ct-text-primary`, and so on) follow the selected theme and mode. Both naming styles are available in CSS. The complete mode-qualified role set and the primary, secondary, and accent shade ramps are also registered as Tailwind tokens.
+Use an active alias when a component should follow the current mode. Use a mode-qualified token when a component intentionally needs a fixed dark or light value.
 
-## Dedicated code palettes
+## Backwards compatibility
 
-Syntax highlighting is configured independently for each theme and appearance. When omitted, the built-in N0ctane code palette is used. Expressive Code receives a pair of named syntax themes for each palette: `<theme-id>-dark` and `<theme-id>-light`.
-
-~~~js
-theme: {
-  themes: {
-    github: {
-      colors: {
-        dark: {
-          codePalette: {
-            background: '#0D1117',
-            foreground: '#E6EDF3',
-            keyword: '#FF7B72',
-            string: '#A5D6FF',
-            comment: '#8B949E',
-          },
-        },
-        light: {
-          codePalette: {
-            background: '#FFFFFF',
-            foreground: '#1F2328',
-            keyword: '#CF222E',
-            string: '#0A3069',
-            comment: '#6E7781',
-          },
-        },
-      },
-    },
-  },
-},
-~~~
-
-The full code palette supports `background`, `foreground`, `comment`, `keyword`, `string`, `number`, `function`, `type`, `variable`, `tag`, `attribute`, `punctuation`, and `invalid`.
-
-## Fine-grained role overrides
-
-Main palette colors are the starting point. Use `overrides` when a component needs a specific role that should not be derived from the four core colors. Overrides can be set independently for each theme and mode.
-
-| Group | Available roles |
-|---|---|
-| `brand` | primary, secondary, accent, highlight, highlightText |
-| `surfaces` | void, base, surface, elevated, sunken, overlay, navigation, sidebar, code |
-| `text` | primary, secondary, muted, subtle, inverse, accent, highlight, onAccent |
-| `borders` | subtle, default, strong, focus |
-| `interactive` | hover, active, selected |
-| `highlight` | background, text, border, selectionBackground, selectionText |
-| `code` | background, foreground, cursor, selectionBackground, lineHighlight, lineNumber, lineNumberActive, diffAdded, diffRemoved, tabs |
-
-The code override group also accepts `diffAdded` and `diffRemoved` (foreground, background, border, text), and `tabs` (background, activeBackground, foreground, activeForeground, border).
-
-## Semantic status colors
-
-Statuses can be overridden independently in each theme and mode:
-
-~~~js
-theme: {
-  themes: {
-    github: {
-      colors: {
-        light: {
-          semantic: {
-            success: { foreground: '#1A7F37' },
-            warning: { foreground: '#9A6700' },
-            danger: { foreground: '#CF222E' },
-            info: { foreground: '#0969DA' },
-          },
-        },
-      },
-    },
-  },
-},
-~~~
-
-## Brand gradients
-
-Set `brandGradient` inside each mode to define the gradient shared by branded text and divider lines. Dark and light values are independent; the selected named palette supplies both.
-
-~~~js
-theme: {
-  themes: {
-    n0ctane: {
-      colors: {
-        dark: {
-          brandGradient: 'linear-gradient(90deg, #F25CFF, #00E5FF)',
-        },
-        light: {
-          brandGradient: 'linear-gradient(90deg, #B72DBF, #00AFC2)',
-        },
-      },
-    },
-  },
-},
-~~~
-
-The fine-grained `effects.gradients.brand` and `effects.gradients.divider` settings remain available and take precedence when provided.
-
-## Gradients and shadows
-
-Gradients and shadows are configurable per theme and appearance through `colors.dark.effects` and `colors.light.effects`. The playground exposes each token under **Gradients and shadows**; edits are saved into the generated theme config.
-
-~~~js
-theme: {
-  themes: {
-    n0ctane: {
-      colors: {
-        dark: {
-          effects: {
-            gradients: {
-              brand: 'linear-gradient(90deg, #F25CFF, #00E5FF)',
-              divider: 'linear-gradient(90deg, #8C42FF, #00E5FF)',
-              canvas: 'radial-gradient(circle at top left, #3B174A, transparent 40rem)',
-            },
-            shadows: {
-              card: '0 12px 34px rgb(0 0 0 / 0.24)',
-              focus: '0 0 0 3px rgb(0 229 255 / 0.2)',
-            },
-          },
-        },
-      },
-    },
-  },
-},
-~~~
-
-Gradient roles cover brand text, heading/code separators, canvas glow, shimmer, callouts, cards, steps, FileTree, sidebar, version selector, and scrollbars. Shadow roles cover cards, callouts, controls, popovers, sidebar, focus, tabs, and other shared components. Values are validated as single CSS values; declarations, URLs, and executable expressions are rejected.
-
-## Layout
-
-The defaults use a 58rem reading width and a 17rem sidebar. Override `theme.contentWidth` and `theme.sidebarWidth` to change layout. Glow strength accepts `subtle`, `balanced`, or `strong`; the default is balanced.
-
-The background glow is fixed to the viewport rather than scrolling with the document. Focus states remain visible and animations respect `prefers-reduced-motion`.
+The legacy theme.colors.dark and theme.colors.light shape still configures the built-in n0ctane palette when themes.n0ctane is not defined. New projects should use named themes to make future palette selection straightforward.
