@@ -1,6 +1,33 @@
 import { describe, expect, it } from 'vitest';
-import { generateN0ctThemeCss, resolveN0ctThemeColors, validateN0ctThemeColors } from './theme-colors.js';
+import { generateN0ctThemeCss, resolveN0ctThemeColors, resolveN0ctThemeConfig, validateN0ctThemeColors } from './theme-colors.js';
 import { createN0ctaneCodeThemes } from './code-themes.js';
+
+describe('named theme logo settings', () => {
+  it('preserves dark and light logo paths for each named palette', () => {
+    const resolved = resolveN0ctThemeConfig({
+      defaultTheme: 'flexoki',
+      themes: {
+        n0ctane: { logo: { dark: '/logos/n0ctane-dark.svg', light: '/logos/n0ctane-light.svg' } },
+        flexoki: { logo: { dark: '/logos/flexoki-dark.svg', light: '/logos/flexoki-light.svg' } },
+      },
+    });
+
+    expect(resolved.defaultTheme).toBe('flexoki');
+    expect(resolved.themes.n0ctane.logo).toEqual({
+      dark: '/logos/n0ctane-dark.svg',
+      light: '/logos/n0ctane-light.svg',
+    });
+    expect(resolved.themes.flexoki.logo).toEqual({
+      dark: '/logos/flexoki-dark.svg',
+      light: '/logos/flexoki-light.svg',
+    });
+  });
+
+  it('keeps logo optional for existing theme configurations', () => {
+    const resolved = resolveN0ctThemeConfig({ colors: { dark: { palette: { primary: '#123456' } } } });
+    expect(resolved.themes.n0ctane.logo).toBeUndefined();
+  });
+});
 
 describe('semantic theme palettes', () => {
   it('preserves the original four-color N0ctane palette in both modes', () => {

@@ -283,6 +283,13 @@ export interface N0ctThemeColors {
 export interface N0ctThemeDefinition {
   /** Optional favicon path relative to the consumer project's public/ directory. Falls back to the global favicon. */
   favicon?: string;
+  /** Optional appearance-specific logo paths relative to public/. Falls back to Starlight's configured logo. */
+  logo?: {
+    /** Logo shown while the named theme is in dark mode. */
+    dark?: string;
+    /** Logo shown while the named theme is in light mode. */
+    light?: string;
+  };
   /** Label shown in the theme picker. Defaults to a title-cased theme ID. */
   label?: string;
   /** Dark and light values for this theme. */

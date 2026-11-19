@@ -132,6 +132,13 @@ export function normalizeN0ctConfig(input: N0ctConfig): N0ctNormalizedConfig {
   if (input.favicon !== undefined) validateFaviconPath(input.favicon, 'favicon');
   for (const [id, theme] of Object.entries(input.theme?.themes ?? {})) {
     if (theme.favicon !== undefined) validateFaviconPath(theme.favicon, 'theme.themes.' + id + '.favicon');
+    if (theme.logo !== undefined) {
+      if (!theme.logo.dark && !theme.logo.light) {
+        throw new Error('N0ctane theme.themes.' + id + '.logo must define at least one of dark or light.');
+      }
+      if (theme.logo.dark !== undefined) validateFaviconPath(theme.logo.dark, 'theme.themes.' + id + '.logo.dark');
+      if (theme.logo.light !== undefined) validateFaviconPath(theme.logo.light, 'theme.themes.' + id + '.logo.light');
+    }
   }
   const hasSidebar = input.sidebar?.topics !== undefined || input.sidebar?.extra !== undefined;
   const sidebarTopicDisplay = input.sidebar?.topicDisplay ?? 'collapsible';
