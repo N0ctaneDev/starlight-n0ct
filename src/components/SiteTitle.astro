@@ -2,31 +2,53 @@
 import { Icon } from 'astro-icon/components';
 import { logos } from 'virtual:starlight/user-images';
 import config from 'virtual:starlight/user-config';
+
 const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
 const match = siteTitle.match(/^\[([^\]]+)\]\s*/);
 const iconName = match?.[1];
 const label = match ? siteTitle.slice(match[0].length) : siteTitle;
+const themeSettings = (Astro.locals as any).n0ctane?.theme ?? {};
+const namedThemes = themeSettings.themes ?? [];
+const hasThemeLogos = namedThemes.some((theme: { logo?: { dark?: string; light?: string } }) => theme.logo?.dark || theme.logo?.light);
+const initialTheme = namedThemes.find((theme: { id: string }) => theme.id === themeSettings.defaultTheme) ?? namedThemes.find((theme: { logo?: { dark?: string; light?: string } }) => theme.logo?.dark || theme.logo?.light);
+const initialThemeLogo = initialTheme?.logo?.dark ?? initialTheme?.logo?.light;
+const baseUrl = import.meta.env.BASE_URL || '/';
+const resolvePublicAsset = (path: string) => /^https?:/i.test(path) ? path : baseUrl + path.replace(/^\/+/, '');
+const hasStarlightLogo = Boolean(config.logo && logos.dark);
+const fallbackLogo = logos.dark?.src ?? (initialThemeLogo ? resolvePublicAsset(initialThemeLogo) : undefined);
 ---
 <a href={siteTitleHref} class="site-title sl-flex n0ct-site-title">
-  {config.logo && logos.dark && (
+  {hasStarlightLogo && (
     <>
       <img
         class:list={{ 'light:sl-hidden print:hidden': !('src' in config.logo) }}
+        data-n0ct-themed-logo
+        data-n0ct-logo-fallback={logos.dark.src}
         alt={config.logo.alt}
         src={logos.dark.src}
         width={logos.dark.width}
         height={logos.dark.height}
       />
-      {!('src' in config.logo) && (
+      {!('src' in config.logo) && logos.light && (
         <img
           class="dark:sl-hidden print:block"
+          data-n0ct-themed-logo
+          data-n0ct-logo-fallback={logos.light.src}
           alt={config.logo.alt}
-          src={logos.light?.src}
-          width={logos.light?.width}
-          height={logos.light?.height}
+          src={logos.light.src}
+          width={logos.light.width}
+          height={logos.light.height}
         />
       )}
     </>
+  )}
+  {!hasStarlightLogo && hasThemeLogos && fallbackLogo && (
+    <img
+      data-n0ct-themed-logo
+      data-n0ct-logo-fallback={fallbackLogo}
+      alt={config.logo?.alt ?? 'Site logo'}
+      src={fallbackLogo}
+    />
   )}
   <span class:list={{ 'sr-only': config.logo?.replacesTitle }} translate="no">
     {iconName && <Icon name={iconName} class="n0ct-site-title__icon" />}
