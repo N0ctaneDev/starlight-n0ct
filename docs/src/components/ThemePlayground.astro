@@ -586,7 +586,7 @@ const defaultTheme = configuredTheme.defaultTheme ?? playgroundThemes[0]?.id ?? 
   document.addEventListener('astro:page-load', initializeThemePlaygrounds);
 </script>
 
-<style>
+<style is:global>
   .n0ct-theme-playground {
     display: grid;
     gap: 1.35rem;

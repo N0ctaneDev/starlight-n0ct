@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createN0ctaneCodeThemeSet } from './code-themes.js';
+// @ts-ignore — the executable demo config is JavaScript and intentionally outside tsconfig's source include.
 import demoConfig from '../n0ct.config.mjs';
 import {
   generateN0ctThemeSetCss,
