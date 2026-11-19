@@ -219,7 +219,8 @@ const config = {
             },
           },
         },
-        nord: {
+      },
+      nord: {
         label: 'Nord',
         colors: {
           dark: {
