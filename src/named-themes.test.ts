@@ -5,6 +5,7 @@ import demoConfig from '../n0ct.config.mjs';
 import {
   generateN0ctThemeSetCss,
   resolveN0ctThemeConfig,
+  resolveN0ctThemeColors,
 } from './theme-colors.js';
 
 describe('named theme palettes', () => {
@@ -73,6 +74,15 @@ describe('named theme palettes', () => {
     expect(css).toContain('--n0ct-primary-500: #4493F8');
     expect(css).not.toContain('brandGradient');
     expect(css).not.toContain('prefers-color-scheme');
+  });
+
+  it('applies each mode brandGradient to the brand and divider tokens', () => {
+    const gradient = 'linear-gradient(110deg, #F25CFF 0%, #8C42FF 52%, #00E5FF 100%)';
+    const resolved = resolveN0ctThemeColors({
+      dark: { brandGradient: gradient },
+    });
+    expect(resolved.dark.variables['--n0ct-gradient-brand']).toBe(gradient);
+    expect(resolved.dark.variables['--n0ct-gradient-divider']).toBe(gradient);
   });
 
   it('creates a matching pair of Expressive Code themes per named palette', () => {
