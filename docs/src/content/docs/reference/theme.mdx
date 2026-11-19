@@ -9,7 +9,7 @@ N0ctane separates **palette identity** from **appearance mode**. A visitor choos
 
 ## Live palette playground
 
-Use the controls to edit the entire theme for either appearance. Core colors are shown first; expandable groups expose surfaces, text, borders, semantic states, code-frame roles, syntax tokens, gradients, and shadows. The current page is the preview, including the theme picker, documentation components, and code frames.
+Use the controls to edit the entire theme for either appearance. Core colors are shown first; expandable groups expose surfaces, text, borders, semantic states, code-frame roles, syntax tokens, gradients, and shadows. The current page is the preview, including the theme picker, all N0ctane components, and actual Expressive Code frames.
 
 <ThemePlayground />
 
@@ -79,6 +79,8 @@ Each mode requires only four core colors:
 | `text` | Main readable foreground |
 
 Secondary, highlight, highlight text, and page background are derived when omitted. You can still provide those optional palette values to fine-tune the result.
+
+The demo also includes **Catppuccin** (Mocha dark / Latte light), **Rosé Pine** (Main dark / Dawn light), and **Dracula** (Dracula Classic dark / Alucard Classic light), each with its own code syntax palette. These are complete starting presets; every color and effect remains editable.
 
 ## Appearance and saved preferences
 
@@ -200,7 +202,37 @@ theme: {
 },
 ~~~
 
-## Layout and effects
+## Gradients and shadows
+
+Gradients and shadows are configurable per theme and appearance through `colors.dark.effects` and `colors.light.effects`. The playground exposes each token under **Gradients and shadows**; edits are saved into the generated theme config.
+
+~~~js
+theme: {
+  themes: {
+    n0ctane: {
+      colors: {
+        dark: {
+          effects: {
+            gradients: {
+              brand: 'linear-gradient(90deg, #F25CFF, #00E5FF)',
+              divider: 'linear-gradient(90deg, #8C42FF, #00E5FF)',
+              canvas: 'radial-gradient(circle at top left, #3B174A, transparent 40rem)',
+            },
+            shadows: {
+              card: '0 12px 34px rgb(0 0 0 / 0.24)',
+              focus: '0 0 0 3px rgb(0 229 255 / 0.2)',
+            },
+          },
+        },
+      },
+    },
+  },
+},
+~~~
+
+Gradient roles cover brand text, heading/code separators, canvas glow, shimmer, callouts, cards, steps, FileTree, sidebar, version selector, and scrollbars. Shadow roles cover cards, callouts, controls, popovers, sidebar, focus, tabs, and other shared components. Values are validated as single CSS values; declarations, URLs, and executable expressions are rejected.
+
+## Layout
 
 The defaults use a 58rem reading width and a 17rem sidebar. Override `theme.contentWidth` and `theme.sidebarWidth` to change layout. Glow strength accepts `subtle`, `balanced`, or `strong`; the default is balanced.
 
