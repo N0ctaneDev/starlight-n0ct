@@ -142,6 +142,7 @@ export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
               id,
               label: theme.label,
               favicon: theme.favicon,
+              logo: theme.logo,
               colors: theme.colors,
             })),
           },
