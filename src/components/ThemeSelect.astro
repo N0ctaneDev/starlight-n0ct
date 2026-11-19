@@ -156,6 +156,7 @@ const themes = Array.isArray(themeSettings.themes) && themeSettings.themes.lengt
     document.documentElement.dataset.theme = mode;
     document.documentElement.dataset.n0ctTheme = theme;
     document.documentElement.dataset.n0ctCodeTheme = theme + '-' + mode;
+    applyFavicon(theme);
 
     getThemeSelects().forEach((select) => { select.value = theme; });
     document.querySelectorAll<HTMLElement>('[data-n0ct-theme-control]').forEach((control) => {
