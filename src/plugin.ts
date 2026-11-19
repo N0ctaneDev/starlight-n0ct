@@ -51,9 +51,10 @@ function themeBootstrapScript(
     defaultTheme: theme.defaultTheme,
     themes: theme.themes.map(({ id }) => id),
     favicon: fallbackFavicon,
-    favicons: Object.fromEntries(theme.themes.flatMap(({ id, favicon }) =>
-      favicon ? [[id, favicon]] : [],
-    )),
+    favicons: theme.themes.reduce<Record<string, string>>((result, { id, favicon }) => {
+      if (favicon) result[id] = favicon;
+      return result;
+    }, {}),
     baseUrl: (baseUrl || '/').replace(/\/?$/, '/'),
   }).replace(/</g, '\\u003c');
 
