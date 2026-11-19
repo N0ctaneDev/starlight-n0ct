@@ -42,18 +42,7 @@ const settings = (Astro.locals as any).n0ctane ?? {};
       );
     }
 
-    function relocateScrollToTopButton() {
-      const button = document.getElementById('scroll-to-top-button');
-      const mainFrame = document.querySelector<HTMLElement>('.main-frame');
-      // The upstream plugin appends its fixed button to body. Put it inside
-      // Starlight's main frame so the sidebar's native inert state also covers it.
-      if (button && mainFrame && button.parentElement !== mainFrame) {
-        mainFrame.appendChild(button);
-      }
-    }
-
     function syncN0ctMobileMenuState() {
-      relocateScrollToTopButton();
       const open = isMobileMenuOpen();
       document.documentElement.toggleAttribute('data-n0ct-mobile-menu-open', open);
 
@@ -76,10 +65,7 @@ const settings = (Astro.locals as any).n0ctane ?? {};
       syncN0ctMobileMenuState();
     }
 
-    const scrollButtonObserver = new MutationObserver(() => {
-      relocateScrollToTopButton();
-      syncN0ctMobileMenuState();
-    });
+    const scrollButtonObserver = new MutationObserver(syncN0ctMobileMenuState);
     scrollButtonObserver.observe(document.body, { childList: true });
 
     // Capture the popover event as well as Starlight's own panel toggle. This

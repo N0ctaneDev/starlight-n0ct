@@ -262,6 +262,8 @@ export interface N0ctThemeEffects {
 export interface N0ctThemeMode {
   /** Four core colors plus up to four optional refinement colors. */
   palette?: N0ctThemePalette;
+  /** CSS gradient for branded text and divider lines, configured independently per appearance mode. */
+  brandGradient?: string;
   /** Optional per-mode syntax palette, separate from the documentation UI palette. */
   codePalette?: N0ctThemeCodePalette;
   /** Semantic colors are independently configurable in each mode. */

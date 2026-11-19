@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createN0ctaneCodeThemeSet } from './code-themes.js';
+// @ts-ignore — the executable demo config is JavaScript and intentionally outside tsconfig's source include.
+import demoConfig from '../n0ct.config.mjs';
 import {
   generateN0ctThemeSetCss,
   resolveN0ctThemeConfig,
@@ -32,6 +34,15 @@ describe('named theme palettes', () => {
     expect(result.themes.n0ctane?.label).toBe('N0ctane');
     expect(result.themes.github?.label).toBe('GitHub');
     expect(result.themes.github?.colors.dark?.palette?.primary).toBe('#4493F8');
+  });
+
+  it('registers every named palette in the demo config', () => {
+    const result = resolveN0ctThemeConfig(demoConfig.theme);
+    expect(Object.keys(result.themes)).toEqual([
+      'n0ctane', 'github', 'catppuccin', 'rose-pine', 'dracula', 'nord', 'flexoki',
+    ]);
+    expect(result.themes.nord?.colors.dark?.palette?.primary).toBe('#88C0D0');
+    expect(result.themes.flexoki?.colors.light?.palette?.primary).toBe('#BC5215');
   });
 
   it('keeps the legacy theme.colors API as the built-in N0ctane palette', () => {

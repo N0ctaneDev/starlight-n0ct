@@ -88,6 +88,41 @@ describe('semantic theme palettes', () => {
     })).toThrow(/without declarations/);
   });
 
+  it('uses the mode-specific brandGradient for branded text and divider lines', () => {
+    const theme = resolveN0ctThemeColors({
+      dark: { brandGradient: 'linear-gradient(90deg, #123456, #ABCDEF)' },
+      light: { brandGradient: 'linear-gradient(90deg, #234567, #FEDCBA)' },
+    });
+    expect(theme.dark.variables['--n0ct-gradient-brand']).toBe('linear-gradient(90deg, #123456, #ABCDEF)');
+    expect(theme.dark.variables['--n0ct-gradient-divider']).toBe('linear-gradient(90deg, #123456, #ABCDEF)');
+    expect(theme.light.variables['--n0ct-gradient-brand']).toBe('linear-gradient(90deg, #234567, #FEDCBA)');
+    expect(theme.light.variables['--n0ct-gradient-divider']).toBe('linear-gradient(90deg, #234567, #FEDCBA)');
+    expect(() => resolveN0ctThemeColors({
+      dark: { brandGradient: 'red; body { display:none }' },
+    })).toThrow(/without declarations/);
+  });
+
+  it('derives default syntax accents from the active palette', () => {
+    const theme = resolveN0ctThemeColors({
+      dark: {
+        palette: {
+          primary: '#4493F8', secondary: '#8957E5', accent: '#3FB950',
+          surface: '#161B22', text: '#E6EDF3', background: '#0D1117',
+        },
+      },
+      light: {
+        palette: {
+          primary: '#0969DA', secondary: '#8250DF', accent: '#1A7F37',
+          surface: '#FFFFFF', text: '#1F2328', background: '#F6F8FA',
+        },
+      },
+    });
+    expect(theme.dark.variables['--n0ct-code-syntax-keyword']).toBe('#4493F8');
+    expect(theme.dark.variables['--n0ct-code-syntax-function']).toBe('#3FB950');
+    expect(theme.light.variables['--n0ct-code-syntax-keyword']).toBe('#0969DA');
+    expect(theme.light.variables['--n0ct-code-syntax-function']).toBe('#1A7F37');
+  });
+
   it('rejects invalid hex colors with the offending configuration path', () => {
     expect(() => resolveN0ctThemeColors({
       dark: { palette: { primary: 'purple' } },

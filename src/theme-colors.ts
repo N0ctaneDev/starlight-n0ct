@@ -84,34 +84,10 @@ const SEMANTIC_DEFAULTS = {
   },
 } as const;
 
-const DEFAULT_CODE_PALETTE: Record<Mode, N0ctDefaultCodePalette> = {
-  dark: {
-    comment: '#A3AED1',
-    keyword: '#FF8DD6',
-    string: '#9FE6B8',
-    number: '#FFD18A',
-    function: '#79DDF8',
-    type: '#BDAAFF',
-    variable: '#E8ECFA',
-    tag: '#72DCEB',
-    attribute: '#F6A8D8',
-    punctuation: '#C0CBE5',
-    invalid: '#FF829A',
-  },
-  light: {
-    comment: '#68627F',
-    keyword: '#92247E',
-    string: '#08764D',
-    number: '#875400',
-    function: '#00688F',
-    type: '#5D3BA5',
-    variable: '#29253D',
-    tag: '#006F88',
-    attribute: '#92266B',
-    punctuation: '#514B64',
-    invalid: '#B42345',
-  },
-};
+const CODE_PALETTE_KEYS: Array<keyof N0ctDefaultCodePalette> = [
+  'comment', 'keyword', 'string', 'number', 'function', 'type',
+  'variable', 'tag', 'attribute', 'punctuation', 'invalid',
+];
 
 const HEX = /^#(?:[\da-f]{3}|[\da-f]{6})$/i;
 const SHADE_STEPS = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'];
@@ -197,12 +173,13 @@ function resolveEffects(
   mode: Mode,
   primary: string,
   highlight: string,
+  brandGradient?: string,
 ): void {
   const dark = mode === 'dark';
   const gradients: Required<NonNullable<N0ctThemeEffects['gradients']>> = {
     monochrome: 'linear-gradient(125deg, var(--n0ct-primary-300), var(--n0ct-primary-500) 56%, var(--n0ct-primary-700))',
     accent: 'linear-gradient(125deg, var(--n0ct-accent-400), var(--n0ct-accent-600))',
-    brand: 'linear-gradient(125deg, var(--n0ct-primary-500) 0%, var(--n0ct-secondary-500) 38%, var(--n0ct-highlight) 70%, var(--n0ct-accent-500) 100%)',
+    brand: brandGradient ?? 'linear-gradient(125deg, var(--n0ct-primary-500) 0%, var(--n0ct-secondary-500) 38%, var(--n0ct-highlight) 70%, var(--n0ct-accent-500) 100%)',
     brandSoft: 'linear-gradient(125deg, color-mix(in srgb, var(--n0ct-primary-500) 18%, transparent), color-mix(in srgb, var(--n0ct-secondary-500) 12%, transparent) 45%, color-mix(in srgb, var(--n0ct-accent-500) 11%, transparent))',
     canvas: 'radial-gradient(ellipse at 0% 0%, color-mix(in srgb, var(--n0ct-primary-500) var(--n0ct-glow-background-strength, 7%), transparent), transparent 34rem), radial-gradient(ellipse at 100% 100%, color-mix(in srgb, var(--n0ct-accent-500) var(--n0ct-glow-accent-strength, 5%), transparent), transparent 38rem)',
     shimmer: 'linear-gradient(115deg, transparent 0%, color-mix(in srgb, var(--n0ct-primary-500) 10%, transparent) 35%, color-mix(in srgb, var(--n0ct-accent-500) 9%, transparent) 52%, transparent 75%)',
@@ -216,7 +193,7 @@ function resolveEffects(
     versionSelect: 'linear-gradient(120deg, color-mix(in srgb, var(--n0ct-primary-500) 7%, transparent), transparent 65%)',
     scrollbar: 'linear-gradient(180deg, var(--n0ct-primary-500), var(--n0ct-accent-500))',
     scrollbarHover: 'linear-gradient(180deg, var(--n0ct-primary-400), var(--n0ct-accent-400))',
-    divider: 'linear-gradient(90deg, var(--n0ct-primary-500), var(--n0ct-secondary-500) 52%, var(--n0ct-accent-500))',
+    divider: brandGradient ?? 'linear-gradient(90deg, var(--n0ct-primary-500), var(--n0ct-secondary-500) 52%, var(--n0ct-accent-500))',
   };
   for (const [key, fallback] of Object.entries(gradients)) {
     const value = input?.gradients?.[key as keyof NonNullable<N0ctThemeEffects['gradients']>] ?? fallback;
@@ -520,8 +497,28 @@ function resolveMode(mode: Mode, input?: N0ctThemeMode): N0ctResolvedThemeMode {
   set(vars, 'code-line-number', codeOverrides.lineNumber ?? (dark ? '#687394' : '#89829A'));
   set(vars, 'code-line-number-active', codeOverrides.lineNumberActive ?? codeForeground);
 
-  for (const key of Object.keys(DEFAULT_CODE_PALETTE[mode]) as Array<keyof N0ctDefaultCodePalette>) {
-    const value = codePalette[key] ?? DEFAULT_CODE_PALETTE[mode][key];
+  const readableCodeColor = (color: string): string => {
+    let candidate = normalizeHex(color, 'theme.colors.' + mode + '.codePalette');
+    for (let step = 0; step < 5 && getN0ctContrastRatio(candidate, codeBackground) < 4.5; step++) {
+      candidate = mixN0ctHex(candidate, palette.text, 0.25);
+    }
+    return candidate;
+  };
+  const defaultCodePalette: N0ctDefaultCodePalette = {
+    comment: mixN0ctHex(palette.text, codeBackground, dark ? 0.20 : 0.18),
+    keyword: readableCodeColor(primary),
+    string: readableCodeColor(input?.semantic?.success?.foreground ?? SEMANTIC_DEFAULTS[mode].success),
+    number: readableCodeColor(input?.semantic?.warning?.foreground ?? SEMANTIC_DEFAULTS[mode].warning),
+    function: readableCodeColor(accent),
+    type: readableCodeColor(secondary),
+    variable: palette.text,
+    tag: readableCodeColor(accent),
+    attribute: readableCodeColor(primary),
+    punctuation: mixN0ctHex(palette.text, codeBackground, 0.08),
+    invalid: readableCodeColor(input?.semantic?.danger?.foreground ?? SEMANTIC_DEFAULTS[mode].danger),
+  };
+  for (const key of CODE_PALETTE_KEYS) {
+    const value = codePalette[key] ?? defaultCodePalette[key];
     set(vars, 'code-syntax-' + key, normalizeHex(value, 'theme.colors.' + mode + '.codePalette.' + key));
   }
 
@@ -539,7 +536,10 @@ function resolveMode(mode: Mode, input?: N0ctThemeMode): N0ctResolvedThemeMode {
   set(vars, 'code-tabs-active-text', tabs.activeForeground ?? vars['--n0ct-text-primary']!);
   set(vars, 'code-tabs-border', tabs.border ?? vars['--n0ct-border']!);
 
-  resolveEffects(vars, input?.effects, mode, primary, highlight);
+  const brandGradient = input?.brandGradient === undefined
+    ? undefined
+    : normalizeCssEffect(input.brandGradient, 'theme.colors.' + mode + '.brandGradient');
+  resolveEffects(vars, input?.effects, mode, primary, highlight, brandGradient);
   set(vars, 'nav-glass', mixColor(navigation, base, 0.12));
   set(vars, 'file-selected-bg', highlight);
   set(vars, 'file-selected-text', highlightText);
@@ -618,7 +618,7 @@ export function validateN0ctThemeColors(input?: N0ctThemeColors): string[] {
     if (getN0ctContrastRatio(variables['--n0ct-code-foreground']!, variables['--n0ct-code-background']!) < 4.5) {
       warnings.push('N0ctane theme.colors.' + mode + '.codePalette.foreground may not have sufficient contrast against codePalette.background.');
     }
-    for (const key of Object.keys(DEFAULT_CODE_PALETTE[mode]) as Array<keyof N0ctDefaultCodePalette>) {
+    for (const key of CODE_PALETTE_KEYS) {
       if (getN0ctContrastRatio(variables['--n0ct-code-syntax-' + key]!, variables['--n0ct-code-background']!) < 4.5) {
         warnings.push('N0ctane theme.colors.' + mode + '.codePalette.' + key + ' may not have sufficient contrast against codePalette.background.');
       }
