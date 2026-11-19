@@ -42,6 +42,34 @@ const settings = (Astro.locals as any).n0ctane ?? {};
       );
     }
 
+    let scrollButtonPositionFrame = 0;
+    const scrollButtonBottomGap = 40;
+
+    function updateScrollToTopButtonPosition() {
+      scrollButtonPositionFrame = 0;
+
+      const button = document.getElementById('scroll-to-top-button') as HTMLButtonElement | null;
+      const mainFrame = document.querySelector<HTMLElement>('.main-frame');
+      if (!button || !mainFrame || !mainFrame.contains(button)) return;
+
+      // main-frame is transformed by starlight-sidebar-swipe. A fixed child
+      // therefore uses main-frame as its containing block, not the viewport.
+      // Recalculate its local top coordinate so it remains at the viewport
+      // bottom while the document scrolls, yet still moves with main-frame
+      // horizontally when the sidebar is swiped open.
+      const frameTop = mainFrame.getBoundingClientRect().top;
+      const viewportHeight = window.innerHeight;
+      const top = viewportHeight - frameTop - button.getBoundingClientRect().height - scrollButtonBottomGap;
+
+      button.style.setProperty('top', `${Math.max(0, top)}px`, 'important');
+      button.style.setProperty('bottom', 'auto', 'important');
+    }
+
+    function scheduleScrollToTopButtonPosition() {
+      if (scrollButtonPositionFrame) return;
+      scrollButtonPositionFrame = window.requestAnimationFrame(updateScrollToTopButtonPosition);
+    }
+
     function relocateScrollToTopButton() {
       const button = document.getElementById('scroll-to-top-button');
       const mainFrame = document.querySelector<HTMLElement>('.main-frame');
@@ -52,6 +80,7 @@ const settings = (Astro.locals as any).n0ctane ?? {};
       if (button && mainFrame && !mainFrame.contains(button)) {
         mainFrame.appendChild(button);
       }
+      scheduleScrollToTopButtonPosition();
     }
 
     function setN0ctMobileMenuState(open: boolean) {
@@ -108,6 +137,11 @@ const settings = (Astro.locals as any).n0ctane ?? {};
       const trigger = target.closest('[popovertarget="starlight__sidebar"], [aria-controls="starlight__sidebar"]');
       if (trigger) requestAnimationFrame(syncN0ctMobileMenuState);
     }, true);
+
+    window.addEventListener('scroll', scheduleScrollToTopButtonPosition, { passive: true });
+    window.addEventListener('resize', scheduleScrollToTopButtonPosition, { passive: true });
+    window.visualViewport?.addEventListener('resize', scheduleScrollToTopButtonPosition, { passive: true });
+    window.visualViewport?.addEventListener('scroll', scheduleScrollToTopButtonPosition, { passive: true });
 
     mobileMenuMedia.addEventListener('change', syncN0ctMobileMenuState);
     document.addEventListener('astro:page-load', bindN0ctSidebarPanel);
