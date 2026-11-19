@@ -3,6 +3,14 @@ import { normalizeN0ctConfig, topicToSidebar } from './config.js';
 import { n0ctane } from './index.js';
 
 describe('N0ctane configuration expansion', () => {
+  it('validates global and named-theme favicon paths', () => {
+    expect(() => normalizeN0ctConfig({ title: 'Docs', favicon: '../outside.svg' })).toThrow(/public/);
+    expect(() => normalizeN0ctConfig({
+      title: 'Docs',
+      theme: { themes: { n0ctane: { favicon: '/../../outside.svg' } } },
+    })).toThrow(/public/);
+  });
+
   it('keeps the native Starlight header and installs code-block enhancements by default', () => {
     const config = n0ctane({ title: 'Docs', integrations: { blog: false } });
     expect(config.plugins?.some((plugin) => plugin.name === 'starlight-codeblocks')).toBe(true);
