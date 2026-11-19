@@ -132,10 +132,10 @@ const themes = Array.isArray(themeSettings.themes) && themeSettings.themes.lengt
 
     const configured = overrides[theme];
     const path = configured?.[mode] ?? configured?.[mode === 'dark' ? 'light' : 'dark'];
-    const base = (control.dataset.baseUrl ?? '/').replace(/\\/?$/, '/');
+    const base = (control.dataset.baseUrl ?? '/').replace(/\/?$/, '/');
     const resolve = (value: string) => /^(?:https?:|data:)/i.test(value)
       ? value
-      : base + value.replace(/^\\/+/, '');
+      : base + value.replace(/^\/+/, '');
 
     document.querySelectorAll<HTMLImageElement>('[data-n0ct-themed-logo]').forEach((image) => {
       if (path) image.src = resolve(path);
