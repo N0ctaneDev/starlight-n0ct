@@ -18,7 +18,7 @@ const hasStarlightLogo = Boolean(config.logo && logos.dark);
 const fallbackLogo = logos.dark?.src ?? (initialThemeLogo ? resolvePublicAsset(initialThemeLogo) : undefined);
 ---
 <a href={siteTitleHref} class="site-title sl-flex n0ct-site-title">
-  {hasStarlightLogo && (
+  {config.logo && logos.dark && (
     <>
       <img
         class:list={{ 'light:sl-hidden print:hidden': !('src' in config.logo) }}
