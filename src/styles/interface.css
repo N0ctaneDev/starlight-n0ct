@@ -373,6 +373,7 @@ starlight-toc a:hover,
 
 }
 
+#scroll-to-top-button[hidden],
 html[data-n0ct-mobile-menu-open] #scroll-to-top-button {
   display: none !important;
   visibility: hidden !important;

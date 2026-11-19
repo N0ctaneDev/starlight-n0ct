@@ -42,30 +42,46 @@ const settings = (Astro.locals as any).n0ctane ?? {};
       );
     }
 
-    function syncN0ctMobileMenuState() {
-      const open = isMobileMenuOpen();
+    function setN0ctMobileMenuState(open: boolean) {
       document.documentElement.toggleAttribute('data-n0ct-mobile-menu-open', open);
 
-      const button = document.getElementById('scroll-to-top-button');
+      const button = document.getElementById('scroll-to-top-button') as HTMLButtonElement | null;
       if (button) {
+        // inert/aria-hidden prevent interaction; hidden also removes the fixed control visually.
+        button.hidden = open;
         button.setAttribute('aria-hidden', String(open));
         button.inert = open;
       }
+    }
+
+    function syncN0ctMobileMenuState() {
+      setN0ctMobileMenuState(isMobileMenuOpen());
+    }
+
+    function handleN0ctSidebarBeforeToggle(event: Event) {
+      if (!mobileMenuMedia.matches) return;
+      const nextState = (event as ToggleEvent).newState;
+      // Hide before opening; let the post-toggle event restore the button after closing.
+      if (nextState === 'open') setN0ctMobileMenuState(true);
     }
 
     function bindN0ctSidebarPanel() {
       const panel = document.getElementById('starlight__sidebar');
       if (panel !== n0ctSidebarPanel) {
         n0ctSidebarPanel?.removeEventListener('toggle', syncN0ctMobileMenuState);
-        n0ctSidebarPanel?.removeEventListener('beforetoggle', syncN0ctMobileMenuState);
+        n0ctSidebarPanel?.removeEventListener('beforetoggle', handleN0ctSidebarBeforeToggle);
         n0ctSidebarPanel = panel;
         n0ctSidebarPanel?.addEventListener('toggle', syncN0ctMobileMenuState);
-        n0ctSidebarPanel?.addEventListener('beforetoggle', syncN0ctMobileMenuState);
+        n0ctSidebarPanel?.addEventListener('beforetoggle', handleN0ctSidebarBeforeToggle);
       }
       syncN0ctMobileMenuState();
     }
 
-    const scrollButtonObserver = new MutationObserver(syncN0ctMobileMenuState);
+    const scrollButtonObserver = new MutationObserver(() => {
+      // Rebind if Starlight replaces its popover and hide the button if the plugin
+      // inserts it after the mobile menu has already opened.
+      bindN0ctSidebarPanel();
+    });
     scrollButtonObserver.observe(document.body, { childList: true });
 
     // Capture the popover event as well as Starlight's own panel toggle. This
