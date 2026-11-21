@@ -56,7 +56,7 @@ describe('N0ctane Sidebar Topics integration', () => {
     } as never);
 
     expect(addRouteMiddleware).toHaveBeenCalledWith({
-      entrypoint: 'starlight-sidebar-topics/middleware',
+      entrypoint: expect.stringMatching(/sidebar-topics-middleware\\.js$/),
       order: 'post',
     });
   });
