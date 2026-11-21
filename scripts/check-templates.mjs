@@ -81,7 +81,7 @@ try {
   assert.match(upgradedConfig, /prefix:\s*"newsroom"/);
   assert.match(upgradedConfig, /newsroom\/\*\*/);
   assert.match(upgradedConfig, /linksValidator:/);
-  assert.match(upgradedConfig, /path\.includes\(prefixPath \+ '\/'\)/);
+  assert.ok(upgradedConfig.includes("path.includes(prefixPath + '/')"));
   assert.equal(await exists(join(starter, 'src/content/docs/newsroom/first-post.mdx')), true);
   const upgradedSchema = await readFile(join(starter, 'src/content.config.ts'), 'utf8');
   assert.match(upgradedSchema, /blogSchema/);
