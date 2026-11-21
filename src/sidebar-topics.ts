@@ -111,13 +111,13 @@ function getTopicLandingPageMappings(topics: N0ctSidebarTopic[]): Record<string,
       ? `/${topic}/`
       : topic.link ?? (directory ? `/${directory}/` : undefined);
 
-    if (!rawLink || /^(?:[a-z][a-z\\d+.-]*:|\\/\\/)/i.test(rawLink)) return;
+    if (!rawLink || /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(rawLink)) return;
 
     // Folder landing pages backed by index.mdx have route IDs such as
     // "guides/index", while the topic link is "/guides/". The upstream
     // resolver compares those values exactly, so associate the index route
     // with its topic ID explicitly.
-    const path = rawLink.split(/[?#]/, 1)[0]?.replace(/^\\/+|\\/+$/g, '');
+    const path = rawLink.split(/[?#]/, 1)[0]?.replace(/^\/+|\/+$/g, '');
     if (!path) return;
 
     const id = typeof topic === 'string' ? `n0ct-topic-${index + 1}` : topic.id ?? `n0ct-topic-${index + 1}`;
