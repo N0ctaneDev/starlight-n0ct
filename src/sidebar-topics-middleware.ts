@@ -19,13 +19,14 @@ function isTopicSidebarGroup(entry: SidebarEntry): entry is SidebarGroup {
 }
 
 export function createSidebarTopicsMiddleware(resolveSidebarTopic: RouteMiddlewareHandler) {
-  return defineRouteMiddleware(async (context) => {
+  return defineRouteMiddleware(async (context, next) => {
     const route = (context.locals as typeof context.locals & { starlightRoute: StarlightRouteData }).starlightRoute;
 
     // Pages without a sidebar are not resolved by Sidebar Topics. Leave their
     // route data untouched, including any sidebar data supplied by integrations.
     if (!route.hasSidebar) {
       await resolveSidebarTopic(context, async () => {});
+      await next();
       return;
     }
 
@@ -42,6 +43,7 @@ export function createSidebarTopicsMiddleware(resolveSidebarTopic: RouteMiddlewa
     // Sidebar Topics replaces route.sidebar with the selected topic's contents.
     // Restore integration-owned entries (e.g. starlight-blog's navigation link).
     route.sidebar.unshift(...additionalEntries);
+    await next();
   });
 }
 
