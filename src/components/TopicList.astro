@@ -6,7 +6,7 @@ const routeTopics = (Astro.locals as any).starlightSidebarTopics;
 const topics = routeTopics?.topics ?? [];
 ---
 
-{topics.length > 0 && (
+{routeTopics?.isPageWithTopic && topics.length > 0 && (
   <ul class="n0ct-topic-list" aria-label="Documentation topics">
     {topics.map((topic: any) => {
       const { class: className, ...attrs } = topic.attrs ?? {};
