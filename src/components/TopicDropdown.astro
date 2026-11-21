@@ -1,0 +1,58 @@
+---
+import { Badge } from '@astrojs/starlight/components';
+import { Icon } from 'astro-icon/components';
+
+const routeTopics = (Astro.locals as any).starlightSidebarTopics;
+const topics = routeTopics?.topics ?? [];
+const currentTopic = topics.find((topic: any) => topic.isCurrent);
+---
+
+{currentTopic && (
+  <details class="n0ct-topic-dropdown">
+    <summary class="n0ct-topic-dropdown__trigger">
+      {currentTopic.icon && (
+        <span class="n0ct-topic-icon" aria-hidden="true">
+          <Icon name={currentTopic.icon} />
+        </span>
+      )}
+      <span class="n0ct-topic-dropdown__label">{currentTopic.label}</span>
+      {currentTopic.badge && (
+        <Badge
+          class="n0ct-topic-badge"
+          text={currentTopic.badge.text}
+          variant={currentTopic.badge.variant}
+        />
+      )}
+      <svg class="n0ct-topic-dropdown__chevron" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="m4 6 4 4 4-4" />
+      </svg>
+    </summary>
+    <div class="n0ct-topic-dropdown__menu">
+      {topics.map((topic: any) => {
+        const { class: className, ...attrs } = topic.attrs ?? {};
+        return (
+          <a
+            {...attrs}
+            href={topic.link}
+            class:list={['n0ct-topic-dropdown__item', topic.isCurrent && 'is-current', className]}
+            aria-current={topic.isCurrent ? 'page' : undefined}
+          >
+            {topic.icon && (
+              <span class="n0ct-topic-icon" aria-hidden="true">
+                <Icon name={topic.icon} />
+              </span>
+            )}
+            <span class="n0ct-topic-dropdown__label">{topic.label}</span>
+            {topic.badge && (
+              <Badge
+                class="n0ct-topic-badge"
+                text={topic.badge.text}
+                variant={topic.badge.variant}
+              />
+            )}
+          </a>
+        );
+      })}
+    </div>
+  </details>
+)}
