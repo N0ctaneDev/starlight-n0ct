@@ -1,8 +1,8 @@
 ---
 import MobileMenuFooter from 'virtual:starlight/components/MobileMenuFooter';
 import SidebarPersister from '@astrojs/starlight/components/SidebarPersister.astro';
-import TopicsDropdown from 'starlight-sidebar-topics-dropdown/TopicsDropdown.astro';
-import TopicsList from 'starlight-sidebar-topics/components/Sidebar.astro';
+import TopicDropdown from './TopicDropdown.astro';
+import TopicList from './TopicList.astro';
 import SidebarSublist from './SidebarSublist.astro';
 
 const { sidebar } = Astro.locals.starlightRoute;
@@ -13,12 +13,12 @@ const settings = (Astro.locals as any).n0ctane ?? {};
     <slot name="before-nav" />
     {settings.sidebar?.topicDisplay === 'list' && (
       <div class="n0ct-sidebar-topic-switcher n0ct-sidebar-topic-switcher--list">
-        <TopicsList />
+        <TopicList />
       </div>
     )}
     {settings.sidebar?.topicDisplay === 'dropdown' && (
       <div class="n0ct-sidebar-topic-switcher n0ct-sidebar-topic-switcher--dropdown">
-        <TopicsDropdown />
+        <TopicDropdown />
       </div>
     )}
     <nav aria-label="Main navigation">
