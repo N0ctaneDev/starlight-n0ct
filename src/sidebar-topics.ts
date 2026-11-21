@@ -1,5 +1,5 @@
 import starlightSidebarTopics from 'starlight-sidebar-topics';
-import type { HookParameters, StarlightPlugin } from '@astrojs/starlight/types';
+import type { HookParameters, StarlightIcon, StarlightPlugin } from '@astrojs/starlight/types';
 import { topicToSidebar } from './config.js';
 import type {
   N0ctBadge,
@@ -11,7 +11,7 @@ import type {
 type TopicPluginEntry = {
   label: string;
   link: string;
-  icon?: string;
+  icon?: StarlightIcon;
   id?: string;
   badge?: N0ctBadge;
   attrs?: Record<string, string | number | boolean | undefined>;
@@ -49,6 +49,7 @@ function normalizePluginTopicLink(link: string): string {
 
 function toTopicPluginEntry(
   topic: N0ctSidebarTopic,
+  index: number,
   extra: N0ctNativeSidebarItem[] = [],
 ): TopicPluginEntry {
   const native = topicToSidebar(topic);
@@ -80,15 +81,50 @@ function toTopicPluginEntry(
     );
   }
 
+  const hasGroupItems = items.length > 0;
+  const id = typeof topic === 'string' ? `n0ct-topic-${index + 1}` : topic.id ?? `n0ct-topic-${index + 1}`;
+
   return {
     label,
     link,
-    ...(typeof topic !== 'string' && topic.dropdownIcon ? { icon: topic.dropdownIcon } : {}),
-    ...(typeof topic !== 'string' && topic.id ? { id: topic.id } : {}),
+    ...(typeof topic !== 'string' && topic.icon ? { icon: topic.icon } : {}),
+    ...(hasGroupItems ? { id } : (typeof topic !== 'string' && topic.id ? { id: topic.id } : {})),
     ...(typeof topic !== 'string' && topic.badge ? { badge: topic.badge } : {}),
     ...(typeof topic !== 'string' && topic.attrs ? { attrs: topic.attrs } : {}),
-    ...(items.length > 0 ? { items } : {}),
+    ...(hasGroupItems ? { items } : {}),
   };
+}
+
+function getTopicLandingPageMappings(topics: N0ctSidebarTopic[]): Record<string, string[]> {
+  const mappings: Record<string, string[]> = {};
+
+  topics.forEach((topic, index) => {
+    const native = topicToSidebar(topic);
+    if (!native || typeof native !== 'object' || !('items' in native)) return;
+
+    const directory = typeof topic === 'string'
+      ? topic
+      : topic.directory
+        ?? (typeof topic.autogenerate === 'object' ? topic.autogenerate.directory : undefined);
+
+    const rawLink = typeof topic === 'string'
+      ? `/${topic}/`
+      : topic.link ?? (directory ? `/${directory}/` : undefined);
+
+    if (!rawLink || /^(?:[a-z][a-z\\d+.-]*:|\\/\\/)/i.test(rawLink)) return;
+
+    // Folder landing pages backed by index.mdx have route IDs such as
+    // "guides/index", while the topic link is "/guides/". The upstream
+    // resolver compares those values exactly, so associate the index route
+    // with its topic ID explicitly.
+    const path = rawLink.split(/[?#]/, 1)[0]?.replace(/^\\/+|\\/+$/g, '');
+    if (!path) return;
+
+    const id = typeof topic === 'string' ? `n0ct-topic-${index + 1}` : topic.id ?? `n0ct-topic-${index + 1}`;
+    mappings[id] = [`/${path}/index`, `/*/${path}/index`];
+  });
+
+  return mappings;
 }
 
 export function getBlogRouteExclusions(integrations: N0ctConfig['integrations']): string[] {
@@ -126,13 +162,20 @@ export function createN0ctSidebarTopics(
   const autoExclusions = getBlogRouteExclusions(integrations);
   const configuredExclusions = sidebar?.topicOptions?.exclude ?? [];
   const exclude = [...new Set([...autoExclusions, ...configuredExclusions])];
+  const configuredTopicMappings = sidebar?.topicOptions?.topics ?? {};
+  const inferredTopicMappings = getTopicLandingPageMappings(topics);
+  const topicMappings = { ...configuredTopicMappings };
+  for (const [topicId, patterns] of Object.entries(inferredTopicMappings)) {
+    topicMappings[topicId] = [...new Set([...(topicMappings[topicId] ?? []), ...patterns])];
+  }
   const options = {
     ...(sidebar?.topicOptions ?? {}),
     ...(exclude.length > 0 ? { exclude } : {}),
+    ...(Object.keys(topicMappings).length > 0 ? { topics: topicMappings } : {}),
   };
 
   const extra = sidebar?.extra ?? [];
-  const topicPlugin = starlightSidebarTopics(topics.map((topic) => toTopicPluginEntry(topic, extra)), options);
+  const topicPlugin = starlightSidebarTopics(topics.map((topic, index) => toTopicPluginEntry(topic, index, extra)), options);
   const setup = topicPlugin.hooks['config:setup'];
 
   if (!setup) return [topicPlugin];
