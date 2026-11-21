@@ -685,6 +685,16 @@ async function main() {
   console.log(`Sidebar topics: ${answers.topicDisplay}`);
   console.log('Lucide icons: explicitly added to project dependencies.');
   console.log('Template: ' + answers.template);
+  if (answers.template === 'blog') {
+    console.log('Blog path: /' + answers.blogPath + '/ (src/content/docs/' + answers.blogPath + '/)');
+    const blogGuide = join(target, 'src', 'content', 'docs', 'getting-started.mdx');
+    if (existsSync(blogGuide)) {
+      const guide = await readFile(blogGuide, 'utf8');
+      await writeFile(blogGuide, guide
+        .replaceAll('src/content/docs/blog/', 'src/content/docs/' + answers.blogPath + '/')
+        .replaceAll('/blog/', '/' + answers.blogPath + '/'), 'utf8');
+    }
+  }
   console.log('Starter pages, content schemas, favicon, and GitHub Pages workflow are ready.');
   console.log(`Versioning: ${answers.versioning ? 'enabled (an initial archive will be created on first dev/build)' : 'disabled'}.`);
 
