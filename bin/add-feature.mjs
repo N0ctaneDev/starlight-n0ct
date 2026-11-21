@@ -167,7 +167,7 @@ function addBlogLinkValidatorExclusion(text, prefix) {
   if (!validator || text.slice(validator.start, validator.end).trim() === 'false' || text[validator.start] !== '{') return text;
   if (getProperty(text, validator.start, 'exclude')) return text;
   const path = JSON.stringify(prefix);
-  const callback = "({ link }) => { const path = link.split(/[?#]/, 1)[0].replace(/^\\/+/, ''); return path === " + path + " || path.startsWith(" + path + " + '/'); }";
+  const callback = "({ link }) => { const path = link.split(/[?#]/, 1)[0].replace(/\\/+$/, ''); const prefix = " + path + "; return path === prefix || path === '/' + prefix || path.startsWith(prefix + '/') || path.includes('/' + prefix + '/'); }";
   return setPath(text, ['integrations', 'linksValidator', 'exclude'], callback);
 }
 
@@ -279,13 +279,17 @@ export async function addFeature(options) {
   let config = await readFile(configPath, 'utf8');
 
   if (feature === 'blog') {
-    const prefix = validateBlogPath(options.blogPath || await ask('Blog path (URL prefix and content directory)', 'blog'));
+    let prefix = validateBlogPath(options.blogPath || await ask('Blog path (URL prefix and content directory)', 'blog'));
     let integrations = getProperty(config, rootObject(config), 'integrations');
     if (!integrations || config[integrations.start] !== '{') {
       config = setPath(config, ['integrations'], '{}');
       integrations = getProperty(config, rootObject(config), 'integrations');
     }
     const blog = getProperty(config, integrations.start, 'blog');
+    if (blog && config[blog.start] === '{') {
+      const currentPrefix = getProperty(config, blog.start, 'prefix');
+      if (currentPrefix) prefix = validateBlogPath(config.slice(currentPrefix.start, currentPrefix.end).trim().replace(/^['"]|['"]$/g, ''));
+    }
     if (!blog || config.slice(blog.start, blog.end).trim() === 'false') {
       const blogOptions = {
         prefix,
