@@ -32,7 +32,7 @@ jobs:
         run: npm run docs:build
       - name: Audit production dependency trees
         run: npm run security:check
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: docs/dist
       - name: Wait for 2 secs
