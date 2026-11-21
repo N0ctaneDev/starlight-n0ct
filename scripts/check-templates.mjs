@@ -36,6 +36,9 @@ async function scaffold(name, template, extraArgs = []) {
   assert.match(config, /defaultTheme:\s*["']n0ctane["']/);
   assert.match(config, /dracula:\s*\{/);
   assert.match(config, /\/favicons\/n0ctane\.svg/);
+  assert.match(config, /icon:\s*['\"]lucide:book-open['\"]/);
+  assert.match(config, /footer:\s*\{[\s\S]*?Built with Starlight-N0ct/);
+  assert.doesNotMatch(config, /dropdownIcon/);
   assert.equal((await exists(join(directory, 'public', 'favicons', 'n0ctane.svg'))), true);
   assert.equal((await exists(join(directory, 'public', 'favicons', 'dracula.svg'))), true);
   assert.equal((await exists(join(directory, 'public', 'logos', 'n0ctane-dark.svg'))), true);
@@ -57,12 +60,21 @@ async function installAndBuild(projectDirectory) {
 }
 
 try {
+  for (const templateName of ['starter', 'blog']) {
+    const templateConfig = await readFile(join(packageRoot, 'templates', templateName, 'n0ct.config.mjs'), 'utf8');
+    assert.match(templateConfig, /footer:\s*\{/);
+    assert.match(templateConfig, /Built with Starlight-N0ct/);
+    assert.match(templateConfig, /icon:\s*['"]lucide:book-open['"]/);
+    assert.doesNotMatch(templateConfig, /dropdownIcon/);
+  }
+
   const starter = await scaffold('starter', 'starter');
   const blog = await scaffold('blog', 'blog', ['--blog-path', 'journal/releases']);
   const reverseOrder = await scaffold('reverse-order', 'starter');
 
   const blogConfig = await readFile(join(blog, 'n0ct.config.mjs'), 'utf8');
   assert.match(blogConfig, /prefix:\s*["']journal\/releases["']/);
+  assert.match(blogConfig, /label:\s*['"]Blog['"],\s*link:\s*['"]\/journal\/releases\/['"]/);
   assert.match(blogConfig, /topicOptions:\s*\{\s*exclude:/);
   assert.equal(await exists(join(blog, 'src/content/docs/journal/releases/first-post.mdx')), true);
   assert.equal(await exists(join(blog, 'src/content/docs/blog')), false);

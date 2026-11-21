@@ -1,10 +1,13 @@
 ---
+import KbdThemeProvider from 'starlight-kbd/overrides/ThemeProvider.astro';
+
 const settings = (Astro.locals as any).n0ctane ?? {};
 const themeSettings = settings.theme ?? {};
 const defaultTheme = themeSettings.defaultTheme ?? 'n0ctane';
 const themes = Array.isArray(themeSettings.themes) ? themeSettings.themes : [];
 const fallbackFavicon = settings.favicon ?? '/favicon.svg';
 const baseUrl = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
+const kbdEnabled = settings.integrations?.kbd === true;
 const settingsLiteral = JSON.stringify({
   defaultTheme,
   themes: themes.map((theme: { id: string }) => theme.id),
@@ -78,4 +81,5 @@ const bootstrapScript = `(() => {
   }
 })();`;
 ---
+{kbdEnabled && <KbdThemeProvider />}
 <script is:inline set:html={bootstrapScript}></script>

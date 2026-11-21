@@ -72,10 +72,8 @@ export interface N0ctSidebarTopicsPluginOptions {
 
 export type N0ctSidebarTopic = string | {
   label: string;
-  /** Optional local/Iconify icon used by the collapsible sidebar presentation. */
+  /** Optional Iconify icon name (for example, `lucide:book-open`) shared by all topic presentations. */
   icon?: string;
-  /** Optional built-in Starlight icon used by the topic dropdown presentation. */
-  dropdownIcon?: string;
   /** Stable identifier for pages associated with this topic by other plugins. */
   id?: string;
   /** Internal page slug or external URL. For generated groups this also identifies the directory. */

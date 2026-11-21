@@ -33,14 +33,14 @@ describe('N0ctane Sidebar Topics integration', () => {
   it.each(['list', 'dropdown'] as const)('activates Sidebar Topics in %s mode', (topicDisplay) => {
     const plugins = createN0ctSidebarTopics({
       topicDisplay,
-      topics: [{ label: 'Guides', id: 'guides', link: '/guides/', directory: 'guides' }],
+      topics: [{ label: 'Guides', id: 'guides', icon: 'lucide:book-open', link: '/guides/', directory: 'guides' }],
     }, { blog: false });
 
     expect(plugins).toHaveLength(1);
     expect(topicFactory).toHaveBeenCalledOnce();
     expect(topicFactory).toHaveBeenCalledWith(
-      [expect.objectContaining({ label: 'Guides', id: 'guides', link: '/guides/' })],
-      {},
+      [expect.objectContaining({ label: 'Guides', id: 'guides', link: '/guides/', icon: 'lucide:book-open' })],
+      { topics: { guides: ['/guides/index', '/*/guides/index'] } },
     );
   });
 
@@ -68,7 +68,7 @@ describe('N0ctane Sidebar Topics integration', () => {
       extra: [{ label: 'External', link: 'https://example.com' }],
       topicOptions: {
         exclude: ['/search', '/api/**'],
-        topics: { reference: ['/generated-api/**'] },
+        topics: { reference: ['/generated-api/**', '/reference/index', '/*/reference/index'] },
       },
     }, { blog: { prefix: 'news' } });
 
@@ -82,7 +82,7 @@ describe('N0ctane Sidebar Topics integration', () => {
       })],
       {
         exclude: ['/news', '/news/**/*', '/search', '/api/**'],
-        topics: { reference: ['/generated-api/**'] },
+        topics: { reference: ['/generated-api/**', '/reference/index', '/*/reference/index'] },
       },
     );
   });
@@ -95,7 +95,7 @@ describe('N0ctane Sidebar Topics integration', () => {
 
     expect(topicFactory).toHaveBeenCalledWith(
       [expect.objectContaining({ label: 'Guides', link: '/guides/' })],
-      {},
+      { topics: { 'n0ct-topic-1': ['/guides/index', '/*/guides/index'] } },
     );
   });
 
@@ -107,7 +107,55 @@ describe('N0ctane Sidebar Topics integration', () => {
 
     expect(topicFactory).toHaveBeenCalledWith(
       expect.any(Array),
-      { exclude: ['/blog', '/blog/**/*'] },
+      { exclude: ['/blog', '/blog/**/*'], topics: { 'n0ct-topic-1': ['/guides/index', '/*/guides/index'] } },
+    );
+  });
+
+  it('maps directory index routes to their topic so a fresh topic root selects the right sidebar', () => {
+    createN0ctSidebarTopics({
+      topicDisplay: 'list',
+      topics: [
+        { label: 'Guides', link: '/guides/', directory: 'guides' },
+        { label: 'Reference', link: '/reference/', directory: 'reference' },
+      ],
+    }, { blog: false });
+
+    expect(topicFactory).toHaveBeenCalledWith(expect.any(Array), {
+      topics: {
+        'n0ct-topic-1': ['/guides/index', '/*/guides/index'],
+        'n0ct-topic-2': ['/reference/index', '/*/reference/index'],
+      },
+    });
+  });
+
+  it('passes the single topic icon property to the list and dropdown plugin', () => {
+    createN0ctSidebarTopics({
+      topicDisplay: 'dropdown',
+      topics: [{ label: 'Guides', id: 'guides', icon: 'lucide:book-open', link: '/guides/', directory: 'guides' }],
+    }, { blog: false });
+
+    expect(topicFactory).toHaveBeenCalledWith(
+      [expect.objectContaining({ icon: 'lucide:book-open' })],
+      expect.anything(),
+    );
+  });
+
+  it('normalizes string badges for topic selector components', () => {
+    createN0ctSidebarTopics({
+      topicDisplay: 'list',
+      topics: [{
+        label: 'Guides',
+        id: 'guides',
+        icon: 'lucide:book-open',
+        link: '/guides/',
+        directory: 'guides',
+        badge: 'New',
+      }],
+    }, { blog: false });
+
+    expect(topicFactory).toHaveBeenCalledWith(
+      [expect.objectContaining({ badge: { text: 'New' } })],
+      expect.anything(),
     );
   });
 

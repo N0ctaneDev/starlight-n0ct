@@ -1,0 +1,83 @@
+---
+import { Badge } from '@astrojs/starlight/components';
+import { Icon } from 'astro-icon/components';
+
+const routeTopics = (Astro.locals as any).starlightSidebarTopics;
+const topics = routeTopics?.topics ?? [];
+const currentTopic = routeTopics?.isPageWithTopic
+  ? topics.find((topic: any) => topic.isCurrent)
+  : undefined;
+---
+
+{currentTopic && (
+  <details class="n0ct-topic-dropdown">
+    <summary class="n0ct-topic-dropdown__trigger">
+      {currentTopic.icon && (
+        <span class="n0ct-topic-icon" aria-hidden="true">
+          <Icon name={currentTopic.icon} />
+        </span>
+      )}
+      <span class="n0ct-topic-dropdown__label">{currentTopic.label}</span>
+      {currentTopic.badge && (
+        <Badge
+          class="n0ct-topic-badge"
+          text={currentTopic.badge.text}
+          variant={currentTopic.badge.variant}
+        />
+      )}
+      <svg class="n0ct-topic-dropdown__chevron" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="m4 6 4 4 4-4" />
+      </svg>
+    </summary>
+    <div class="n0ct-topic-dropdown__menu">
+      {topics.map((topic: any) => {
+        const { class: className, ...attrs } = topic.attrs ?? {};
+        return (
+          <a
+            {...attrs}
+            href={topic.link}
+            class:list={['n0ct-topic-dropdown__item', topic.isCurrent && 'is-current', className]}
+            aria-current={topic.isCurrent ? 'page' : undefined}
+          >
+            {topic.icon && (
+              <span class="n0ct-topic-icon" aria-hidden="true">
+                <Icon name={topic.icon} />
+              </span>
+            )}
+            <span class="n0ct-topic-dropdown__label">{topic.label}</span>
+            {topic.badge && (
+              <Badge
+                class="n0ct-topic-badge"
+                text={topic.badge.text}
+                variant={topic.badge.variant}
+              />
+            )}
+          </a>
+        );
+      })}
+    </div>
+  </details>
+)}
+
+<script>
+  const topicDropdownWindow = window as typeof window & { __n0ctTopicDropdownBound?: boolean };
+
+  if (!topicDropdownWindow.__n0ctTopicDropdownBound) {
+    topicDropdownWindow.__n0ctTopicDropdownBound = true;
+
+    document.addEventListener('click', (event) => {
+      const target = event.target instanceof Node ? event.target : null;
+      document.querySelectorAll<HTMLDetailsElement>('.n0ct-topic-dropdown[open]').forEach((dropdown) => {
+        if (!target || !dropdown.contains(target)) dropdown.open = false;
+      });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      document.querySelectorAll<HTMLDetailsElement>('.n0ct-topic-dropdown[open]').forEach((dropdown) => {
+        dropdown.open = false;
+        dropdown.querySelector<HTMLElement>('summary')?.focus();
+      });
+    });
+  }
+</script>

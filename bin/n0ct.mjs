@@ -429,7 +429,6 @@ function createN0ctConfig(answers) {
           label: 'Start here',
           id: 'start',
           icon: 'lucide:rocket',
-          dropdownIcon: 'rocket',
           link: '/getting-started/',
           items: ['getting-started'],
         },
@@ -437,7 +436,6 @@ function createN0ctConfig(answers) {
           label: 'Guides',
           id: 'guides',
           icon: 'lucide:book-open',
-          dropdownIcon: 'open-book',
           link: '/guides/',
           directory: 'guides',
         },
@@ -445,7 +443,6 @@ function createN0ctConfig(answers) {
           label: 'Reference',
           id: 'reference',
           icon: 'lucide:library',
-          dropdownIcon: 'information',
           link: '/reference/',
           directory: 'reference',
         },
@@ -458,6 +455,17 @@ function createN0ctConfig(answers) {
           ...(enabled.has('blog') ? { exclude: [blogPath + '/**'] } : {}),
         }
       : false,
+    footer: {
+      text: 'Built with Starlight-N0ct',
+      links: [
+        { label: 'N0ctane._.Dev', link: 'https://github.com/n0ctanedev', newTab: true },
+        { label: 'GitHub', link: 'https://github.com/n0ctanedev/starlight-n0ct', newTab: true },
+        ...(enabled.has('blog') ? [{ label: 'Blog', link: '/' + blogPath + '/' }] : []),
+      ],
+      icons: [
+        { icon: 'lucide:github', link: 'https://github.com/n0ctanedev/starlight-n0ct', label: 'GitHub', newTab: true },
+      ],
+    },
     starlight: {
       logo: {
         dark: './src/assets/n0ctane-dark.svg',
