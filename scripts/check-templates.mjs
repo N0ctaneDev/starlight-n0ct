@@ -65,7 +65,7 @@ try {
   for (const topic of ['components', 'guides', 'showcase', 'reference']) {
     const overviewPath = join(packageRoot, 'docs', 'src', 'content', 'docs', topic, 'index.mdx');
     const overview = await readFile(overviewPath, 'utf8');
-    assert.match(overview, /^sidebar:\\n  label: Overview$/m);
+    assert.match(overview, /^sidebar:\n  label: Overview$/m);
     assert.match(overview, new RegExp('^topic: ' + topic + '
     const templateConfig = await readFile(join(packageRoot, 'templates', templateName, 'n0ct.config.mjs'), 'utf8');
     assert.match(templateConfig, /footer:\s*\{/);
