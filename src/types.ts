@@ -1,4 +1,4 @@
-import type { StarlightUserConfig } from '@astrojs/starlight/types';
+import type { StarlightIcon, StarlightUserConfig } from '@astrojs/starlight/types';
 
 export type N0ctBadge = string | {
   text: string;
@@ -72,10 +72,8 @@ export interface N0ctSidebarTopicsPluginOptions {
 
 export type N0ctSidebarTopic = string | {
   label: string;
-  /** Optional local/Iconify icon used by the collapsible sidebar presentation. */
-  icon?: string;
-  /** Optional built-in Starlight icon used by the topic dropdown presentation. */
-  dropdownIcon?: string;
+  /** Optional Starlight built-in icon used consistently by every sidebar topic presentation. */
+  icon?: StarlightIcon;
   /** Stable identifier for pages associated with this topic by other plugins. */
   id?: string;
   /** Internal page slug or external URL. For generated groups this also identifies the directory. */
