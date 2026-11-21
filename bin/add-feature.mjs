@@ -301,6 +301,10 @@ export async function addFeature(options) {
 
     config = ensureExclude(config, ['sidebar', 'topicOptions'], ['/' + prefix, '/' + prefix + '/**/*']);
     config = addBlogLinkValidatorExclusion(config, prefix);
+    const activeVersioning = getProperty(config, rootObject(config), 'versioning');
+    if (activeVersioning && config.slice(activeVersioning.start, activeVersioning.end).trim() !== 'false') {
+      config = ensureExclude(config, ['versioning'], [prefix + '/**']);
+    }
     await updateContentConfig(directory, { blog: true });
     const post = join(directory, 'src/content/docs', prefix, 'first-post.mdx');
     if (!existsSync(post)) {
@@ -353,6 +357,15 @@ export async function addFeature(options) {
     const existing = getProperty(config, integrations.start, feature);
     if (!existing || config.slice(existing.start, existing.end).trim() === 'false') {
       config = setPath(config, ['integrations', feature], '{}');
+    }
+    if (feature === 'linksValidator') {
+      const refreshedIntegrations = getProperty(config, rootObject(config), 'integrations');
+      const blog = refreshedIntegrations && getProperty(config, refreshedIntegrations.start, 'blog');
+      if (blog && config[blog.start] === '{') {
+        const prefix = getProperty(config, blog.start, 'prefix');
+        const blogPath = prefix ? config.slice(prefix.start, prefix.end).trim().replace(/^['"]|['"]$/g, '') : 'blog';
+        config = addBlogLinkValidatorExclusion(config, blogPath);
+      }
     }
   }
 
