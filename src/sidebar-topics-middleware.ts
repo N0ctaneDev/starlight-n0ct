@@ -19,12 +19,12 @@ function isTopicSidebarGroup(entry: SidebarEntry): entry is SidebarGroup {
 }
 
 export const onRequest = defineRouteMiddleware(async (context) => {
-  const route = context.locals.starlightRoute;
+  const route = (context.locals as typeof context.locals & { starlightRoute: StarlightRouteData }).starlightRoute;
 
   // Pages without a sidebar are not resolved by Sidebar Topics. Leave their
   // route data untouched, including any sidebar data supplied by integrations.
   if (!route.hasSidebar) {
-    await resolveSidebarTopic(context);
+    await resolveSidebarTopic(context, async () => {});
     return;
   }
 
