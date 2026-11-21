@@ -60,6 +60,14 @@ async function installAndBuild(projectDirectory) {
 }
 
 try {
+  for (const templateName of ['starter', 'blog']) {
+    const templateConfig = await readFile(join(packageRoot, 'templates', templateName, 'n0ct.config.mjs'), 'utf8');
+    assert.match(templateConfig, /footer:\s*\{/);
+    assert.match(templateConfig, /Built with Starlight-N0ct/);
+    assert.match(templateConfig, /icon:\s*['"]lucide:book-open['"]/);
+    assert.doesNotMatch(templateConfig, /dropdownIcon/);
+  }
+
   const starter = await scaffold('starter', 'starter');
   const blog = await scaffold('blog', 'blog', ['--blog-path', 'journal/releases']);
   const reverseOrder = await scaffold('reverse-order', 'starter');
