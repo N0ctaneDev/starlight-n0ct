@@ -1,4 +1,7 @@
 import starlightSidebarTopics from 'starlight-sidebar-topics';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { HookParameters, StarlightPlugin } from '@astrojs/starlight/types';
 import { topicToSidebar } from './config.js';
 import type {
@@ -185,14 +188,36 @@ export function createN0ctSidebarTopics(
     ...topicPlugin,
     hooks: {
       ...topicPlugin.hooks,
-      'config:setup': (context: HookParameters<'config:setup'>) => {
+      'config:setup': async (context: HookParameters<'config:setup'>) => {
         const { addRouteMiddleware, ...hookContext } = context;
+        const runtimeDir = join(fileURLToPath(context.astroConfig.root), '.astro', 'n0ctane');
+        const debugMiddlewarePath = join(runtimeDir, 'sidebar-topic-debug.mjs');
+        await mkdir(dirname(debugMiddlewarePath), { recursive: true });
+        await writeFile(debugMiddlewarePath, String.raw\`export function onRequest(context) {
+  const route = context.locals.starlightRoute;
+  if (!/^(?:components|guides|showcase|reference)(?:\\/index)?$/.test(route.id)) return;
+  const describe = (entries) => entries.map((entry) => ({
+    type: entry.type,
+    label: entry.label,
+    isCurrent: entry.isCurrent,
+    entries: entry.type === 'group' ? describe(entry.entries) : undefined,
+  }));
+  console.log('[N0CT TOPIC DEBUG]', JSON.stringify({
+    id: route.id,
+    hasSidebar: route.hasSidebar,
+    topic: route.entry?.data?.topic,
+    sidebar: describe(route.sidebar ?? []),
+  }));
+}
+\`, 'utf8');
+
         return setup({
           ...hookContext,
-          addRouteMiddleware: (middleware) => addRouteMiddleware({
-            ...middleware,
-            order: 'post',
-          }),
+          addRouteMiddleware: (middleware) => {
+            // Log the version-selected sidebar immediately before Sidebar Topics resolves it.
+            addRouteMiddleware({ entrypoint: debugMiddlewarePath, order: 'post' });
+            addRouteMiddleware({ ...middleware, order: 'post' });
+          },
         });
       },
     },
