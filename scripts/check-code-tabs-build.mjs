@@ -33,6 +33,55 @@ if (!tabsModule) {
   );
 }
 
-console.log(
-  `[code-tabs] Verified ${groups} rendered group(s) and client module ${relative(root, tabsModule)}.`,
-);
+// Verify the actual HTML output selects the matching topic sidebar on each
+// topic landing page and preserves the Blog link injected by starlight-blog.
+const topicSidebarChecks = [
+  {
+    page: 'components/index.html',
+    required: ['/components/', '/components/callout/', '/components/kbd/', '/blog/'],
+    forbidden: ['/guides/configuration/', '/reference/config-api/'],
+  },
+  {
+    page: 'guides/index.html',
+    required: ['/guides/', '/guides/configuration/', '/blog/'],
+    forbidden: ['/components/callout/', '/reference/config-api/'],
+  },
+  {
+    page: 'showcase/index.html',
+    required: ['/showcase/', '/blog/'],
+    forbidden: ['/components/callout/', '/reference/config-api/'],
+  },
+  {
+    page: 'reference/index.html',
+    required: ['/reference/', '/reference/config-api/', '/blog/'],
+    forbidden: ['/guides/configuration/', '/components/callout/'],
+  },
+];
+
+for (const check of topicSidebarChecks) {
+  const pageHtml = await readFile(join(root, 'docs', 'dist', check.page), 'utf8');
+  const navStart = pageHtml.indexOf('<nav aria-label="Main navigation">');
+  const navEnd = navStart === -1 ? -1 : pageHtml.indexOf('</nav>', navStart);
+
+  if (navStart === -1 || navEnd === -1) {
+    throw new Error(`[sidebar-topics] ${check.page} is missing its main navigation.`);
+  }
+
+  const navHtml = pageHtml.slice(navStart, navEnd + '</nav>'.length);
+  const hrefs = [...navHtml.matchAll(/href="([^"]+)"/g)].map((match) => match[1]);
+  const hasPath = (suffix) => hrefs.some((href) => href.endsWith(suffix));
+
+  for (const path of check.required) {
+    if (!hasPath(path)) {
+      throw new Error(`[sidebar-topics] ${check.page} is missing expected sidebar link "${path}".`);
+    }
+  }
+
+  for (const path of check.forbidden) {
+    if (hasPath(path)) {
+      throw new Error(`[sidebar-topics] ${check.page} incorrectly contains sidebar link "${path}".`);
+    }
+  }
+}
+
+console.log('[sidebar-topics] Verified topic-specific sidebars and preserved Blog links on all demo topic roots.');
