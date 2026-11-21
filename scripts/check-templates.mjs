@@ -66,6 +66,7 @@ try {
 
   const blogConfig = await readFile(join(blog, 'n0ct.config.mjs'), 'utf8');
   assert.match(blogConfig, /prefix:\s*["']journal\/releases["']/);
+  assert.match(blogConfig, /label:\s*['"]Blog['"],\s*link:\s*['"]\/journal\/releases\/['"]/);
   assert.match(blogConfig, /topicOptions:\s*\{\s*exclude:/);
   assert.equal(await exists(join(blog, 'src/content/docs/journal/releases/first-post.mdx')), true);
   assert.equal(await exists(join(blog, 'src/content/docs/blog')), false);
