@@ -1,0 +1,39 @@
+---
+import { Badge } from '@astrojs/starlight/components';
+import { Icon } from 'astro-icon/components';
+
+const routeTopics = (Astro.locals as any).starlightSidebarTopics;
+const topics = routeTopics?.topics ?? [];
+---
+
+{topics.length > 0 && (
+  <ul class="n0ct-topic-list" aria-label="Documentation topics">
+    {topics.map((topic: any) => {
+      const { class: className, ...attrs } = topic.attrs ?? {};
+      return (
+        <li>
+          <a
+            {...attrs}
+            href={topic.link}
+            class:list={['n0ct-topic-link', topic.isCurrent && 'is-current', className]}
+            aria-current={topic.isCurrent ? 'page' : undefined}
+          >
+            {topic.icon && (
+              <span class="n0ct-topic-icon" aria-hidden="true">
+                <Icon name={topic.icon} />
+              </span>
+            )}
+            <span class="n0ct-topic-label">{topic.label}</span>
+            {topic.badge && (
+              <Badge
+                class="n0ct-topic-badge"
+                text={topic.badge.text}
+                variant={topic.badge.variant}
+              />
+            )}
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+)}
