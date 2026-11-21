@@ -68,6 +68,8 @@ try {
   assert.equal(await exists(join(blog, 'src/content/docs/blog')), false);
   const blogGuide = await readFile(join(blog, 'src/content/docs/getting-started.mdx'), 'utf8');
   assert.match(blogGuide, /src\/content\/docs\/journal\/releases\//);
+  const blogReadme = await readFile(join(blog, 'README.md'), 'utf8');
+  assert.match(blogReadme, /src\/content\/docs\/journal\/releases\//);
   const blogPost = await readFile(join(blog, 'src/content/docs/journal/releases/first-post.mdx'), 'utf8');
   assert.match(blogPost, /sidebar:\n\s+hidden: true/);
 
