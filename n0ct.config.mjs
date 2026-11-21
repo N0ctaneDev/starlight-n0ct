@@ -10,11 +10,11 @@ const config = {
   sidebar: {
     topicDisplay: 'list',
     topics: [
-      { label: 'Start here', id: 'start', icon: 'rocket', link: '/getting-started/', items: ['getting-started', 'contributing', 'changelog'] },
-      { label: 'Guides', id: 'guides', icon: 'open-book', link: '/guides' },
-      { label: 'Components', id: 'components', icon: 'puzzle', link: '/components' },
-      { label: 'Showcase', id: 'showcase', icon: 'star', link: '/showcase' },
-      { label: 'Reference', id: 'reference', icon: 'information', link: '/reference' },
+      { label: 'Start here', id: 'start', icon: 'lucide:rocket', link: '/getting-started/', items: ['getting-started', 'contributing', 'changelog'] },
+      { label: 'Guides', id: 'guides', icon: 'lucide:book-open', link: '/guides' },
+      { label: 'Components', id: 'components', icon: 'lucide:blocks', link: '/components' },
+      { label: 'Showcase', id: 'showcase', icon: 'lucide:sparkles', link: '/showcase' },
+      { label: 'Reference', id: 'reference', icon: 'lucide:library', link: '/reference' },
     ],
   },
   versioning: {
