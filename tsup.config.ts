@@ -11,7 +11,6 @@ const bundledStarlightPlugins = [
   'starlight-scroll-to-top',
   'starlight-sidebar-swipe',
   'starlight-links-validator',
-  'starlight-sidebar-topics',
   'starlight-versions',
 ];
 
