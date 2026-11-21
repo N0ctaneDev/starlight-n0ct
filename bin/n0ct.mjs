@@ -491,7 +491,7 @@ function createN0ctConfig(answers) {
     .replace(/"([A-Za-z_$][\w$]*)":/g, '$1:');
   if (answers.template === 'blog' && enabled.has('linksValidator')) {
     const prefix = JSON.stringify(blogPath);
-    const validator = "linksValidator: {\n      exclude: ({ link }) => { const path = link.split(/[?#]/, 1)[0].replace(/^\\/+/, ''); return path === " + prefix + " || path.startsWith(" + prefix + " + '/'); },\n    },";
+    const validator = "linksValidator: {\n      exclude: ({ link }) => { const path = link.split(/[?#]/, 1)[0]; const prefix = " + prefix + "; const prefixPath = '/' + prefix; return path === prefix || path === prefixPath || path.startsWith(prefix + '/') || path.endsWith(prefixPath) || path.includes(prefixPath + '/'); },\n    },";
     serialized = serialized.replace('linksValidator: {},', validator);
   }
 
