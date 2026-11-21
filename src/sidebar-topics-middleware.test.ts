@@ -1,14 +1,10 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-
-const { resolveTopicMiddleware } = vi.hoisted(() => ({
-  resolveTopicMiddleware: vi.fn(async (_context: any) => {}),
-}));
+import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('starlight-sidebar-topics/middleware', () => ({
-  onRequest: resolveTopicMiddleware,
+  onRequest: vi.fn(),
 }));
 
-import { onRequest } from './sidebar-topics-middleware.js';
+import { createSidebarTopicsMiddleware } from './sidebar-topics-middleware.js';
 
 const link = (label: string) => ({
   type: 'link',
@@ -26,8 +22,6 @@ const group = (label: string, entries: ReturnType<typeof link>[]) => ({
 });
 
 describe('Sidebar Topics route middleware adapter', () => {
-  beforeEach(() => resolveTopicMiddleware.mockReset());
-
   it('removes integration entries from positional topic lookup and restores them afterwards', async () => {
     const blogLink = { ...link('Blog'), attrs: { class: 'sl-blog-mobile-link' } };
     const startPage = link('Getting started');
@@ -37,12 +31,13 @@ describe('Sidebar Topics route middleware adapter', () => {
     const guidesTopic = group('1', [guideOverview, guideConfig]);
 
     let sidebarSeenByResolver: unknown;
-    resolveTopicMiddleware.mockImplementation(async (context: any) => {
+    const resolver = vi.fn(async (context: any) => {
       const route = context.locals.starlightRoute;
       sidebarSeenByResolver = route.sidebar;
       // Mimic the upstream plugin resolving group topic #1 by array position.
       route.sidebar = route.sidebar[1].entries;
     });
+    const middleware = createSidebarTopicsMiddleware(resolver as never);
 
     const context: any = {
       locals: {
@@ -53,7 +48,7 @@ describe('Sidebar Topics route middleware adapter', () => {
       },
     };
 
-    await onRequest(context, async () => {});
+    await middleware(context, async () => {});
 
     expect(sidebarSeenByResolver).toEqual([startTopic, guidesTopic]);
     expect(context.locals.starlightRoute.sidebar).toEqual([
@@ -61,6 +56,7 @@ describe('Sidebar Topics route middleware adapter', () => {
       guideOverview,
       guideConfig,
     ]);
+    expect(resolver).toHaveBeenCalledOnce();
   });
 
   it('leaves an excluded route sidebar unchanged when it has no numeric topic groups', async () => {
@@ -69,6 +65,8 @@ describe('Sidebar Topics route middleware adapter', () => {
       group('Recent posts', [link('First post')]),
       group('Tags', [link('Release')]),
     ];
+    const resolver = vi.fn(async () => {});
+    const middleware = createSidebarTopicsMiddleware(resolver as never);
     const context: any = {
       locals: {
         starlightRoute: {
@@ -78,14 +76,16 @@ describe('Sidebar Topics route middleware adapter', () => {
       },
     };
 
-    await onRequest(context, async () => {});
+    await middleware(context, async () => {});
 
     expect(context.locals.starlightRoute.sidebar).toEqual(blogSidebar);
-    expect(resolveTopicMiddleware).toHaveBeenCalledOnce();
+    expect(resolver).toHaveBeenCalledOnce();
   });
 
   it('does not normalize route data on pages without a sidebar', async () => {
     const sidebar = [group('0', [link('Overview')])];
+    const resolver = vi.fn(async () => {});
+    const middleware = createSidebarTopicsMiddleware(resolver as never);
     const context: any = {
       locals: {
         starlightRoute: {
@@ -95,9 +95,9 @@ describe('Sidebar Topics route middleware adapter', () => {
       },
     };
 
-    await onRequest(context, async () => {});
+    await middleware(context, async () => {});
 
     expect(context.locals.starlightRoute.sidebar).toEqual(sidebar);
-    expect(resolveTopicMiddleware).toHaveBeenCalledOnce();
+    expect(resolver).toHaveBeenCalledOnce();
   });
 });
