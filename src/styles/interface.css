@@ -203,6 +203,220 @@ body::before {
   background: var(--n0ct-surface-elevated);
 }
 
+
+/* Topic selectors share the same surfaced control treatment as the version picker. */
+.n0ct-sidebar-topic-switcher {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin-block: 0.15rem 1rem;
+}
+
+.n0ct-sidebar-topic-switcher--list {
+  padding: 0.32rem;
+  border: 1px solid var(--n0ct-border);
+  border-radius: var(--n0ct-radius-md);
+  background: var(--n0ct-gradient-version-select), var(--n0ct-surface-elevated);
+  box-shadow: var(--n0ct-shadow-control);
+}
+
+.n0ct-sidebar-topic-switcher--list .starlight-sidebar-topics {
+  display: grid;
+  gap: 0.18rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.n0ct-sidebar-topic-switcher--list .starlight-sidebar-topics::after {
+  display: none;
+}
+
+.n0ct-sidebar-topic-switcher--list .starlight-sidebar-topics li + li {
+  margin-block-start: 0;
+}
+
+.n0ct-sidebar-topic-switcher--list .starlight-sidebar-topics a {
+  display: flex;
+  align-items: center;
+  min-height: 2.15rem;
+  padding: 0.4rem 0.62rem;
+  gap: 0.55rem;
+  border: 1px solid transparent;
+  border-radius: var(--n0ct-radius-sm);
+  color: var(--n0ct-text-secondary);
+  background: transparent;
+  font-size: 0.84rem;
+  font-weight: 620;
+  line-height: 1.35;
+  text-decoration: none;
+  transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease;
+}
+
+.n0ct-sidebar-topic-switcher--list .starlight-sidebar-topics a:hover,
+.n0ct-sidebar-topic-switcher--list .starlight-sidebar-topics a:focus-visible {
+  border-color: var(--n0ct-border);
+  color: var(--n0ct-text-primary);
+  background: var(--n0ct-interactive-hover);
+}
+
+.n0ct-sidebar-topic-switcher--list .starlight-sidebar-topics a.starlight-sidebar-topics-current {
+  border-color: var(--n0ct-border-focus);
+  color: var(--n0ct-text-primary);
+  background: var(--n0ct-gradient-sidebar-active);
+  box-shadow: inset 2px 0 var(--n0ct-accent-500);
+}
+
+.n0ct-sidebar-topic-switcher--list .starlight-sidebar-topics-icon,
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-icon,
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-button-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  padding: 0.25rem;
+  border: 1px solid var(--n0ct-border);
+  border-radius: var(--n0ct-radius-xs);
+  color: var(--n0ct-text-accent);
+  background: var(--n0ct-surface);
+}
+
+.n0ct-sidebar-topic-switcher--list .starlight-sidebar-topics-icon svg,
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-icon svg,
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-button-icon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.n0ct-sidebar-topic-switcher--list .starlight-sidebar-topics a.starlight-sidebar-topics-current .starlight-sidebar-topics-icon,
+.n0ct-sidebar-topic-switcher--list .starlight-sidebar-topics a:hover .starlight-sidebar-topics-icon,
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-item:is(:hover, .starlight-sidebar-topics-dropdown-current-item) .starlight-sidebar-topics-dropdown-icon {
+  border-color: var(--n0ct-accent-500);
+  color: var(--n0ct-text-on-accent);
+  background: var(--n0ct-accent-500);
+}
+
+.n0ct-sidebar-topic-switcher--dropdown starlight-sidebar-topics-dropdown {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-button {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 2.8rem;
+  padding: 0.45rem 0.68rem;
+  gap: 0.6rem;
+  border: 1px solid var(--n0ct-border) !important;
+  border-radius: var(--n0ct-radius-md) !important;
+  color: var(--n0ct-text-primary) !important;
+  background: var(--n0ct-gradient-version-select), var(--n0ct-surface-elevated) !important;
+  box-shadow: var(--n0ct-shadow-control);
+  font-size: 0.84rem;
+  font-weight: 650;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-button::before {
+  display: none !important;
+}
+
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-button:hover,
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-button:focus-visible {
+  border-color: var(--n0ct-accent-500) !important;
+  box-shadow: var(--n0ct-shadow-focus);
+  outline: none;
+}
+
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-button-icon {
+  border-color: var(--n0ct-border);
+  color: var(--n0ct-text-accent);
+  background: var(--n0ct-surface);
+}
+
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-button-label {
+  min-width: 0;
+  margin: 0;
+  color: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-button > svg {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+  color: var(--n0ct-text-muted);
+}
+
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-menu {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin-block-start: 0.38rem;
+  padding: 0.35rem;
+  border: 1px solid var(--n0ct-border);
+  border-radius: var(--n0ct-radius-md);
+  color: var(--n0ct-text-primary);
+  background: var(--n0ct-gradient-version-select), var(--n0ct-surface-elevated);
+  box-shadow: var(--n0ct-shadow-popover);
+  backdrop-filter: blur(18px);
+}
+
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-item {
+  display: flex;
+  align-items: center;
+  min-height: 2.2rem;
+  padding: 0.38rem 0.55rem;
+  gap: 0.55rem;
+  border: 1px solid transparent;
+  border-radius: var(--n0ct-radius-sm);
+  color: var(--n0ct-text-secondary);
+  background: transparent;
+  font-size: 0.84rem;
+  font-weight: 620;
+  text-decoration: none;
+  transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease;
+}
+
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-item:is(:hover, :focus-visible) {
+  border-color: var(--n0ct-border);
+  color: var(--n0ct-text-primary);
+  background: var(--n0ct-interactive-hover);
+  outline: none;
+}
+
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-item.starlight-sidebar-topics-dropdown-current-item {
+  border-color: var(--n0ct-border-focus);
+  color: var(--n0ct-text-primary);
+  background: var(--n0ct-gradient-sidebar-active);
+}
+
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-label {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-badge {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+}
+
+.n0ct-sidebar-topic-switcher--dropdown .starlight-sidebar-topics-dropdown-icon {
+  border-color: var(--n0ct-border);
+  color: var(--n0ct-text-accent);
+  background: var(--n0ct-surface);
+}
+
 .sidebar-pane {
   min-height: 0;
   overflow-y: auto !important;
