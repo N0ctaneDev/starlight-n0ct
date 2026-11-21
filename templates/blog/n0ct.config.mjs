@@ -16,24 +16,21 @@ const config = {
       {
         label: 'Start here',
         id: 'start',
-        icon: 'lucide:rocket',
-        dropdownIcon: 'rocket',
+        icon: 'rocket',
         link: '/getting-started/',
         items: ['getting-started'],
       },
       {
         label: 'Guides',
         id: 'guides',
-        icon: 'lucide:book-open',
-        dropdownIcon: 'open-book',
+        icon: 'open-book',
         link: '/guides/',
         directory: 'guides',
       },
       {
         label: 'Reference',
         id: 'reference',
-        icon: 'lucide:library',
-        dropdownIcon: 'information',
+        icon: 'information',
         link: '/reference/',
         directory: 'reference',
       },
@@ -78,6 +75,17 @@ const config = {
   icons: {
     iconDir: './src/icons',
     include: { lucide: ['*'] },
+  },
+  footer: {
+    text: 'Built with Starlight-N0ct',
+    links: [
+      { label: 'N0ctane._.Dev', link: 'https://github.com/n0ctanedev', newTab: true },
+      { label: 'GitHub', link: 'https://github.com/n0ctanedev/starlight-n0ct', newTab: true },
+      { label: 'Blog', link: '/blog/' },
+    ],
+    icons: [
+      { icon: 'lucide:github', link: 'https://github.com/n0ctanedev/starlight-n0ct', label: 'GitHub', newTab: true },
+    ],
   },
   theme: {
     defaultTheme: 'n0ctane',
