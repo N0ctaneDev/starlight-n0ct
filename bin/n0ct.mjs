@@ -381,7 +381,7 @@ async function promptForAnswers(defaults, enabledByDefault, yes, requestedTempla
 
 function createN0ctConfig(answers) {
   const enabled = new Set(answers.enabledIntegrations);
-  const blogPath = answers.template === 'blog' ? answers.blogPath : 'blog';
+  const blogPath = enabled.has('blog') ? answers.blogPath : 'blog';
   const integrations = {
     basePath: enabled.has('basePath') ? {} : false,
     announcement: enabled.has('announcement') ? {} : false,
@@ -392,20 +392,18 @@ function createN0ctConfig(answers) {
     sidebarSwipe: enabled.has('sidebarSwipe') ? {} : false,
     linksValidator: enabled.has('linksValidator') ? {} : false,
     blog: enabled.has('blog')
-      ? (answers.template === 'blog'
-        ? {
-            prefix: blogPath,
-            navigation: 'header-start',
-            metrics: { readingTime: true, words: 'rounded' },
-            authors: {
-              team: {
-                name: answers.title,
-                title: 'Editorial team',
-                url: answers.siteUrl,
-              },
+      ? {
+          prefix: blogPath,
+          navigation: 'header-start',
+          metrics: { readingTime: true, words: 'rounded' },
+          authors: {
+            team: {
+              name: answers.title,
+              title: 'Editorial team',
+              url: answers.siteUrl,
             },
-          }
-        : {})
+          },
+        }
       : false,
     imageZoom: enabled.has('imageZoom') ? {} : false,
   };
@@ -425,7 +423,7 @@ function createN0ctConfig(answers) {
     description: answers.description,
     sidebar: {
       topicDisplay: answers.topicDisplay,
-      ...(answers.template === 'blog' ? {
+      ...(enabled.has('blog') ? {
         topicOptions: { exclude: ['/' + blogPath, '/' + blogPath + '/**/*'] },
       } : {}),
       topics: [
@@ -451,7 +449,7 @@ function createN0ctConfig(answers) {
     versioning: answers.versioning
       ? {
           ...answers.versioning,
-          ...(answers.template === 'blog' ? { exclude: [blogPath + '/**'] } : {}),
+          ...(enabled.has('blog') ? { exclude: [blogPath + '/**'] } : {}),
         }
       : false,
     starlight: {
@@ -489,7 +487,7 @@ function createN0ctConfig(answers) {
 
   let serialized = JSON.stringify(config, null, 2)
     .replace(/"([A-Za-z_$][\w$]*)":/g, '$1:');
-  if (answers.template === 'blog' && enabled.has('linksValidator')) {
+  if (enabled.has('blog') && enabled.has('linksValidator')) {
     const prefix = JSON.stringify(blogPath);
     const validator = "linksValidator: {\n      exclude: ({ link }) => { const path = link.split(/[?#]/, 1)[0]; const prefix = " + prefix + "; const prefixPath = '/' + prefix; return path === prefix || path === prefixPath || path.startsWith(prefix + '/') || path.endsWith(prefixPath) || path.includes(prefixPath + '/'); },\n    },";
     serialized = serialized.replace('linksValidator: {},', validator);
@@ -612,7 +610,7 @@ async function main() {
   const answers = await promptForAnswers(defaults, recommendedIntegrations, options.yes, options.template, options.blogPath);
 
   answers.siteUrl = normalizeSiteUrl(answers.siteUrl);
-  if (answers.template === 'blog') answers.blogPath = normalizeBlogPath(answers.blogPath);
+  if (answers.enabledIntegrations.includes('blog')) answers.blogPath = normalizeBlogPath(answers.blogPath);
   answers.basePath = normalizeBasePath(answers.basePath);
   answers.topicDisplay = answers.topicDisplay.trim().toLowerCase();
 
@@ -620,6 +618,9 @@ async function main() {
     throw new Error('Sidebar topic display must be "collapsible", "list", or "dropdown".');
   }
 
+  if (answers.enabledIntegrations.includes('blog') && !answers.blogPath) {
+    throw new Error('A Blog path is required when the Blog integration is enabled.');
+  }
   if (answers.template === 'blog' && !answers.enabledIntegrations.includes('blog')) answers.enabledIntegrations.push('blog');
 
   const manager = options.packageManager ?? detectPackageManager(targetParent);
@@ -679,13 +680,34 @@ async function main() {
     'utf8',
   );
 
+  if (answers.enabledIntegrations.includes('blog')) {
+    const postPath = join(target, 'src', 'content', 'docs', ...answers.blogPath.split('/'), 'first-post.mdx');
+    if (!existsSync(postPath)) {
+      await mkdir(dirname(postPath), { recursive: true });
+      await writeFile(postPath, [
+        '---',
+        'title: Welcome to the publication',
+        'description: Your first Blog post.',
+        'date: ' + new Date().toISOString().slice(0, 10),
+        'authors: [team]',
+        'tags: [welcome]',
+        'sidebar:',
+        '  hidden: true',
+        '---',
+        '',
+        'Write your first publication post here.',
+        '',
+      ].join('\\n'), 'utf8');
+    }
+  }
+
   console.log(`\nCreated ${answers.title} in ${target}`);
   console.log(`Site URL: ${answers.siteUrl}`);
   console.log(`Base path: ${answers.basePath}`);
   console.log(`Sidebar topics: ${answers.topicDisplay}`);
   console.log('Lucide icons: explicitly added to project dependencies.');
   console.log('Template: ' + answers.template);
-  if (answers.template === 'blog') {
+  if (answers.enabledIntegrations.includes('blog')) {
     console.log('Blog path: /' + answers.blogPath + '/ (src/content/docs/' + answers.blogPath + '/)');
     const blogGuide = join(target, 'src', 'content', 'docs', 'getting-started.mdx');
     if (existsSync(blogGuide)) {
