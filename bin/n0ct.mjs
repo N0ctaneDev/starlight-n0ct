@@ -426,6 +426,14 @@ function createN0ctConfig(answers) {
       } : {}),
       topics: [
         {
+          label: 'Start here',
+          id: 'start',
+          icon: 'lucide:rocket',
+          dropdownIcon: 'rocket',
+          link: '/getting-started/',
+          items: ['getting-started'],
+        },
+        {
           label: 'Guides',
           id: 'guides',
           icon: 'lucide:book-open',
