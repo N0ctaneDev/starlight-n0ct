@@ -93,7 +93,7 @@ try {
   await addFeature({ feature: 'blog', directory: reverseOrder, blogPath: 'journal', install: false });
   const reverseConfig = await readFile(join(reverseOrder, 'n0ct.config.mjs'), 'utf8');
   assert.ok(reverseConfig.includes('journal/**'));
-  assert.match(reverseConfig, /linksValidator:\s*\\{/);
+  assert.ok(reverseConfig.includes('linksValidator: {'));
   assert.ok(reverseConfig.includes('isBlog'));
 
   await installAndBuild(starter);
