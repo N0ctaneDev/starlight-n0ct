@@ -58,6 +58,9 @@ export function createN0ctanePlugin(config: N0ctConfig): StarlightPlugin {
           footer: config.footer ?? {},
           sidebar: { topicDisplay: config.sidebar?.topicDisplay ?? 'collapsible' },
           versioning: config.versioning ?? false,
+          integrations: {
+            kbd: config.integrations?.kbd !== false,
+          },
           theme: {
             defaultTheme: themeSet.defaultTheme,
             themes: Object.entries(themeSet.themes).map(([id, theme]) => ({
