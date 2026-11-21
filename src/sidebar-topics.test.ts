@@ -140,6 +140,25 @@ describe('N0ctane Sidebar Topics integration', () => {
     );
   });
 
+  it('normalizes string badges for topic selector components', () => {
+    createN0ctSidebarTopics({
+      topicDisplay: 'list',
+      topics: [{
+        label: 'Guides',
+        id: 'guides',
+        icon: 'lucide:book-open',
+        link: '/guides/',
+        directory: 'guides',
+        badge: 'New',
+      }],
+    }, { blog: false });
+
+    expect(topicFactory).toHaveBeenCalledWith(
+      [expect.objectContaining({ badge: { text: 'New' } })],
+      expect.anything(),
+    );
+  });
+
   it('requires root topics in plugin-backed modes', () => {
     expect(() => createN0ctSidebarTopics({ topicDisplay: 'list', topics: [] }, { blog: false }))
       .toThrow(/sidebar\.topics is empty/);
