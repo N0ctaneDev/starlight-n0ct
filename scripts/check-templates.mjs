@@ -60,6 +60,72 @@ async function installAndBuild(projectDirectory) {
 }
 
 try {
+  // Every demo topic landing page is a real sidebar entry named Overview and
+  // is explicitly associated with the matching Sidebar Topics ID.
+  for (const topic of ['components', 'guides', 'showcase', 'reference']) {
+    const overviewPath = join(packageRoot, 'docs', 'src', 'content', 'docs', topic, 'index.mdx');
+    const overview = await readFile(overviewPath, 'utf8');
+    assert.match(overview, /^sidebar:\\n  label: Overview$/m);
+    assert.match(overview, new RegExp('^topic: ' + topic + '
+    const templateConfig = await readFile(join(packageRoot, 'templates', templateName, 'n0ct.config.mjs'), 'utf8');
+    assert.match(templateConfig, /footer:\s*\{/);
+    assert.match(templateConfig, /Built with Starlight-N0ct/);
+    assert.match(templateConfig, /icon:\s*['"]lucide:book-open['"]/);
+    assert.doesNotMatch(templateConfig, /dropdownIcon/);
+  }
+
+  const starter = await scaffold('starter', 'starter');
+  const blog = await scaffold('blog', 'blog', ['--blog-path', 'journal/releases']);
+  const reverseOrder = await scaffold('reverse-order', 'starter');
+
+  const blogConfig = await readFile(join(blog, 'n0ct.config.mjs'), 'utf8');
+  assert.match(blogConfig, /prefix:\s*["']journal\/releases["']/);
+  assert.match(blogConfig, /label:\s*['"]Blog['"],\s*link:\s*['"]\/journal\/releases\/['"]/);
+  assert.match(blogConfig, /topicOptions:\s*\{\s*exclude:/);
+  assert.equal(await exists(join(blog, 'src/content/docs/journal/releases/first-post.mdx')), true);
+  assert.equal(await exists(join(blog, 'src/content/docs/blog')), false);
+  const blogGuide = await readFile(join(blog, 'src/content/docs/getting-started.mdx'), 'utf8');
+  assert.match(blogGuide, /src\/content\/docs\/journal\/releases\//);
+  const blogReadme = await readFile(join(blog, 'README.md'), 'utf8');
+  assert.match(blogReadme, /src\/content\/docs\/journal\/releases\//);
+  const blogPost = await readFile(join(blog, 'src/content/docs/journal/releases/first-post.mdx'), 'utf8');
+  assert.match(blogPost, /sidebar:\n\s+hidden: true/);
+
+  // Exercise feature installation against a freshly generated docs-only project.
+  const { addFeature } = await import(new URL('../bin/add-feature.mjs', import.meta.url));
+  await addFeature({ feature: 'blog', directory: starter, blogPath: 'newsroom', install: false });
+  await addFeature({ feature: 'versioning', directory: starter, versionSlug: '1.0.0', install: false });
+  await addFeature({ feature: 'linksValidator', directory: starter, install: false });
+
+  const upgradedConfig = await readFile(join(starter, 'n0ct.config.mjs'), 'utf8');
+  assert.match(upgradedConfig, /prefix:\s*"newsroom"/);
+  assert.match(upgradedConfig, /newsroom\/\*\*/);
+  assert.match(upgradedConfig, /linksValidator:/);
+  assert.ok(upgradedConfig.includes("path.includes(prefixPath + '/')"));
+  assert.equal(await exists(join(starter, 'src/content/docs/newsroom/first-post.mdx')), true);
+  const upgradedSchema = await readFile(join(starter, 'src/content.config.ts'), 'utf8');
+  assert.match(upgradedSchema, /blogSchema/);
+  assert.match(upgradedSchema, /docsVersionsLoader/);
+
+  // Verify the reverse feature order: versioning first, then Blog.
+  await addFeature({ feature: 'versioning', directory: reverseOrder, versionSlug: '2.0.0', install: false });
+  await addFeature({ feature: 'linksValidator', directory: reverseOrder, install: false });
+  await addFeature({ feature: 'blog', directory: reverseOrder, blogPath: 'journal', install: false });
+  const reverseConfig = await readFile(join(reverseOrder, 'n0ct.config.mjs'), 'utf8');
+  assert.ok(reverseConfig.includes('journal/**'));
+  assert.ok(reverseConfig.includes('linksValidator: {'));
+  assert.ok(reverseConfig.includes('isBlog'));
+
+  await installAndBuild(starter);
+  await installAndBuild(blog);
+
+  console.log('Template smoke tests passed: starter, custom Blog path, post-init Blog/versioning/link validation, npm install, and Astro builds.');
+} finally {
+  await rm(tempRoot, { recursive: true, force: true });
+}
+, 'm'));
+  }
+
   for (const templateName of ['starter', 'blog']) {
     const templateConfig = await readFile(join(packageRoot, 'templates', templateName, 'n0ct.config.mjs'), 'utf8');
     assert.match(templateConfig, /footer:\s*\{/);
