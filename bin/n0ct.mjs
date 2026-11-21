@@ -131,6 +131,14 @@ function normalizeBasePath(value) {
   return normalized;
 }
 
+function normalizeBlogPath(value) {
+  const raw = String(value ?? 'blog').trim().replace(/^\/+|\/+$/g, '');
+  if (!raw || raw.split('/').some((part) => !part || part === '.' || part === '..') || /[\\:#?%\s\u0000-\u001f]/.test(raw)) {
+    throw new Error('Blog path must be a relative path such as blog or updates/blog, without spaces or URL characters.');
+  }
+  return raw;
+}
+
 function normalizeSiteUrl(value) {
   const raw = value.trim() || 'https://example.com';
   const withProtocol = /^[a-z][a-z\d+.-]*:\/\//i.test(raw) ? raw : `https://${raw}`;
