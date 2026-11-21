@@ -10,11 +10,11 @@ const config = {
   sidebar: {
     topicDisplay: 'list',
     topics: [
-      { label: 'Start here', id: 'start', icon: 'lucide:rocket', link: '/getting-started/', items: ['getting-started', 'contributing', 'changelog'] },
-      { label: 'Guides', id: 'guides', icon: 'lucide:book-open', link: '/guides' },
-      { label: 'Components', id: 'components', icon: 'lucide:blocks', link: '/components' },
-      { label: 'Showcase', id: 'showcase', icon: 'lucide:sparkles', link: '/showcase' },
-      { label: 'Reference', id: 'reference', icon: 'lucide:library', link: '/reference' },
+      { label: 'Start here', id: 'start', icon: 'rocket', link: '/getting-started/', items: ['getting-started', 'contributing', 'changelog'] },
+      { label: 'Guides', id: 'guides', icon: 'open-book', link: '/guides' },
+      { label: 'Components', id: 'components', icon: 'puzzle', link: '/components' },
+      { label: 'Showcase', id: 'showcase', icon: 'star', link: '/showcase' },
+      { label: 'Reference', id: 'reference', icon: 'information', link: '/reference' },
     ],
   },
   versioning: {
@@ -54,6 +54,17 @@ const config = {
   icons: {
     iconDir: './src/icons',
     include: { lucide: ['*'] },
+  },
+  footer: {
+    text: 'Built with Starlight-N0ct',
+    links: [
+      { label: 'N0ctane._.Dev', link: 'https://github.com/n0ctanedev', newTab: true },
+      { label: 'GitHub', link: 'https://github.com/n0ctanedev/starlight-n0ct', newTab: true },
+      { label: 'Blog', link: '/blog/' },
+    ],
+    icons: [
+      { icon: 'lucide:github', link: 'https://github.com/n0ctanedev/starlight-n0ct', label: 'GitHub', newTab: true },
+    ],
   },
   footer: {
     text: 'Built with Starlight-N0ct',
