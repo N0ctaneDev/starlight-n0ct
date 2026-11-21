@@ -16,7 +16,7 @@ const bundledStarlightPlugins = [
 ];
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: ['src/index.ts', 'src/sidebar-topics-middleware.ts'],
   format: ['esm'],
   target: 'node22',
   platform: 'node',
@@ -36,6 +36,9 @@ export default defineConfig({
     'astro-icon',
     'astro-icon/components',
     'starlight-codeblocks',
+    // Keep the upstream route middleware as a runtime import so its virtual
+    // config modules are resolved by Astro's Vite build.
+    'starlight-sidebar-topics/middleware',
   ],
 
   banner: {
