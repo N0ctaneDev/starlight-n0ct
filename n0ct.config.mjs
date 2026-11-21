@@ -66,17 +66,6 @@ const config = {
       { icon: 'lucide:github', link: 'https://github.com/n0ctanedev/starlight-n0ct', label: 'GitHub', newTab: true },
     ],
   },
-  footer: {
-    text: 'Built with Starlight-N0ct',
-    links: [
-      { label: 'N0ctane._.Dev', link: 'https://github.com/n0ctanedev', newTab: true },
-      { label: 'GitHub', link: 'https://github.com/n0ctanedev/starlight-n0ct', newTab: true },
-      { label: 'Blog', link: '/blog/' },
-    ],
-    icons: [
-      { icon: 'lucide:github', link: 'https://github.com/n0ctanedev/starlight-n0ct', label: 'GitHub', newTab: true },
-    ],
-  },
   theme: {
     defaultTheme: 'n0ctane',
     themes: {
