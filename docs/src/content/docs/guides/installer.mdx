@@ -22,7 +22,7 @@ Use the arrow keys and Enter to choose:
 | Documentation starter | Starter homepage, docs sections, guides, reference structure, and the theme defaults |
 | Blog + documentation | Docs plus Blog navigation, author configuration, tags, sample posts, and the Blog schema |
 
-The blog template enables the blog integration. You can still change its route, authors, metrics, and navigation in n0ct.config.mjs.
+The blog template enables the Blog integration and asks for a Blog path (URL prefix and content directory). The default is blog. You can set it in advance with --blog-path journal. The installer creates posts under src/content/docs/journal/ and configures the public route at /journal/. You can still change authors, metrics, and navigation in n0ct.config.mjs.
 
 ## Integration picker
 
@@ -46,7 +46,7 @@ Each integration row includes a short description. A recommended set is selected
 npx @n0ctanedev/starlight-n0ct init my-docs --yes
 
 # Select a template without opening the template selector
-npx @n0ctanedev/starlight-n0ct init my-site --template blog
+npx @n0ctanedev/starlight-n0ct init my-site --template blog --blog-path journal
 
 # Generate files without installing dependencies
 npx @n0ctanedev/starlight-n0ct init my-docs --no-install
@@ -68,11 +68,12 @@ The selected template contains:
 - n0ct.config.mjs and a site favicon.
 - Starlight docs and i18n collections.
 - Blog and Sidebar Topics schema extensions, ready for their respective integrations.
+- N0ctane and Dracula named themes, including their matching favicons and logos.
 - The versions collection loader, ready to enable when needed.
 - Example docs content and a custom 404 page.
 - A GitHub Pages workflow and deployment notes.
 
-The installer rewrites the project title, site URL, base path, sidebar, integrations, and package metadata for the new project.
+The installer writes JavaScript config with identifier keys unquoted, rewrites the project title, site URL, base path, sidebar, integrations, and package metadata, and keeps Blog source paths aligned with the selected Blog prefix. To add a feature after setup, use the [existing-project feature guide](/guides/features/).
 
 ## After generation
 

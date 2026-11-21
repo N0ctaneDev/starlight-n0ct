@@ -61,11 +61,11 @@ When kbd is enabled and no custom types are supplied, N0ctane adds macOS, Window
 
 ## Blog schema
 
-The Blog integration reads metadata from the docs content collection. Merge blogSchema into docsSchema in your content configuration. The generated blog template already does this. The docs starter includes the schema extension so Blog can be enabled later.
+The Blog integration reads metadata from the docs content collection. Merge blogSchema into docsSchema in your content configuration. Both generated templates already do this. The post-init command performs this update for the standard N0ctane content schema, creates an initial post with sidebar.hidden enabled, and adds route exclusions for topic navigation and link validation. The docs starter includes the schema extension so Blog can be enabled later. Run npx @n0ctanedev/starlight-n0ct add blog to enable it in an existing project; the command asks for its path and installs the required schema dependencies.
 
 ## Sidebar and versioning interactions
 
-List/dropdown sidebar topics and Blog route generation can share the same site. Blog-generated routes should remain excluded from topic routing where needed. Documentation versioning is configured separately and should generally exclude blog routes so posts keep stable URLs.
+List/dropdown sidebar topics and Blog route generation can share the same site. Blog-generated routes should remain excluded from topic routing where needed. Documentation versioning is configured separately and should generally exclude blog routes so posts keep stable URLs. Adding Blog or versioning with n0ct add keeps this exclusion in place regardless of which feature is enabled first. See the [existing-project feature guide](/guides/features/).
 
 ## Upstream documentation
 

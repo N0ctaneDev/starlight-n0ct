@@ -1,0 +1,106 @@
+---
+title: Add features to an existing project
+description: Enable Blog, documentation versioning, and optional integrations after initialization.
+---
+
+N0ctane projects do not need to be recreated when the feature set changes. Use the installer CLI inside an initialized N0ctane project to add Blog, versioning, or any bundled integration.
+
+## Add Blog
+
+From the project directory, run:
+
+~~~sh
+npx @n0ctanedev/starlight-n0ct add blog
+~~~
+
+The command asks for a Blog path. The default is blog. You can also provide it explicitly:
+
+~~~sh
+npx @n0ctanedev/starlight-n0ct add blog ./my-docs --blog-path journal
+~~~
+
+The selected path is used for both the public URL prefix and the content directory. For the example above, routes use /journal/ and posts live under src/content/docs/journal/.
+
+The command then:
+
+- Enables the Blog integration and configures its prefix.
+- Adds the Blog and Sidebar Topics schema dependencies and merges blogSchema into the docs collection schema.
+- Excludes the Blog route from Sidebar Topics navigation.
+- Adds a first post with sidebar.hidden set to true, keeping it out of the docs sidebar.
+- Adds a Blog exclusion to existing versioning configuration.
+- Configures the link validator to ignore Blog-generated routes when that integration is enabled.
+- Installs the updated dependencies using the detected package manager.
+
+The source posts are stored inside the docs collection because that is how starlight-blog reads them. They should not become ordinary docs navigation entries. Keep sidebar.hidden enabled on every post.
+
+## Add versioning
+
+~~~sh
+npx @n0ctanedev/starlight-n0ct add versioning
+~~~
+
+The command asks for the first archived version slug. You can pass it on the command line:
+
+~~~sh
+npx @n0ctanedev/starlight-n0ct add versioning ./my-docs --version 1.0.0
+~~~
+
+It enables the upstream versioning configuration, registers the docsVersionsLoader collection, and installs starlight-versions. When Blog is already configured, its current source prefix is automatically added to versioning.exclude. When Blog is added later, the same exclusion is added then.
+
+Versioning snapshots documentation content, not a separate Blog archive. Keep Blog URLs stable by leaving its source directory excluded.
+
+## Add an optional integration
+
+Use the integration key as the feature name:
+
+~~~sh
+npx @n0ctanedev/starlight-n0ct add llmActions
+npx @n0ctanedev/starlight-n0ct add announcement
+npx @n0ctanedev/starlight-n0ct add imageZoom
+npx @n0ctanedev/starlight-n0ct add linksValidator
+~~~
+
+The command enables the integration with an empty options object. Edit integrations in n0ct.config.mjs to pass the upstream plugin's options or add site-specific settings. N0ctane keeps its built-in composition and conflict safeguards, including avoiding duplicate LLM index generators.
+
+To add Blog and then enable the link validator, use:
+
+~~~sh
+npx @n0ctanedev/starlight-n0ct add blog --blog-path journal
+npx @n0ctanedev/starlight-n0ct add linksValidator
+~~~
+
+The Blog path exclusion is added to the validator when it is enabled after Blog. The same exclusion is included when the link validator is already enabled before Blog is added.
+
+## Package manager and install options
+
+The command detects npm, pnpm, yarn, or bun from the project's lockfile. Override the detection with --pm:
+
+~~~sh
+npx @n0ctanedev/starlight-n0ct add blog --blog-path journal --pm pnpm
+~~~
+
+Use --no-install to update the project files without running the package manager:
+
+~~~sh
+npx @n0ctanedev/starlight-n0ct add versioning --no-install
+~~~
+
+Then install dependencies yourself from the project directory.
+
+## Existing project requirements
+
+The command expects an initialized N0ctane project containing n0ct.config.mjs and package.json. The config should export a plain object assigned to const config and then use export default config. The tool edits targeted properties while preserving the rest of the file.
+
+If a custom content config uses a non-standard docs schema or collection declaration, the command stops and explains the manual schema change it could not safely make. It does not replace the content config wholesale. Add the indicated Blog schema extension or versions collection, then rerun the command.
+
+For projects not initialized with N0ctane, first migrate to the N0ctane config and content schema shape. This command is not a generic Starlight-to-N0ctane migration utility.
+
+## What the commands change
+
+| Feature | Config change | Content change | Dependency |
+|---|---|---|---|
+| Blog | integrations.blog, sidebar.topicOptions.exclude | Adds a first post under the chosen path; adds Blog schema | starlight-blog, starlight-sidebar-topics |
+| Versioning | versioning, including Blog exclusions | Adds the versions collection loader | starlight-versions |
+| Optional integration | integrations plus the integration key | No content files | Uses the bundled integration |
+
+The commands are safe to rerun for already-enabled features: existing Blog prefixes and integration options are retained. Review the config diff and run a production build after adding features.

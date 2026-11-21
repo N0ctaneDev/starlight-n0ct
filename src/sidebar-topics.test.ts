@@ -1,7 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { topicFactory } = vi.hoisted(() => ({
-  topicFactory: vi.fn(() => ({ name: 'starlight-sidebar-topics' })),
+  topicFactory: vi.fn(() => ({
+    name: 'starlight-sidebar-topics',
+    hooks: {
+      'config:setup': ({
+        addRouteMiddleware,
+      }: {
+        addRouteMiddleware: (config: { entrypoint: string; order?: 'pre' | 'post' | 'default' }) => void;
+      }) => addRouteMiddleware({
+        entrypoint: 'starlight-sidebar-topics/middleware',
+        order: 'pre',
+      }),
+    },
+  })),
 }));
 
 vi.mock('starlight-sidebar-topics', () => ({
@@ -30,6 +42,23 @@ describe('N0ctane Sidebar Topics integration', () => {
       [expect.objectContaining({ label: 'Guides', id: 'guides', link: '/guides/' })],
       {},
     );
+  });
+
+  it('runs topic routing after Starlight Versions selects a version sidebar', () => {
+    const [plugin] = createN0ctSidebarTopics({
+      topicDisplay: 'list',
+      topics: [{ label: 'Guides', id: 'guides', link: '/guides/', directory: 'guides' }],
+    }, { blog: false });
+    const addRouteMiddleware = vi.fn();
+
+    plugin?.hooks['config:setup']?.({
+      addRouteMiddleware,
+    } as never);
+
+    expect(addRouteMiddleware).toHaveBeenCalledWith({
+      entrypoint: 'starlight-sidebar-topics/middleware',
+      order: 'post',
+    });
   });
 
   it('preserves user route options and excludes the configured Blog prefix', () => {

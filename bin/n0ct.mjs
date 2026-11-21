@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
 import { existsSync } from 'node:fs';
-import { cp, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, readdir, rename, writeFile } from 'node:fs/promises';
 import { basename, dirname, join, resolve } from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { createInterface } from 'node:readline/promises';
 import { emitKeypressEvents } from 'node:readline';
+import { addFeature } from './add-feature.mjs';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const templatesRoot = join(packageRoot, 'templates');
@@ -20,17 +21,26 @@ N0ctane project installer
 
 Usage:
   npx @n0ctanedev/starlight-n0ct init [directory] [options]
+  npx @n0ctanedev/starlight-n0ct add <feature> [project-directory] [options]
+
+Features:
+  blog, versioning, basePath, announcement, kbd, llmsTxt,
+  scrollToTop, llmActions, sidebarSwipe, linksValidator, imageZoom
 
 Options:
   --yes, -y              Use recommended defaults without prompts
-  --no-install           Scaffold files but do not install dependencies
+  --no-install           Scaffold files without installing dependencies
   --pm <manager>         Package manager: npm, pnpm, yarn, or bun
   --template <name>      Template: starter or blog (default: starter)
+  --blog-path <path>     Blog URL prefix/content directory (default: blog)
+  --version <slug>       Initial archived version slug
   --help, -h             Show this help
 
 Examples:
   npx @n0ctanedev/starlight-n0ct init my-docs
-  npx @n0ctanedev/starlight-n0ct init ./website --pm pnpm
+  npx @n0ctanedev/starlight-n0ct init my-publication --template blog
+  npx @n0ctanedev/starlight-n0ct add blog
+  npx @n0ctanedev/starlight-n0ct add versioning ./my-docs --version 1.0.0
 `);
 };
 
@@ -43,6 +53,9 @@ function parseArgs(argv) {
     install: true,
     packageManager: undefined,
     template: undefined,
+    blogPath: undefined,
+    versionSlug: undefined,
+    feature: undefined,
   };
 
   for (let index = firstIsOption ? 0 : 1; index < argv.length; index += 1) {
@@ -59,6 +72,16 @@ function parseArgs(argv) {
       index += 1;
     } else if (argument.startsWith('--template=')) {
       result.template = argument.slice('--template='.length);
+    } else if (argument === '--blog-path' || argument === '--path') {
+      result.blogPath = argv[index + 1];
+      index += 1;
+    } else if (argument.startsWith('--blog-path=')) {
+      result.blogPath = argument.slice('--blog-path='.length);
+    } else if (argument === '--version') {
+      result.versionSlug = argv[index + 1];
+      index += 1;
+    } else if (argument.startsWith('--version=')) {
+      result.versionSlug = argument.slice('--version='.length);
     } else if (argument === '--pm' || argument === '--package-manager') {
       result.packageManager = argv[index + 1];
       index += 1;
@@ -66,8 +89,9 @@ function parseArgs(argv) {
       result.packageManager = argument.slice('--pm='.length);
     } else if (argument.startsWith('--package-manager=')) {
       result.packageManager = argument.slice('--package-manager='.length);
-    } else if (!argument.startsWith('-') && !result.directory) {
-      result.directory = argument;
+    } else if (!argument.startsWith('-')) {
+      if (result.command === 'add' && !result.feature) result.feature = argument;
+      else if (!result.directory) result.directory = argument;
     }
   }
 
@@ -104,6 +128,14 @@ function normalizeBasePath(value) {
   }
 
   return normalized;
+}
+
+function normalizeBlogPath(value) {
+  const raw = String(value ?? 'blog').trim().replace(/^\/+|\/+$/g, '');
+  if (!raw || raw.split('/').some((part) => !part || part === '.' || part === '..') || /[\\:#?%\s\u0000-\u001f]/.test(raw)) {
+    throw new Error('Blog path must be a relative path such as blog or updates/blog, without spaces or URL characters.');
+  }
+  return raw;
 }
 
 function normalizeSiteUrl(value) {
@@ -234,7 +266,7 @@ async function interactiveList({ title, choices, selected = [], multiple = false
   });
 }
 
-async function promptForAnswers(defaults, enabledByDefault, yes, requestedTemplate) {
+async function promptForAnswers(defaults, enabledByDefault, yes, requestedTemplate, requestedBlogPath) {
   if (yes || !process.stdin.isTTY || !process.stdout.isTTY) {
     return {
       ...defaults,
@@ -242,6 +274,7 @@ async function promptForAnswers(defaults, enabledByDefault, yes, requestedTempla
       enabledIntegrations: requestedTemplate === 'blog'
         ? [...new Set([...enabledByDefault, 'blog'])]
         : enabledByDefault,
+      blogPath: requestedTemplate === 'blog' ? (requestedBlogPath || 'blog') : undefined,
     };
   }
 
@@ -280,7 +313,6 @@ async function promptForAnswers(defaults, enabledByDefault, yes, requestedTempla
           fallback: 'starter',
         });
     if (!template) throw new Error('Unknown template. Choose "starter" or "blog".');
-
     const choices = [
       { value: 'basePath', label: 'Base path rewriting', description: 'Prefix root-relative links with the deployment subpath when the site is not hosted at /.' },
       { value: 'announcement', label: 'Announcement banner', description: 'Display dismissible or scheduled notices at the top of the docs.' },
@@ -306,6 +338,9 @@ async function promptForAnswers(defaults, enabledByDefault, yes, requestedTempla
     const enabledIntegrations = template === 'blog'
       ? [...new Set([...selectedPlugins, 'blog'])]
       : selectedPlugins;
+    const blogPath = enabledIntegrations.includes('blog')
+      ? (requestedBlogPath || await ask('Blog path (URL prefix and content directory)', 'blog'))
+      : undefined;
 
     const enableVersioning = /^y(?:es)?$/i.test(
       await ask('Enable archived documentation versioning? (creates a snapshot on first dev/build)', 'no'),
@@ -333,6 +368,7 @@ async function promptForAnswers(defaults, enabledByDefault, yes, requestedTempla
       basePath,
       topicDisplay,
       template,
+      blogPath,
       enabledIntegrations,
       versioning,
     };
@@ -343,6 +379,7 @@ async function promptForAnswers(defaults, enabledByDefault, yes, requestedTempla
 
 function createN0ctConfig(answers) {
   const enabled = new Set(answers.enabledIntegrations);
+  const blogPath = enabled.has('blog') ? answers.blogPath : 'blog';
   const integrations = {
     basePath: enabled.has('basePath') ? {} : false,
     announcement: enabled.has('announcement') ? {} : false,
@@ -353,30 +390,49 @@ function createN0ctConfig(answers) {
     sidebarSwipe: enabled.has('sidebarSwipe') ? {} : false,
     linksValidator: enabled.has('linksValidator') ? {} : false,
     blog: enabled.has('blog')
-      ? answers.template === 'blog'
-        ? {
-            navigation: 'header-start',
-            metrics: { readingTime: true, words: 'rounded' },
-            authors: {
-              team: {
-                name: answers.title,
-                title: 'Editorial team',
-                url: answers.siteUrl,
-              },
+      ? {
+          prefix: blogPath,
+          navigation: 'header-start',
+          metrics: { readingTime: true, words: 'rounded' },
+          authors: {
+            team: {
+              name: answers.title,
+              title: 'Editorial team',
+              url: answers.siteUrl,
             },
-          }
-        : {}
+          },
+        }
       : false,
     imageZoom: enabled.has('imageZoom') ? {} : false,
   };
 
+  const n0ctaneColors = {
+    dark: { palette: { primary: '#F25CFF', secondary: '#8C42FF', accent: '#00E5FF', surface: '#131626', text: '#E6EAF8', highlight: '#2A85FF', highlightText: '#080A15', background: '#0B0D17' } },
+    light: { palette: { primary: '#B72DBF', secondary: '#7540CE', accent: '#00AFC2', surface: '#FFFFFF', text: '#211D32', highlight: '#286DCE', highlightText: '#FFFFFF', background: '#F6F5FB' } },
+  };
+  const draculaColors = {
+    dark: { palette: { primary: '#BD93F9', secondary: '#FF79C6', accent: '#8BE9FD', surface: '#343746', text: '#F8F8F2', highlight: '#44475A', highlightText: '#F8F8F2', background: '#282A36' } },
+    light: { palette: { primary: '#644AC9', secondary: '#A3144D', accent: '#036A96', surface: '#ECE9DF', text: '#1F1F1F', highlight: '#CFCFDE', highlightText: '#1F1F1F', background: '#FFFBEB' } },
+  };
+
   const config = {
     title: answers.title,
-    favicon: '/favicon.svg',
+    favicon: '/favicons/n0ctane.svg',
     description: answers.description,
     sidebar: {
       topicDisplay: answers.topicDisplay,
+      ...(enabled.has('blog') ? {
+        topicOptions: { exclude: ['/' + blogPath, '/' + blogPath + '/**/*'] },
+      } : {}),
       topics: [
+        {
+          label: 'Start here',
+          id: 'start',
+          icon: 'lucide:rocket',
+          dropdownIcon: 'rocket',
+          link: '/getting-started/',
+          items: ['getting-started'],
+        },
         {
           label: 'Guides',
           id: 'guides',
@@ -396,19 +452,55 @@ function createN0ctConfig(answers) {
       ],
     },
     integrations,
-    versioning: answers.versioning || false,
+    versioning: answers.versioning
+      ? {
+          ...answers.versioning,
+          ...(enabled.has('blog') ? { exclude: [blogPath + '/**'] } : {}),
+        }
+      : false,
+    starlight: {
+      logo: {
+        dark: './src/assets/n0ctane-dark.svg',
+        light: './src/assets/n0ctane-light.svg',
+        alt: 'N0ctane logo',
+      },
+    },
     icons: {
       iconDir: './src/icons',
       include: { lucide: ['*'] },
     },
     theme: {
+      defaultTheme: 'n0ctane',
+      themes: {
+        n0ctane: {
+          label: 'N0ctane',
+          favicon: '/favicons/n0ctane.svg',
+          logo: { dark: '/logos/n0ctane-dark.svg', light: '/logos/n0ctane-light.svg' },
+          colors: n0ctaneColors,
+        },
+        dracula: {
+          label: 'Dracula',
+          favicon: '/favicons/dracula.svg',
+          logo: { dark: '/logos/dracula-dark.svg', light: '/logos/dracula-light.svg' },
+          colors: draculaColors,
+        },
+      },
       glow: 'balanced',
       contentWidth: '55rem',
       sidebarWidth: '17rem',
     },
   };
 
-  return `// @ts-check\n\n/**\n * Generated by the N0ctane project installer.\n * @satisfies {import('@n0ctanedev/starlight-n0ct').N0ctConfig}\n */\nconst config = ${JSON.stringify(config, null, 2)};\n\nexport default config;\n`;
+  let serialized = JSON.stringify(config, null, 2)
+    .replace(/"([A-Za-z_$][\w$]*)":/g, '$1:');
+  if (enabled.has('blog') && enabled.has('linksValidator')) {
+    const prefix = JSON.stringify(blogPath);
+    const validator = "linksValidator: {\n      exclude: ({ link }) => { const path = link.split(/[?#]/, 1)[0]; const prefix = " + prefix + "; const prefixPath = '/' + prefix; return path === prefix || path === prefixPath || path.startsWith(prefix + '/') || path.endsWith(prefixPath) || path.includes(prefixPath + '/'); },\n    },";
+    serialized = serialized.replace('linksValidator: {},', validator);
+  }
+
+  return '// @ts-check\n\n/**\n * Generated by the N0ctane project installer.\n * @satisfies {import(\'@n0ctanedev/starlight-n0ct\').N0ctConfig}\n */\nconst config = ' +
+    serialized + ';\n\nexport default config;\n';
 }
 
 function packageVersions() {
@@ -477,6 +569,18 @@ async function main() {
     return;
   }
 
+  if (options.command === 'add') {
+    await addFeature({
+      feature: options.feature,
+      directory: options.directory,
+      packageManager: options.packageManager,
+      blogPath: options.blogPath,
+      versionSlug: options.versionSlug,
+      install: options.install,
+    });
+    return;
+  }
+
   if (options.command !== 'init') {
     usage();
     process.exitCode = 1;
@@ -509,9 +613,10 @@ async function main() {
     'imageZoom',
   ];
 
-  const answers = await promptForAnswers(defaults, recommendedIntegrations, options.yes, options.template);
+  const answers = await promptForAnswers(defaults, recommendedIntegrations, options.yes, options.template, options.blogPath);
 
   answers.siteUrl = normalizeSiteUrl(answers.siteUrl);
+  if (answers.enabledIntegrations.includes('blog')) answers.blogPath = normalizeBlogPath(answers.blogPath);
   answers.basePath = normalizeBasePath(answers.basePath);
   answers.topicDisplay = answers.topicDisplay.trim().toLowerCase();
 
@@ -519,6 +624,9 @@ async function main() {
     throw new Error('Sidebar topic display must be "collapsible", "list", or "dropdown".');
   }
 
+  if (answers.enabledIntegrations.includes('blog') && !answers.blogPath) {
+    throw new Error('A Blog path is required when the Blog integration is enabled.');
+  }
   if (answers.template === 'blog' && !answers.enabledIntegrations.includes('blog')) answers.enabledIntegrations.push('blog');
 
   const manager = options.packageManager ?? detectPackageManager(targetParent);
@@ -548,6 +656,23 @@ async function main() {
   const selectedTemplateRoot = join(templatesRoot, answers.template);
   if (!existsSync(selectedTemplateRoot)) throw new Error('Template "' + answers.template + '" does not exist.');
   await cp(selectedTemplateRoot, target, { recursive: true });
+  if (answers.template === 'blog' && answers.blogPath !== 'blog') {
+    const sourceBlog = join(target, 'src', 'content', 'docs', 'blog');
+    const targetBlog = join(target, 'src', 'content', 'docs', ...answers.blogPath.split('/'));
+    await mkdir(dirname(targetBlog), { recursive: true });
+    await rename(sourceBlog, targetBlog);
+  }
+
+  const generatedReadme = join(target, 'README.md');
+  if (existsSync(generatedReadme)) {
+    let readme = await readFile(generatedReadme, 'utf8');
+    if (answers.template === 'blog' && answers.blogPath !== 'blog') {
+      readme = readme.replaceAll('src/content/docs/blog/', 'src/content/docs/' + answers.blogPath + '/');
+    } else if (answers.template !== 'blog' && answers.enabledIntegrations.includes('blog')) {
+      readme += '\n\n## Blog publication\n\nBlog routes use /' + answers.blogPath + '/ and posts live under src/content/docs/' + answers.blogPath + '/. Keep sidebar.hidden: true in each post so it does not appear in documentation navigation. Configure authors under integrations.blog.authors in n0ct.config.mjs.\n';
+    }
+    await writeFile(generatedReadme, readme, 'utf8');
+  }
   await writeFile(
     join(target, 'package.json'),
     `${JSON.stringify(projectPackage, null, 2)}\n`,
@@ -565,9 +690,33 @@ async function main() {
   const homeContent = await readFile(homePage, 'utf8');
   await writeFile(
     homePage,
-    homeContent.replace('"__N0CT_SITE_TITLE__"', JSON.stringify(answers.title)),
+    homeContent
+      .replace('"__N0CT_SITE_TITLE__"', JSON.stringify(answers.title))
+      .replaceAll('/blog/', '/' + (answers.blogPath || 'blog') + '/')
+      .replaceAll('src/content/docs/blog/', 'src/content/docs/' + (answers.blogPath || 'blog') + '/'),
     'utf8',
   );
+
+  if (answers.enabledIntegrations.includes('blog')) {
+    const postPath = join(target, 'src', 'content', 'docs', ...answers.blogPath.split('/'), 'first-post.mdx');
+    if (!existsSync(postPath)) {
+      await mkdir(dirname(postPath), { recursive: true });
+      await writeFile(postPath, [
+        '---',
+        'title: Welcome to the publication',
+        'description: Your first Blog post.',
+        'date: ' + new Date().toISOString().slice(0, 10),
+        'authors: [team]',
+        'tags: [welcome]',
+        'sidebar:',
+        '  hidden: true',
+        '---',
+        '',
+        'Write your first publication post here.',
+        '',
+      ].join('\n'), 'utf8');
+    }
+  }
 
   console.log(`\nCreated ${answers.title} in ${target}`);
   console.log(`Site URL: ${answers.siteUrl}`);
@@ -575,6 +724,20 @@ async function main() {
   console.log(`Sidebar topics: ${answers.topicDisplay}`);
   console.log('Lucide icons: explicitly added to project dependencies.');
   console.log('Template: ' + answers.template);
+  if (answers.enabledIntegrations.includes('blog')) {
+    console.log('Blog path: /' + answers.blogPath + '/ (src/content/docs/' + answers.blogPath + '/)');
+    const blogGuide = join(target, 'src', 'content', 'docs', 'getting-started.mdx');
+    if (existsSync(blogGuide)) {
+      let guide = await readFile(blogGuide, 'utf8');
+      guide = guide
+        .replaceAll('src/content/docs/blog/', 'src/content/docs/' + answers.blogPath + '/')
+        .replaceAll('/blog/', '/' + answers.blogPath + '/');
+      if (answers.template !== 'blog' && !guide.includes('## Blog publication')) {
+        guide += '\n\n## Blog publication\n\nYour Blog is available at /' + answers.blogPath + '/. Create posts under src/content/docs/' + answers.blogPath + '/ and keep sidebar.hidden: true in each post so it stays out of the docs sidebar. The Blog author profile is configured under integrations.blog.authors in n0ct.config.mjs.\n';
+      }
+      await writeFile(blogGuide, guide, 'utf8');
+    }
+  }
   console.log('Starter pages, content schemas, favicon, and GitHub Pages workflow are ready.');
   console.log(`Versioning: ${answers.versioning ? 'enabled (an initial archive will be created on first dev/build)' : 'disabled'}.`);
 

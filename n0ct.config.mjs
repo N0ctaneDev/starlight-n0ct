@@ -8,7 +8,7 @@ const config = {
   title: 'N0ctane',
   description: 'A modern, readable documentation theme for Astro Starlight.',
   sidebar: {
-    topicDisplay: 'collapsible',
+    topicDisplay: 'list',
     topics: [
       { label: 'Start here', id: 'start', icon: 'lucide:rocket', link: '/getting-started/', items: ['getting-started', 'contributing', 'changelog'] },
       { label: 'Guides', id: 'guides', icon: 'lucide:book-open', link: '/guides' },

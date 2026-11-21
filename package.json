@@ -62,14 +62,15 @@
     "docs:install": "npm --prefix docs install --no-audit --no-fund",
     "docs:dev": "npm run build && npm run docs:install && npm --prefix docs run dev",
     "docs:build": "npm run build && npm run docs:install && npm run docs:build:site",
-    "check": "node --check bin/n0ct.mjs && npm run typecheck && npm test && npm run build",
-    "check:all": "npm run check && npm run docs:install && npm run docs:build:site && npm run audit:full",
+    "check": "node --check bin/n0ct.mjs && node --check bin/add-feature.mjs && node --check scripts/check-templates.mjs && npm run typecheck && npm test && npm run build",
+    "check:all": "npm run check && npm run docs:install && npm run docs:build:site && npm run templates:check && npm run audit:full",
     "prepack": "npm run build",
     "audit": "node ./scripts/audit-deps.mjs",
     "docs:build:site": "npm --prefix docs run build && node ./scripts/check-code-tabs-build.mjs",
     "check:ci": "npm run check:all && npm pack --dry-run",
     "security:check": "node ./scripts/audit-deps.mjs",
-    "audit:full": "node ./scripts/audit-deps.mjs"
+    "audit:full": "node ./scripts/audit-deps.mjs",
+    "templates:check": "node scripts/check-templates.mjs"
   },
   "dependencies": {
     "@astrojs/starlight-tailwind": "^5.0.0",

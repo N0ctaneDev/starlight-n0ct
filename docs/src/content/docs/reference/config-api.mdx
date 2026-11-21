@@ -46,7 +46,7 @@ export default config;
 | topicOptions.topics | `Record<string, string[]>` | Map otherwise-unlisted route patterns to topic IDs |
 | extra | N0ctNativeSidebarItem[] | Append native Starlight entries |
 
-A topic may be a directory string or an object with label, id, icon, dropdownIcon, link, directory, autogenerate, items, collapsed, badge, attrs, and translations. A string such as guides creates a title-cased group with children generated from that content directory.
+A topic may be a directory string or an object with label, id, icon, dropdownIcon, link, directory, autogenerate, items, collapsed, badge, attrs, and translations. A string such as guides creates a title-cased group with children generated from that content directory. When the Blog integration is enabled, N0ctane automatically excludes its configured prefix from Sidebar Topics routing in list/dropdown modes. Blog posts should also use `sidebar.hidden: true` so they stay out of the native Starlight docs sidebar.
 
 ## Footer and icons
 

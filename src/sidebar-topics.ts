@@ -1,5 +1,5 @@
 import starlightSidebarTopics from 'starlight-sidebar-topics';
-import type { StarlightPlugin } from '@astrojs/starlight/types';
+import type { HookParameters, StarlightPlugin } from '@astrojs/starlight/types';
 import { topicToSidebar } from './config.js';
 import type {
   N0ctBadge,
@@ -91,7 +91,7 @@ function toTopicPluginEntry(
   };
 }
 
-function getBlogRouteExclusions(integrations: N0ctConfig['integrations']): string[] {
+export function getBlogRouteExclusions(integrations: N0ctConfig['integrations']): string[] {
   const blog = integrations?.blog;
   if (blog === false) return [];
 
@@ -132,5 +132,28 @@ export function createN0ctSidebarTopics(
   };
 
   const extra = sidebar?.extra ?? [];
-  return [starlightSidebarTopics(topics.map((topic) => toTopicPluginEntry(topic, extra)), options)];
+  const topicPlugin = starlightSidebarTopics(topics.map((topic) => toTopicPluginEntry(topic, extra)), options);
+  const setup = topicPlugin.hooks['config:setup'];
+
+  if (!setup) return [topicPlugin];
+
+  // Starlight Versions wraps the configured sidebar into version groups in its
+  // default middleware bucket. Sidebar Topics then needs to resolve the active
+  // topic within that selected version, so its route middleware must run last.
+  return [{
+    ...topicPlugin,
+    hooks: {
+      ...topicPlugin.hooks,
+      'config:setup': (context: HookParameters<'config:setup'>) => {
+        const { addRouteMiddleware, ...hookContext } = context;
+        return setup({
+          ...hookContext,
+          addRouteMiddleware: (middleware) => addRouteMiddleware({
+            ...middleware,
+            order: 'post',
+          }),
+        });
+      },
+    },
+  }];
 }

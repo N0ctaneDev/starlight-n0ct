@@ -63,4 +63,4 @@ Do not configure multiple missing versions at once; the upstream plugin intentio
 
 ## Blog routes
 
-Exclude the blog source from versioning when you want posts to keep stable URLs across documentation releases. The demo config uses blog/** in the exclude list.
+Exclude the Blog source from versioning when you want posts to keep stable URLs across documentation releases. The generated Blog template sets the correct source glob automatically, and n0ct add versioning checks the configured Blog prefix before writing versioning.exclude. If you add Blog after versioning, the Blog command adds the same exclusion. For a custom Blog path such as journal/releases, the source glob is journal/releases/**.
