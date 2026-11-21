@@ -8,7 +8,6 @@ import { fileURLToPath } from 'node:url';
 import { createInterface } from 'node:readline/promises';
 import { emitKeypressEvents } from 'node:readline';
 import { addFeature } from './add-feature.mjs';
-import { addFeature } from './add-feature.mjs';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const templatesRoot = join(packageRoot, 'templates');
