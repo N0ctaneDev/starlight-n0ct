@@ -710,10 +710,14 @@ async function main() {
     console.log('Blog path: /' + answers.blogPath + '/ (src/content/docs/' + answers.blogPath + '/)');
     const blogGuide = join(target, 'src', 'content', 'docs', 'getting-started.mdx');
     if (existsSync(blogGuide)) {
-      const guide = await readFile(blogGuide, 'utf8');
-      await writeFile(blogGuide, guide
+      let guide = await readFile(blogGuide, 'utf8');
+      guide = guide
         .replaceAll('src/content/docs/blog/', 'src/content/docs/' + answers.blogPath + '/')
-        .replaceAll('/blog/', '/' + answers.blogPath + '/'), 'utf8');
+        .replaceAll('/blog/', '/' + answers.blogPath + '/');
+      if (answers.template !== 'blog' && !guide.includes('## Blog publication')) {
+        guide += '\n\n## Blog publication\n\nYour Blog is available at /' + answers.blogPath + '/. Create posts under src/content/docs/' + answers.blogPath + '/ and keep sidebar.hidden: true in each post so it stays out of the docs sidebar. The Blog author profile is configured under integrations.blog.authors in n0ct.config.mjs.\n';
+      }
+      await writeFile(blogGuide, guide, 'utf8');
     }
   }
   console.log('Starter pages, content schemas, favicon, and GitHub Pages workflow are ready.');
