@@ -193,7 +193,7 @@ export function createN0ctSidebarTopics(
         const runtimeDir = join(fileURLToPath(context.astroConfig.root), '.astro', 'n0ctane');
         const debugMiddlewarePath = join(runtimeDir, 'sidebar-topic-debug.mjs');
         await mkdir(dirname(debugMiddlewarePath), { recursive: true });
-        await writeFile(debugMiddlewarePath, String.raw\`export function onRequest(context) {
+        await writeFile(debugMiddlewarePath, String.raw`export function onRequest(context) {
   const route = context.locals.starlightRoute;
   if (!/^(?:components|guides|showcase|reference)(?:\\/index)?$/.test(route.id)) return;
   const describe = (entries) => entries.map((entry) => ({
@@ -209,7 +209,7 @@ export function createN0ctSidebarTopics(
     sidebar: describe(route.sidebar ?? []),
   }));
 }
-\`, 'utf8');
+`, 'utf8');
 
         return setup({
           ...hookContext,
