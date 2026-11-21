@@ -53,9 +53,8 @@ function toTopicPluginEntry(
   extra: N0ctNativeSidebarItem[] = [],
 ): TopicPluginEntry {
   const native = topicToSidebar(topic);
-  const items = typeof native === 'object' && native !== null && 'items' in native
-    ? [...native.items, ...extra]
-    : [...extra];
+  const isGroup = typeof native === 'object' && native !== null && 'items' in native;
+  const items = isGroup ? [...native.items, ...extra] : [...extra];
 
   const label = typeof topic === 'string'
     ? titleCase(topic.split('/').at(-1) ?? topic)
@@ -81,17 +80,16 @@ function toTopicPluginEntry(
     );
   }
 
-  const hasGroupItems = items.length > 0;
   const id = typeof topic === 'string' ? `n0ct-topic-${index + 1}` : topic.id ?? `n0ct-topic-${index + 1}`;
 
   return {
     label,
     link,
     ...(typeof topic !== 'string' && topic.icon ? { icon: topic.icon } : {}),
-    ...(hasGroupItems ? { id } : (typeof topic !== 'string' && topic.id ? { id: topic.id } : {})),
+    ...(isGroup ? { id } : (typeof topic !== 'string' && topic.id ? { id: topic.id } : {})),
     ...(typeof topic !== 'string' && topic.badge ? { badge: topic.badge } : {}),
     ...(typeof topic !== 'string' && topic.attrs ? { attrs: topic.attrs } : {}),
-    ...(hasGroupItems ? { items } : {}),
+    ...(isGroup ? { items } : {}),
   };
 }
 
