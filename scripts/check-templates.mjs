@@ -59,6 +59,7 @@ async function installAndBuild(projectDirectory) {
 try {
   const starter = await scaffold('starter', 'starter');
   const blog = await scaffold('blog', 'blog', ['--blog-path', 'journal/releases']);
+  const reverseOrder = await scaffold('reverse-order', 'starter');
 
   const blogConfig = await readFile(join(blog, 'n0ct.config.mjs'), 'utf8');
   assert.match(blogConfig, /prefix:\s*["']journal\/releases["']/);
@@ -85,6 +86,15 @@ try {
   const upgradedSchema = await readFile(join(starter, 'src/content.config.ts'), 'utf8');
   assert.match(upgradedSchema, /blogSchema/);
   assert.match(upgradedSchema, /docsVersionsLoader/);
+
+  // Verify the reverse feature order: versioning first, then Blog.
+  await addFeature({ feature: 'versioning', directory: reverseOrder, versionSlug: '2.0.0', install: false });
+  await addFeature({ feature: 'linksValidator', directory: reverseOrder, install: false });
+  await addFeature({ feature: 'blog', directory: reverseOrder, blogPath: 'journal', install: false });
+  const reverseConfig = await readFile(join(reverseOrder, 'n0ct.config.mjs'), 'utf8');
+  assert.match(reverseConfig, /journal\\/\\*\\*/);
+  assert.match(reverseConfig, /linksValidator:\s*\\{/);
+  assert.match(reverseConfig, /isBlog/);
 
   await installAndBuild(starter);
   await installAndBuild(blog);
