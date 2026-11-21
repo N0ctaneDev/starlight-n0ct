@@ -33,7 +33,7 @@ describe('N0ctane Sidebar Topics integration', () => {
   it.each(['list', 'dropdown'] as const)('activates Sidebar Topics in %s mode', (topicDisplay) => {
     const plugins = createN0ctSidebarTopics({
       topicDisplay,
-      topics: [{ label: 'Guides', id: 'guides', link: '/guides/', directory: 'guides' }],
+      topics: [{ label: 'Guides', id: 'guides', icon: 'open-book', link: '/guides/', directory: 'guides' }],
     }, { blog: false });
 
     expect(plugins).toHaveLength(1);
@@ -82,7 +82,7 @@ describe('N0ctane Sidebar Topics integration', () => {
       })],
       {
         exclude: ['/news', '/news/**/*', '/search', '/api/**'],
-        topics: { reference: ['/generated-api/**'] },
+        topics: { reference: ['/generated-api/**', '/reference/index', '/*/reference/index'] },
       },
     );
   });
@@ -95,7 +95,7 @@ describe('N0ctane Sidebar Topics integration', () => {
 
     expect(topicFactory).toHaveBeenCalledWith(
       [expect.objectContaining({ label: 'Guides', link: '/guides/' })],
-      {},
+      { topics: { 'n0ct-topic-1': ['/guides/index', '/*/guides/index'] } },
     );
   });
 
@@ -120,8 +120,7 @@ describe('N0ctane Sidebar Topics integration', () => {
       ],
     }, { blog: false });
 
-    const [, options] = topicFactory.mock.calls[0] ?? [];
-    expect(options).toEqual({
+    expect(topicFactory).toHaveBeenCalledWith(expect.any(Array), {
       topics: {
         'n0ct-topic-1': ['/guides/index', '/*/guides/index'],
         'n0ct-topic-2': ['/reference/index', '/*/reference/index'],
@@ -135,9 +134,10 @@ describe('N0ctane Sidebar Topics integration', () => {
       topics: [{ label: 'Guides', id: 'guides', icon: 'open-book', link: '/guides/', directory: 'guides' }],
     }, { blog: false });
 
-    expect(topicFactory.mock.calls[0]?.[0]).toEqual([
-      expect.objectContaining({ icon: 'open-book' }),
-    ]);
+    expect(topicFactory).toHaveBeenCalledWith(
+      [expect.objectContaining({ icon: 'open-book' })],
+      expect.anything(),
+    );
   });
 
   it('requires root topics in plugin-backed modes', () => {
