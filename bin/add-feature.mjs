@@ -136,13 +136,21 @@ function setPath(text, keys, rawValue) {
   return text;
 }
 
-function ensureExclude(text, key, patterns) {
-  const group = getProperty(text, rootObject(text), key);
-  if (!group || text[group.start] !== '{') return text;
-  const found = getProperty(text, group.start, 'exclude');
-  if (!found) return insertProperty(text, group.start, 'exclude', JSON.stringify(patterns));
+function ensureExclude(text, path, patterns) {
+  let objectStart = rootObject(text);
+  for (const key of path) {
+    let part = getProperty(text, objectStart, key);
+    if (!part) {
+      text = insertProperty(text, objectStart, key, '{}');
+      part = getProperty(text, objectStart, key);
+    }
+    if (!part || text[part.start] !== '{') throw new Error(path.join('.') + ' must be an object to configure exclusions.');
+    objectStart = part.start;
+  }
+  const found = getProperty(text, objectStart, 'exclude');
+  if (!found) return insertProperty(text, objectStart, 'exclude', JSON.stringify(patterns));
   const raw = text.slice(found.start, found.end).trim();
-  if (!raw.startsWith('[') || !raw.endsWith(']')) throw new Error(key + '.exclude is not a literal array. Add these patterns manually: ' + patterns.join(', '));
+  if (!raw.startsWith('[') || !raw.endsWith(']')) throw new Error(path.join('.') + '.exclude is not a literal array. Add these patterns manually: ' + patterns.join(', '));
   const values = [...raw.matchAll(/(['"])(.*?)\1/g)].map((m) => m[2]);
   const missing = patterns.filter((p) => !values.includes(p));
   if (!missing.length) return text;
@@ -150,6 +158,17 @@ function ensureExclude(text, key, patterns) {
   const comma = prefix.endsWith('[') || prefix.endsWith(',') ? '' : ',';
   const next = prefix + comma + ' ' + missing.map((p) => JSON.stringify(p)).join(', ') + ']';
   return text.slice(0, found.start) + next + text.slice(found.end);
+}
+
+function addBlogLinkValidatorExclusion(text, prefix) {
+  const integrations = getProperty(text, rootObject(text), 'integrations');
+  if (!integrations || text[integrations.start] !== '{') return text;
+  const validator = getProperty(text, integrations.start, 'linksValidator');
+  if (!validator || text.slice(validator.start, validator.end).trim() === 'false' || text[validator.start] !== '{') return text;
+  if (getProperty(text, validator.start, 'exclude')) return text;
+  const path = JSON.stringify(prefix);
+  const callback = "({ link }) => { const path = link.split(/[?#]/, 1)[0].replace(/^\\/+/, ''); return path === " + path + " || path.startsWith(" + path + " + '/'); }";
+  return setPath(text, ['integrations', 'linksValidator', 'exclude'], callback);
 }
 
 function addImport(text, statement, moduleName) {
@@ -280,7 +299,8 @@ export async function addFeature(options) {
       config = setPath(config, ['integrations', 'blog', 'prefix'], JSON.stringify(prefix));
     }
 
-    config = ensureExclude(config, 'sidebar', ['/' + prefix, '/' + prefix + '/**/*']);
+    config = ensureExclude(config, ['sidebar', 'topicOptions'], ['/' + prefix, '/' + prefix + '/**/*']);
+    config = addBlogLinkValidatorExclusion(config, prefix);
     await updateContentConfig(directory, { blog: true });
     const post = join(directory, 'src/content/docs', prefix, 'first-post.mdx');
     if (!existsSync(post)) {
@@ -319,7 +339,7 @@ export async function addFeature(options) {
     if (blog && config[blog.start] === '{') {
       const prefixValue = getProperty(config, blog.start, 'prefix');
       const prefix = prefixValue ? config.slice(prefixValue.start, prefixValue.end).trim().replace(/^['"]|['"]$/g, '') : 'blog';
-      config = ensureExclude(config, 'versioning', [prefix + '/**']);
+      config = ensureExclude(config, ['versioning'], [prefix + '/**']);
     }
     await updateContentConfig(directory, { versioning: true });
     pkg.dependencies ||= {};
