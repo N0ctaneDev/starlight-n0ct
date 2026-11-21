@@ -36,6 +36,9 @@ async function scaffold(name, template, extraArgs = []) {
   assert.match(config, /defaultTheme:\s*["']n0ctane["']/);
   assert.match(config, /dracula:\s*\{/);
   assert.match(config, /\/favicons\/n0ctane\.svg/);
+  assert.match(config, /icon:\s*['\"]lucide:book-open['\"]/);
+  assert.match(config, /footer:\s*\{[\s\S]*?Built with Starlight-N0ct/);
+  assert.doesNotMatch(config, /dropdownIcon/);
   assert.equal((await exists(join(directory, 'public', 'favicons', 'n0ctane.svg'))), true);
   assert.equal((await exists(join(directory, 'public', 'favicons', 'dracula.svg'))), true);
   assert.equal((await exists(join(directory, 'public', 'logos', 'n0ctane-dark.svg'))), true);
