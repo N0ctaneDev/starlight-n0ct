@@ -1,5 +1,5 @@
 import starlightSidebarTopics from 'starlight-sidebar-topics';
-import type { HookParameters, StarlightIcon, StarlightPlugin } from '@astrojs/starlight/types';
+import type { HookParameters, StarlightPlugin } from '@astrojs/starlight/types';
 import { topicToSidebar } from './config.js';
 import type {
   N0ctBadge,
@@ -11,7 +11,7 @@ import type {
 type TopicPluginEntry = {
   label: string;
   link: string;
-  icon?: StarlightIcon;
+  icon?: string;
   id?: string;
   badge?: N0ctBadge;
   attrs?: Record<string, string | number | boolean | undefined>;
