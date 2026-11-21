@@ -33,13 +33,13 @@ describe('N0ctane Sidebar Topics integration', () => {
   it.each(['list', 'dropdown'] as const)('activates Sidebar Topics in %s mode', (topicDisplay) => {
     const plugins = createN0ctSidebarTopics({
       topicDisplay,
-      topics: [{ label: 'Guides', id: 'guides', icon: 'open-book', link: '/guides/', directory: 'guides' }],
+      topics: [{ label: 'Guides', id: 'guides', icon: 'lucide:book-open', link: '/guides/', directory: 'guides' }],
     }, { blog: false });
 
     expect(plugins).toHaveLength(1);
     expect(topicFactory).toHaveBeenCalledOnce();
     expect(topicFactory).toHaveBeenCalledWith(
-      [expect.objectContaining({ label: 'Guides', id: 'guides', link: '/guides/', icon: 'open-book' })],
+      [expect.objectContaining({ label: 'Guides', id: 'guides', link: '/guides/', icon: 'lucide:book-open' })],
       { topics: { guides: ['/guides/index', '/*/guides/index'] } },
     );
   });
@@ -131,11 +131,11 @@ describe('N0ctane Sidebar Topics integration', () => {
   it('passes the single topic icon property to the list and dropdown plugin', () => {
     createN0ctSidebarTopics({
       topicDisplay: 'dropdown',
-      topics: [{ label: 'Guides', id: 'guides', icon: 'open-book', link: '/guides/', directory: 'guides' }],
+      topics: [{ label: 'Guides', id: 'guides', icon: 'lucide:book-open', link: '/guides/', directory: 'guides' }],
     }, { blog: false });
 
     expect(topicFactory).toHaveBeenCalledWith(
-      [expect.objectContaining({ icon: 'open-book' })],
+      [expect.objectContaining({ icon: 'lucide:book-open' })],
       expect.anything(),
     );
   });
