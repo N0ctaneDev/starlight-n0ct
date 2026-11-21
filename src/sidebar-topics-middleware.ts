@@ -36,7 +36,7 @@ export const onRequest = defineRouteMiddleware(async (context) => {
   // Other integrations' links/groups must not shift those indexes.
   route.sidebar = topicGroups;
 
-  await resolveSidebarTopic(context);
+  await resolveSidebarTopic(context, async () => {});
 
   // Sidebar Topics replaces route.sidebar with the selected topic's contents.
   // Restore integration-owned entries (e.g. starlight-blog's navigation link).
