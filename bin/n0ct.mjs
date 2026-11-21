@@ -655,6 +655,17 @@ async function main() {
     await mkdir(dirname(targetBlog), { recursive: true });
     await rename(sourceBlog, targetBlog);
   }
+
+  const generatedReadme = join(target, 'README.md');
+  if (existsSync(generatedReadme)) {
+    let readme = await readFile(generatedReadme, 'utf8');
+    if (answers.template === 'blog' && answers.blogPath !== 'blog') {
+      readme = readme.replaceAll('src/content/docs/blog/', 'src/content/docs/' + answers.blogPath + '/');
+    } else if (answers.template !== 'blog' && answers.enabledIntegrations.includes('blog')) {
+      readme += '\n\n## Blog publication\n\nBlog routes use /' + answers.blogPath + '/ and posts live under src/content/docs/' + answers.blogPath + '/. Keep sidebar.hidden: true in each post so it does not appear in documentation navigation. Configure authors under integrations.blog.authors in n0ct.config.mjs.\n';
+    }
+    await writeFile(generatedReadme, readme, 'utf8');
+  }
   await writeFile(
     join(target, 'package.json'),
     `${JSON.stringify(projectPackage, null, 2)}\n`,
