@@ -33,7 +33,7 @@ async function scaffold(name, template, extraArgs = []) {
   const config = await readFile(configPath, 'utf8');
   assert.match(config, /(^|\n)\s*title:/);
   assert.doesNotMatch(config, /"title"\s*:/);
-  assert.match(config, /defaultTheme:\s*'n0ctane'/);
+  assert.match(config, /defaultTheme:\s*["']n0ctane["']/);
   assert.match(config, /dracula:\s*\{/);
   assert.match(config, /\/favicons\/n0ctane\.svg/);
   assert.equal((await exists(join(directory, 'public', 'favicons', 'n0ctane.svg'))), true);
@@ -61,7 +61,7 @@ try {
   const blog = await scaffold('blog', 'blog', ['--blog-path', 'journal/releases']);
 
   const blogConfig = await readFile(join(blog, 'n0ct.config.mjs'), 'utf8');
-  assert.match(blogConfig, /prefix:\s*'journal\/releases'/);
+  assert.match(blogConfig, /prefix:\s*["']journal\/releases["']/);
   assert.match(blogConfig, /topicOptions:\s*\{\s*exclude:/);
   assert.equal(await exists(join(blog, 'src/content/docs/journal/releases/first-post.mdx')), true);
   assert.equal(await exists(join(blog, 'src/content/docs/blog')), false);
@@ -80,7 +80,7 @@ try {
   assert.match(upgradedConfig, /prefix:\s*"newsroom"/);
   assert.match(upgradedConfig, /newsroom\/\*\*/);
   assert.match(upgradedConfig, /linksValidator:/);
-  assert.match(upgradedConfig, /path\.includes\('\/' \+ prefix \+ '\/'\)/);
+  assert.match(upgradedConfig, /path\.includes\(prefixPath \+ '\/'\)/);
   assert.equal(await exists(join(starter, 'src/content/docs/newsroom/first-post.mdx')), true);
   const upgradedSchema = await readFile(join(starter, 'src/content.config.ts'), 'utf8');
   assert.match(upgradedSchema, /blogSchema/);
