@@ -314,10 +314,6 @@ async function promptForAnswers(defaults, enabledByDefault, yes, requestedTempla
           fallback: 'starter',
         });
     if (!template) throw new Error('Unknown template. Choose "starter" or "blog".');
-    const blogPath = template === 'blog'
-      ? (requestedBlogPath || await ask('Blog path (URL prefix and content directory)', 'blog'))
-      : undefined;
-
     const choices = [
       { value: 'basePath', label: 'Base path rewriting', description: 'Prefix root-relative links with the deployment subpath when the site is not hosted at /.' },
       { value: 'announcement', label: 'Announcement banner', description: 'Display dismissible or scheduled notices at the top of the docs.' },
@@ -343,6 +339,9 @@ async function promptForAnswers(defaults, enabledByDefault, yes, requestedTempla
     const enabledIntegrations = template === 'blog'
       ? [...new Set([...selectedPlugins, 'blog'])]
       : selectedPlugins;
+    const blogPath = enabledIntegrations.includes('blog')
+      ? (requestedBlogPath || await ask('Blog path (URL prefix and content directory)', 'blog'))
+      : undefined;
 
     const enableVersioning = /^y(?:es)?$/i.test(
       await ask('Enable archived documentation versioning? (creates a snapshot on first dev/build)', 'no'),
