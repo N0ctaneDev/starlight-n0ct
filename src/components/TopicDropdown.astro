@@ -4,7 +4,9 @@ import { Icon } from 'astro-icon/components';
 
 const routeTopics = (Astro.locals as any).starlightSidebarTopics;
 const topics = routeTopics?.topics ?? [];
-const currentTopic = topics.find((topic: any) => topic.isCurrent);
+const currentTopic = routeTopics?.isPageWithTopic
+  ? topics.find((topic: any) => topic.isCurrent)
+  : undefined;
 ---
 
 {currentTopic && (
