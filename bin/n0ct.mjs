@@ -706,7 +706,7 @@ async function main() {
         '',
         'Write your first publication post here.',
         '',
-      ].join('\\n'), 'utf8');
+      ].join('\n'), 'utf8');
     }
   }
 
