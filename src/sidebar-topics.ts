@@ -91,7 +91,7 @@ function toTopicPluginEntry(
   };
 }
 
-function getBlogRouteExclusions(integrations: N0ctConfig['integrations']): string[] {
+export function getBlogRouteExclusions(integrations: N0ctConfig['integrations']): string[] {
   const blog = integrations?.blog;
   if (blog === false) return [];
 
