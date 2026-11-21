@@ -190,10 +190,15 @@ export function createN0ctSidebarTopics(
       ...topicPlugin.hooks,
       'config:setup': async (context: HookParameters<'config:setup'>) => {
         const { addRouteMiddleware, ...hookContext } = context;
-        const runtimeDir = join(fileURLToPath(context.astroConfig.root), '.astro', 'n0ctane');
-        const debugMiddlewarePath = join(runtimeDir, 'sidebar-topic-debug.mjs');
-        await mkdir(dirname(debugMiddlewarePath), { recursive: true });
-        await writeFile(debugMiddlewarePath, String.raw`export function onRequest(context) {
+        const runtimeDir = context.astroConfig?.root
+          ? join(fileURLToPath(context.astroConfig.root), '.astro', 'n0ctane')
+          : undefined;
+        const debugMiddlewarePath = runtimeDir
+          ? join(runtimeDir, 'sidebar-topic-debug.mjs')
+          : undefined;
+        if (debugMiddlewarePath) {
+          await mkdir(dirname(debugMiddlewarePath), { recursive: true });
+          await writeFile(debugMiddlewarePath, String.raw`export function onRequest(context) {
   const route = context.locals.starlightRoute;
   const rootId = route.id.endsWith('/index') ? route.id.slice(0, -6) : route.id;
   if (!['components', 'guides', 'showcase', 'reference'].includes(rootId)) return;
@@ -211,12 +216,15 @@ export function createN0ctSidebarTopics(
   }));
 }
 `, 'utf8');
+        }
 
         return setup({
           ...hookContext,
           addRouteMiddleware: (middleware) => {
             // Log the version-selected sidebar immediately before Sidebar Topics resolves it.
-            addRouteMiddleware({ entrypoint: debugMiddlewarePath, order: 'post' });
+            if (debugMiddlewarePath) {
+              addRouteMiddleware({ entrypoint: debugMiddlewarePath, order: 'post' });
+            }
             addRouteMiddleware({ ...middleware, order: 'post' });
           },
         });
