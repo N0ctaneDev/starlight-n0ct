@@ -60,6 +60,14 @@ async function installAndBuild(projectDirectory) {
 }
 
 try {
+  // Demo topic index pages must be visible as Overview and associated with their topic.
+  for (const topic of ['components', 'guides', 'showcase', 'reference']) {
+    const overviewPath = join(packageRoot, 'docs', 'src', 'content', 'docs', topic, 'index.mdx');
+    const overview = await readFile(overviewPath, 'utf8');
+    assert.ok(overview.includes('sidebar:\n  label: Overview'), topic + ' index must be labelled Overview');
+    assert.ok(overview.includes('topic: ' + topic), topic + ' index must declare its topic ID');
+  }
+
   for (const templateName of ['starter', 'blog']) {
     const templateConfig = await readFile(join(packageRoot, 'templates', templateName, 'n0ct.config.mjs'), 'utf8');
     assert.match(templateConfig, /footer:\s*\{/);
