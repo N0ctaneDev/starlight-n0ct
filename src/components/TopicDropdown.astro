@@ -56,3 +56,26 @@ const currentTopic = topics.find((topic: any) => topic.isCurrent);
     </div>
   </details>
 )}
+
+<script>
+  const topicDropdownWindow = window as typeof window & { __n0ctTopicDropdownBound?: boolean };
+
+  if (!topicDropdownWindow.__n0ctTopicDropdownBound) {
+    topicDropdownWindow.__n0ctTopicDropdownBound = true;
+
+    document.addEventListener('click', (event) => {
+      const target = event.target instanceof Node ? event.target : null;
+      document.querySelectorAll<HTMLDetailsElement>('.n0ct-topic-dropdown[open]').forEach((dropdown) => {
+        if (!target || !dropdown.contains(target)) dropdown.open = false;
+      });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      document.querySelectorAll<HTMLDetailsElement>('.n0ct-topic-dropdown[open]').forEach((dropdown) => {
+        dropdown.open = false;
+        dropdown.querySelector<HTMLElement>('summary')?.focus();
+      });
+    });
+  }
+</script>
