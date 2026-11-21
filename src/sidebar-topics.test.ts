@@ -39,8 +39,8 @@ describe('N0ctane Sidebar Topics integration', () => {
     expect(plugins).toHaveLength(1);
     expect(topicFactory).toHaveBeenCalledOnce();
     expect(topicFactory).toHaveBeenCalledWith(
-      [expect.objectContaining({ label: 'Guides', id: 'guides', link: '/guides/' })],
-      {},
+      [expect.objectContaining({ label: 'Guides', id: 'guides', link: '/guides/', icon: 'open-book' })],
+      { topics: { guides: ['/guides/index', '/*/guides/index'] } },
     );
   });
 
@@ -68,7 +68,7 @@ describe('N0ctane Sidebar Topics integration', () => {
       extra: [{ label: 'External', link: 'https://example.com' }],
       topicOptions: {
         exclude: ['/search', '/api/**'],
-        topics: { reference: ['/generated-api/**'] },
+        topics: { reference: ['/generated-api/**', '/reference/index', '/*/reference/index'] },
       },
     }, { blog: { prefix: 'news' } });
 
@@ -107,8 +107,37 @@ describe('N0ctane Sidebar Topics integration', () => {
 
     expect(topicFactory).toHaveBeenCalledWith(
       expect.any(Array),
-      { exclude: ['/blog', '/blog/**/*'] },
+      { exclude: ['/blog', '/blog/**/*'], topics: { 'n0ct-topic-1': ['/guides/index', '/*/guides/index'] } },
     );
+  });
+
+  it('maps directory index routes to their topic so a fresh topic root selects the right sidebar', () => {
+    createN0ctSidebarTopics({
+      topicDisplay: 'list',
+      topics: [
+        { label: 'Guides', link: '/guides/', directory: 'guides' },
+        { label: 'Reference', link: '/reference/', directory: 'reference' },
+      ],
+    }, { blog: false });
+
+    const [, options] = topicFactory.mock.calls[0] ?? [];
+    expect(options).toEqual({
+      topics: {
+        'n0ct-topic-1': ['/guides/index', '/*/guides/index'],
+        'n0ct-topic-2': ['/reference/index', '/*/reference/index'],
+      },
+    });
+  });
+
+  it('passes the single topic icon property to the list and dropdown plugin', () => {
+    createN0ctSidebarTopics({
+      topicDisplay: 'dropdown',
+      topics: [{ label: 'Guides', id: 'guides', icon: 'open-book', link: '/guides/', directory: 'guides' }],
+    }, { blog: false });
+
+    expect(topicFactory.mock.calls[0]?.[0]).toEqual([
+      expect.objectContaining({ icon: 'open-book' }),
+    ]);
   });
 
   it('requires root topics in plugin-backed modes', () => {
