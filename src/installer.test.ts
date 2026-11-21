@@ -43,7 +43,11 @@ describe('project installer', () => {
     const result = await scaffold('starter');
 
     expect(result.config.title).toBe('Starter');
-    expect(result.config.favicon).toBe('/favicon.svg');
+    expect(result.config.favicon).toBe('/favicons/n0ctane.svg');
+    expect(result.config.theme.defaultTheme).toBe('n0ctane');
+    expect(result.config.theme.themes.n0ctane.label).toBe('N0ctane');
+    expect(result.config.theme.themes.dracula.label).toBe('Dracula');
+    expect(result.config.theme.themes.dracula.favicon).toBe('/favicons/dracula.svg');
     expect(result.config.integrations.blog).toBe(false);
     expect(result.project.dependencies['@n0ctanedev/starlight-n0ct']).toBe('^1.0.0');
     expect(result.homepage).toContain('Starter');
@@ -57,7 +61,10 @@ describe('project installer', () => {
     const result = await scaffold('blog');
     const blog = result.config.integrations.blog;
 
-    expect(result.config.favicon).toBe('/favicon.svg');
+    expect(result.config.favicon).toBe('/favicons/n0ctane.svg');
+    expect(result.config.theme.themes.n0ctane.label).toBe('N0ctane');
+    expect(result.config.theme.themes.dracula.label).toBe('Dracula');
+    expect(result.config.sidebar.topicOptions.exclude).toContain('/blog');
     expect(typeof blog).toBe('object');
     expect(blog.navigation).toBe('header-start');
     expect(blog.metrics).toEqual({ readingTime: true, words: 'rounded' });
