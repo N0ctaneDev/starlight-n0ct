@@ -38,6 +38,7 @@ describe('Sidebar Topics route middleware adapter', () => {
       route.sidebar = route.sidebar[1].entries;
     });
     const middleware = createSidebarTopicsMiddleware(resolver as never);
+    const next = vi.fn(async () => {});
 
     const context: any = {
       locals: {
@@ -48,7 +49,7 @@ describe('Sidebar Topics route middleware adapter', () => {
       },
     };
 
-    await middleware(context, async () => {});
+    await middleware(context, next);
 
     expect(sidebarSeenByResolver).toEqual([startTopic, guidesTopic]);
     expect(context.locals.starlightRoute.sidebar).toEqual([
@@ -57,6 +58,7 @@ describe('Sidebar Topics route middleware adapter', () => {
       guideConfig,
     ]);
     expect(resolver).toHaveBeenCalledOnce();
+    expect(next).toHaveBeenCalledOnce();
   });
 
   it('leaves an excluded route sidebar unchanged when it has no numeric topic groups', async () => {
@@ -67,6 +69,7 @@ describe('Sidebar Topics route middleware adapter', () => {
     ];
     const resolver = vi.fn(async () => {});
     const middleware = createSidebarTopicsMiddleware(resolver as never);
+    const next = vi.fn(async () => {});
     const context: any = {
       locals: {
         starlightRoute: {
@@ -76,16 +79,18 @@ describe('Sidebar Topics route middleware adapter', () => {
       },
     };
 
-    await middleware(context, async () => {});
+    await middleware(context, next);
 
     expect(context.locals.starlightRoute.sidebar).toEqual(blogSidebar);
     expect(resolver).toHaveBeenCalledOnce();
+    expect(next).toHaveBeenCalledOnce();
   });
 
   it('does not normalize route data on pages without a sidebar', async () => {
     const sidebar = [group('0', [link('Overview')])];
     const resolver = vi.fn(async () => {});
     const middleware = createSidebarTopicsMiddleware(resolver as never);
+    const next = vi.fn(async () => {});
     const context: any = {
       locals: {
         starlightRoute: {
@@ -95,9 +100,10 @@ describe('Sidebar Topics route middleware adapter', () => {
       },
     };
 
-    await middleware(context, async () => {});
+    await middleware(context, next);
 
     expect(context.locals.starlightRoute.sidebar).toEqual(sidebar);
     expect(resolver).toHaveBeenCalledOnce();
+    expect(next).toHaveBeenCalledOnce();
   });
 });
