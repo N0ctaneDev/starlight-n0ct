@@ -177,3 +177,16 @@ starlight: {
 ~~~
 
 Advanced Starlight options are merged after N0ctane defaults. Custom components, CSS, sidebar, and plugins can intentionally replace defaults. See the [complete config reference](/reference/config-api/).
+
+
+## Add features after setup
+
+You can enable Blog, versioning, or any bundled integration after the project has been initialized. Run the CLI from the project directory:
+
+~~~sh
+npx @n0ctanedev/starlight-n0ct add blog
+npx @n0ctanedev/starlight-n0ct add versioning
+npx @n0ctanedev/starlight-n0ct add linksValidator
+~~~
+
+The Blog command asks for its route prefix and content directory, updates the docs schema, and creates a hidden first post. Versioning automatically excludes the configured Blog source path. See [Add features to an existing project](/guides/features/) for the complete workflow and package-manager options.
