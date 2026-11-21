@@ -165,10 +165,34 @@ function addBlogLinkValidatorExclusion(text, prefix) {
   if (!integrations || text[integrations.start] !== '{') return text;
   const validator = getProperty(text, integrations.start, 'linksValidator');
   if (!validator || text.slice(validator.start, validator.end).trim() === 'false' || text[validator.start] !== '{') return text;
-  if (getProperty(text, validator.start, 'exclude')) return text;
-  const path = JSON.stringify(prefix);
-  const callback = "({ link }) => { const path = link.split(/[?#]/, 1)[0]; const prefix = " + JSON.stringify(prefix) + "; const prefixPath = '/' + prefix; return path === prefix || path === prefixPath || path.startsWith(prefix + '/') || path.endsWith(prefixPath) || path.includes(prefixPath + '/'); }";
-  return setPath(text, ['integrations', 'linksValidator', 'exclude'], callback);
+
+  const existing = getProperty(text, validator.start, 'exclude');
+  const prefixLiteral = JSON.stringify(prefix);
+  const callback = "({ file, link, slug }) => { const path = link.split(/[?#]/, 1)[0]; const prefix = " +
+    prefixLiteral +
+    "; const prefixPath = '/' + prefix; const isBlog = path === prefix || path === prefixPath || path.startsWith(prefix + '/') || path.endsWith(prefixPath) || path.includes(prefixPath + '/'); return isBlog; }";
+  if (!existing) return setPath(text, ['integrations', 'linksValidator', 'exclude'], callback);
+
+  const raw = text.slice(existing.start, existing.end).trim();
+  if (raw.startsWith('[') && raw.endsWith(']')) {
+    return ensureExclude(text, ['integrations', 'linksValidator'], [
+      prefix,
+      prefix + '/**',
+      '/' + prefix,
+      '/' + prefix + '/**',
+      '**/' + prefix,
+      '**/' + prefix + '/**',
+    ]);
+  }
+  if (raw.includes('=>') || raw.startsWith('function')) {
+    const wrapped = "({ file, link, slug }) => { const path = link.split(/[?#]/, 1)[0]; const prefix = " +
+      prefixLiteral +
+      "; const prefixPath = '/' + prefix; const isBlog = path === prefix || path === prefixPath || path.startsWith(prefix + '/') || path.endsWith(prefixPath) || path.includes(prefixPath + '/'); return isBlog || (" +
+      raw +
+      ")({ file, link, slug }); }";
+    return setPath(text, ['integrations', 'linksValidator', 'exclude'], wrapped);
+  }
+  throw new Error('Cannot safely extend integrations.linksValidator.exclude. Keep it as a string array or function, then add a Blog-route exclusion for "' + prefix + '".');
 }
 
 function addImport(text, statement, moduleName) {
