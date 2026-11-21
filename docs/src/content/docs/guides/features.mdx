@@ -89,7 +89,7 @@ Then install dependencies yourself from the project directory.
 
 ## Existing project requirements
 
-The command expects an initialized N0ctane project containing n0ct.config.mjs and package.json. The config should export a plain config object declared as const config = { ... } and then export default config. The tool edits targeted properties while preserving the rest of the file.
+The command expects an initialized N0ctane project containing n0ct.config.mjs and package.json. The config should export a plain object assigned to const config and then use export default config. The tool edits targeted properties while preserving the rest of the file.
 
 If a custom content config uses a non-standard docs schema or collection declaration, the command stops and explains the manual schema change it could not safely make. It does not replace the content config wholesale. Add the indicated Blog schema extension or versions collection, then rerun the command.
 
