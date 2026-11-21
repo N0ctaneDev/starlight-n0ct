@@ -11,9 +11,13 @@ const settings = (Astro.locals as any).n0ctane ?? {};
 <SidebarPersister>
   <div class="n0ct-sidebar">
     <slot name="before-nav" />
-    {settings.sidebar?.topicDisplay === 'list' && <TopicsList />}
+    {settings.sidebar?.topicDisplay === 'list' && (
+      <div class="n0ct-sidebar-topic-switcher n0ct-sidebar-topic-switcher--list">
+        <TopicsList />
+      </div>
+    )}
     {settings.sidebar?.topicDisplay === 'dropdown' && (
-      <div class="n0ct-sidebar-topic-switcher">
+      <div class="n0ct-sidebar-topic-switcher n0ct-sidebar-topic-switcher--dropdown">
         <TopicsDropdown />
       </div>
     )}
