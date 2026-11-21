@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
 import { existsSync } from 'node:fs';
-import { cp, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, readdir, rename, writeFile } from 'node:fs/promises';
 import { basename, dirname, join, resolve } from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { createInterface } from 'node:readline/promises';
 import { emitKeypressEvents } from 'node:readline';
+import { addFeature } from './add-feature.mjs';
 import { addFeature } from './add-feature.mjs';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -32,7 +33,7 @@ Options:
   --no-install           Scaffold files without installing dependencies
   --pm <manager>         Package manager: npm, pnpm, yarn, or bun
   --template <name>      Template: starter or blog (default: starter)
-  --blog-path <path>     Blog URL prefix and content directory (default: blog)
+  --blog-path <path>     Blog URL prefix/content directory (default: blog)
   --version <slug>       Initial archived version slug
   --help, -h             Show this help
 
