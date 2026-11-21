@@ -167,7 +167,7 @@ function addBlogLinkValidatorExclusion(text, prefix) {
   if (!validator || text.slice(validator.start, validator.end).trim() === 'false' || text[validator.start] !== '{') return text;
   if (getProperty(text, validator.start, 'exclude')) return text;
   const path = JSON.stringify(prefix);
-  const callback = "({ link }) => { const path = link.split(/[?#]/, 1)[0].replace(/\\/+$/, ''); const prefix = " + path + "; return path === prefix || path === '/' + prefix || path.startsWith(prefix + '/') || path.includes('/' + prefix + '/') || path.endsWith('/' + prefix); }";
+  const callback = "({ link }) => { const path = link.split(/[?#]/, 1)[0]; const prefix = " + JSON.stringify(prefix) + "; const prefixPath = '/' + prefix; return path === prefix || path === prefixPath || path.startsWith(prefix + '/') || path.endsWith(prefixPath) || path.includes(prefixPath + '/'); }";
   return setPath(text, ['integrations', 'linksValidator', 'exclude'], callback);
 }
 
