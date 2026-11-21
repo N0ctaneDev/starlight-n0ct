@@ -470,6 +470,45 @@ body::before {
   -webkit-background-clip: text;
 }
 
+/* Keep Starlight's generic sidebar rules from flattening the custom topic controls. */
+.sidebar-content .n0ct-topic-dropdown__trigger {
+  border-radius: var(--n0ct-radius-md);
+  background: var(--n0ct-gradient-version-select), var(--n0ct-surface-elevated);
+}
+
+.sidebar-content .n0ct-topic-dropdown__trigger:hover,
+.sidebar-content .n0ct-topic-dropdown__trigger:focus-visible,
+.sidebar-content .n0ct-topic-dropdown[open] .n0ct-topic-dropdown__trigger {
+  border-color: var(--n0ct-accent-500);
+  background: var(--n0ct-gradient-version-select), var(--n0ct-surface-elevated);
+  box-shadow: var(--n0ct-shadow-focus);
+  outline: none;
+}
+
+.sidebar-content .n0ct-topic-link[aria-current='page'] > .n0ct-topic-label,
+.sidebar-content .n0ct-topic-dropdown__item[aria-current='page'] > .n0ct-topic-dropdown__label {
+  color: var(--n0ct-text-primary);
+  background: none;
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+  -webkit-text-fill-color: currentColor;
+}
+
+.sidebar-content .n0ct-topic-link[aria-current='page'] > .n0ct-topic-icon,
+.sidebar-content .n0ct-topic-dropdown__item[aria-current='page'] > .n0ct-topic-icon {
+  border-color: var(--n0ct-accent-500);
+  color: var(--n0ct-text-on-accent);
+  background: var(--n0ct-accent-500);
+  background-clip: padding-box;
+  -webkit-background-clip: padding-box;
+  -webkit-text-fill-color: currentColor;
+}
+
+.sidebar-content .n0ct-topic-link[aria-current='page'],
+.sidebar-content .n0ct-topic-dropdown__item[aria-current='page'] {
+  outline: none;
+}
+
 .sidebar-content ul ul li {
   border-inline-start-color: var(--n0ct-border-subtle);
 }
