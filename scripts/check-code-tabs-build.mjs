@@ -60,13 +60,15 @@ const topicSidebarChecks = [
 
 for (const check of topicSidebarChecks) {
   const pageHtml = await readFile(join(root, 'docs', 'dist', check.page), 'utf8');
-  const nav = pageHtml.match(/<nav aria-label="Main navigation">([\\s\\S]*?)<\\/nav>/);
+  const navStart = pageHtml.indexOf('<nav aria-label="Main navigation">');
+  const navEnd = navStart === -1 ? -1 : pageHtml.indexOf('</nav>', navStart);
 
-  if (!nav) {
+  if (navStart === -1 || navEnd === -1) {
     throw new Error(`[sidebar-topics] ${check.page} is missing its main navigation.`);
   }
 
-  const hrefs = [...nav[1].matchAll(/href="([^"]+)"/g)].map((match) => match[1]);
+  const navHtml = pageHtml.slice(navStart, navEnd + '</nav>'.length);
+  const hrefs = [...navHtml.matchAll(/href="([^"]+)"/g)].map((match) => match[1]);
   const hasPath = (suffix) => hrefs.some((href) => href.endsWith(suffix));
 
   for (const path of check.required) {
