@@ -82,9 +82,9 @@ sidebar: {
 },
 ~~~
 
-Use link to identify a landing page, directory to choose the autogenerate source, items for manual entries, and autogenerate: false to prevent generated children. The icon property accepts local or Iconify names in the native collapsible presentation; dropdownIcon uses a built-in Starlight icon name.
+Use link to identify a landing page, directory to choose the autogenerate source, items for manual entries, and autogenerate: false to prevent generated children. The single icon property accepts a Starlight built-in icon name and is used by all three presentations. This keeps the same icon visible in the native collapsible sidebar and in the list/dropdown topic selectors. See the [Starlight icons reference](https://starlight.astro.build/reference/icons/) for supported names.
 
-List and dropdown modes delegate navigation to the upstream Sidebar Topics plugins. They require the topic schema extension and a destination for each topic. Advanced starlight.sidebar configuration cannot be combined with these plugin-backed modes.
+List and dropdown modes delegate navigation to the upstream Sidebar Topics plugins. They require the topic schema extension and a destination for each topic. Folder topics backed by `index.mdx` are automatically associated with their topic even though their generated route ID ends in `/index`. Advanced starlight.sidebar configuration cannot be combined with these plugin-backed modes.
 
 ## Named themes
 
