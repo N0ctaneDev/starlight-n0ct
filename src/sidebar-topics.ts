@@ -13,7 +13,7 @@ type TopicPluginEntry = {
   link: string;
   icon?: string;
   id?: string;
-  badge?: N0ctBadge;
+  badge?: Exclude<N0ctBadge, string>;
   attrs?: Record<string, string | number | boolean | undefined>;
   items?: N0ctNativeSidebarItem[];
 };
@@ -87,7 +87,7 @@ function toTopicPluginEntry(
     link,
     ...(typeof topic !== 'string' && topic.icon ? { icon: topic.icon } : {}),
     ...(isGroup ? { id } : (typeof topic !== 'string' && topic.id ? { id: topic.id } : {})),
-    ...(typeof topic !== 'string' && topic.badge ? { badge: topic.badge } : {}),
+    ...(typeof topic !== 'string' && topic.badge ? { badge: typeof topic.badge === 'string' ? { text: topic.badge } : topic.badge } : {}),
     ...(typeof topic !== 'string' && topic.attrs ? { attrs: topic.attrs } : {}),
     ...(isGroup ? { items } : {}),
   };
