@@ -1,5 +1,5 @@
 import { defineRouteMiddleware } from '@astrojs/starlight/route-data';
-import type { StarlightRouteData } from '@astrojs/starlight/route-data';
+import type { RouteMiddlewareHandler, StarlightRouteData } from '@astrojs/starlight/route-data';
 import { onRequest as resolveSidebarTopic } from 'starlight-sidebar-topics/middleware';
 
 type SidebarEntry = StarlightRouteData['sidebar'][number];
@@ -18,27 +18,31 @@ function isTopicSidebarGroup(entry: SidebarEntry): entry is SidebarGroup {
   return entry.type === 'group' && /^\d+$/.test(entry.label);
 }
 
-export const onRequest = defineRouteMiddleware(async (context) => {
-  const route = (context.locals as typeof context.locals & { starlightRoute: StarlightRouteData }).starlightRoute;
+export function createSidebarTopicsMiddleware(resolveSidebarTopic: RouteMiddlewareHandler) {
+  return defineRouteMiddleware(async (context) => {
+    const route = (context.locals as typeof context.locals & { starlightRoute: StarlightRouteData }).starlightRoute;
 
-  // Pages without a sidebar are not resolved by Sidebar Topics. Leave their
-  // route data untouched, including any sidebar data supplied by integrations.
-  if (!route.hasSidebar) {
+    // Pages without a sidebar are not resolved by Sidebar Topics. Leave their
+    // route data untouched, including any sidebar data supplied by integrations.
+    if (!route.hasSidebar) {
+      await resolveSidebarTopic(context, async () => {});
+      return;
+    }
+
+    const originalSidebar = route.sidebar;
+    const topicGroups = originalSidebar.filter(isTopicSidebarGroup);
+    const additionalEntries = originalSidebar.filter((entry) => !isTopicSidebarGroup(entry));
+
+    // The upstream resolver expects the topic groups to occupy indexes 0..N.
+    // Other integrations' links/groups must not shift those indexes.
+    route.sidebar = topicGroups;
+
     await resolveSidebarTopic(context, async () => {});
-    return;
-  }
 
-  const originalSidebar = route.sidebar;
-  const topicGroups = originalSidebar.filter(isTopicSidebarGroup);
-  const additionalEntries = originalSidebar.filter((entry) => !isTopicSidebarGroup(entry));
+    // Sidebar Topics replaces route.sidebar with the selected topic's contents.
+    // Restore integration-owned entries (e.g. starlight-blog's navigation link).
+    route.sidebar.unshift(...additionalEntries);
+  });
+}
 
-  // The upstream resolver expects the topic groups to occupy indexes 0..N.
-  // Other integrations' links/groups must not shift those indexes.
-  route.sidebar = topicGroups;
-
-  await resolveSidebarTopic(context, async () => {});
-
-  // Sidebar Topics replaces route.sidebar with the selected topic's contents.
-  // Restore integration-owned entries (e.g. starlight-blog's navigation link).
-  route.sidebar.unshift(...additionalEntries);
-});
+export const onRequest = createSidebarTopicsMiddleware(resolveSidebarTopic);
