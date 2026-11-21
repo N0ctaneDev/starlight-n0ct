@@ -1,4 +1,5 @@
 import starlightSidebarTopics from 'starlight-sidebar-topics';
+import { fileURLToPath } from 'node:url';
 import type { HookParameters, StarlightPlugin } from '@astrojs/starlight/types';
 import { topicToSidebar } from './config.js';
 import type {
@@ -189,8 +190,10 @@ export function createN0ctSidebarTopics(
         const { addRouteMiddleware, ...hookContext } = context;
         return setup({
           ...hookContext,
-          addRouteMiddleware: (middleware) => addRouteMiddleware({
-            ...middleware,
+          addRouteMiddleware: () => addRouteMiddleware({
+            // The adapter removes non-topic entries before the upstream plugin's
+            // positional lookup and restores them after it selects the sidebar.
+            entrypoint: fileURLToPath(new URL('./sidebar-topics-middleware.js', import.meta.url)),
             order: 'post',
           }),
         });
