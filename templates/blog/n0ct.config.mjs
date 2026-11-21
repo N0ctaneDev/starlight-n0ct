@@ -41,8 +41,9 @@ const config = {
     sidebarSwipe: {},
     linksValidator: {
       exclude: ({ link }) => {
-        const path = link.split(/[?#]/, 1)[0].replace(/^\\/+/, '');
-        return path === 'blog' || path.startsWith('blog/');
+        const path = link.split(/[?#]/, 1)[0];
+        const prefix = '/blog';
+        return path === 'blog' || path === prefix || path.startsWith('blog/') || path.endsWith(prefix) || path.includes(prefix + '/');
       },
     },
     blog: {
