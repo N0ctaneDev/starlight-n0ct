@@ -195,7 +195,8 @@ export function createN0ctSidebarTopics(
         await mkdir(dirname(debugMiddlewarePath), { recursive: true });
         await writeFile(debugMiddlewarePath, String.raw`export function onRequest(context) {
   const route = context.locals.starlightRoute;
-  if (!/^(?:components|guides|showcase|reference)(?:\\/index)?$/.test(route.id)) return;
+  const rootId = route.id.endsWith('/index') ? route.id.slice(0, -6) : route.id;
+  if (!['components', 'guides', 'showcase', 'reference'].includes(rootId)) return;
   const describe = (entries) => entries.map((entry) => ({
     type: entry.type,
     label: entry.label,
