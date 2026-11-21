@@ -1,8 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { normalizeN0ctConfig, topicToSidebar } from './config.js';
 import { n0ctane } from './index.js';
+import { getBlogRouteExclusions } from './sidebar-topics.js';
 
 describe('N0ctane configuration expansion', () => {
+  it('excludes the configured Blog route from topic sidebar routing', () => {
+    expect(getBlogRouteExclusions({ blog: { prefix: 'journal/releases' } })).toEqual([
+      '/journal/releases',
+      '/journal/releases/**/*',
+    ]);
+    expect(getBlogRouteExclusions({ blog: false })).toEqual([]);
+  });
+
   it('validates global and named-theme favicon paths', () => {
     expect(() => normalizeN0ctConfig({ title: 'Docs', favicon: '../outside.svg' })).toThrow(/public/);
     expect(() => normalizeN0ctConfig({
