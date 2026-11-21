@@ -7,6 +7,7 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { createInterface } from 'node:readline/promises';
 import { emitKeypressEvents } from 'node:readline';
+import { addFeature } from './add-feature.mjs';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const templatesRoot = join(packageRoot, 'templates');
@@ -20,17 +21,26 @@ N0ctane project installer
 
 Usage:
   npx @n0ctanedev/starlight-n0ct init [directory] [options]
+  npx @n0ctanedev/starlight-n0ct add <feature> [project-directory] [options]
+
+Features:
+  blog, versioning, basePath, announcement, kbd, llmsTxt,
+  scrollToTop, llmActions, sidebarSwipe, linksValidator, imageZoom
 
 Options:
   --yes, -y              Use recommended defaults without prompts
-  --no-install           Scaffold files but do not install dependencies
+  --no-install           Scaffold files without installing dependencies
   --pm <manager>         Package manager: npm, pnpm, yarn, or bun
   --template <name>      Template: starter or blog (default: starter)
+  --blog-path <path>     Blog URL prefix and content directory (default: blog)
+  --version <slug>       Initial archived version slug
   --help, -h             Show this help
 
 Examples:
   npx @n0ctanedev/starlight-n0ct init my-docs
-  npx @n0ctanedev/starlight-n0ct init ./website --pm pnpm
+  npx @n0ctanedev/starlight-n0ct init my-publication --template blog
+  npx @n0ctanedev/starlight-n0ct add blog
+  npx @n0ctanedev/starlight-n0ct add versioning ./my-docs --version 1.0.0
 `);
 };
 
@@ -43,6 +53,9 @@ function parseArgs(argv) {
     install: true,
     packageManager: undefined,
     template: undefined,
+    blogPath: undefined,
+    versionSlug: undefined,
+    feature: undefined,
   };
 
   for (let index = firstIsOption ? 0 : 1; index < argv.length; index += 1) {
@@ -59,6 +72,16 @@ function parseArgs(argv) {
       index += 1;
     } else if (argument.startsWith('--template=')) {
       result.template = argument.slice('--template='.length);
+    } else if (argument === '--blog-path' || argument === '--path') {
+      result.blogPath = argv[index + 1];
+      index += 1;
+    } else if (argument.startsWith('--blog-path=')) {
+      result.blogPath = argument.slice('--blog-path='.length);
+    } else if (argument === '--version') {
+      result.versionSlug = argv[index + 1];
+      index += 1;
+    } else if (argument.startsWith('--version=')) {
+      result.versionSlug = argument.slice('--version='.length);
     } else if (argument === '--pm' || argument === '--package-manager') {
       result.packageManager = argv[index + 1];
       index += 1;
@@ -66,8 +89,9 @@ function parseArgs(argv) {
       result.packageManager = argument.slice('--pm='.length);
     } else if (argument.startsWith('--package-manager=')) {
       result.packageManager = argument.slice('--package-manager='.length);
-    } else if (!argument.startsWith('-') && !result.directory) {
-      result.directory = argument;
+    } else if (!argument.startsWith('-')) {
+      if (result.command === 'add' && !result.feature) result.feature = argument;
+      else if (!result.directory) result.directory = argument;
     }
   }
 
@@ -234,7 +258,7 @@ async function interactiveList({ title, choices, selected = [], multiple = false
   });
 }
 
-async function promptForAnswers(defaults, enabledByDefault, yes, requestedTemplate) {
+async function promptForAnswers(defaults, enabledByDefault, yes, requestedTemplate, requestedBlogPath) {
   if (yes || !process.stdin.isTTY || !process.stdout.isTTY) {
     return {
       ...defaults,
@@ -242,6 +266,7 @@ async function promptForAnswers(defaults, enabledByDefault, yes, requestedTempla
       enabledIntegrations: requestedTemplate === 'blog'
         ? [...new Set([...enabledByDefault, 'blog'])]
         : enabledByDefault,
+      blogPath: requestedTemplate === 'blog' ? (requestedBlogPath || 'blog') : undefined,
     };
   }
 
@@ -280,6 +305,9 @@ async function promptForAnswers(defaults, enabledByDefault, yes, requestedTempla
           fallback: 'starter',
         });
     if (!template) throw new Error('Unknown template. Choose "starter" or "blog".');
+    const blogPath = template === 'blog'
+      ? (requestedBlogPath || await ask('Blog path (URL prefix and content directory)', 'blog'))
+      : undefined;
 
     const choices = [
       { value: 'basePath', label: 'Base path rewriting', description: 'Prefix root-relative links with the deployment subpath when the site is not hosted at /.' },
@@ -333,6 +361,7 @@ async function promptForAnswers(defaults, enabledByDefault, yes, requestedTempla
       basePath,
       topicDisplay,
       template,
+      blogPath,
       enabledIntegrations,
       versioning,
     };
