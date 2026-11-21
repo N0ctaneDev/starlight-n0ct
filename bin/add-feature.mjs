@@ -167,7 +167,7 @@ function addBlogLinkValidatorExclusion(text, prefix) {
   if (!validator || text.slice(validator.start, validator.end).trim() === 'false' || text[validator.start] !== '{') return text;
   if (getProperty(text, validator.start, 'exclude')) return text;
   const path = JSON.stringify(prefix);
-  const callback = "({ link }) => { const path = link.split(/[?#]/, 1)[0].replace(/\\/+$/, ''); const prefix = " + path + "; return path === prefix || path === '/' + prefix || path.startsWith(prefix + '/') || path.includes('/' + prefix + '/'); }";
+  const callback = "({ link }) => { const path = link.split(/[?#]/, 1)[0].replace(/\\/+$/, ''); const prefix = " + path + "; return path === prefix || path === '/' + prefix || path.startsWith(prefix + '/') || path.includes('/' + prefix + '/') || path.endsWith('/' + prefix); }";
   return setPath(text, ['integrations', 'linksValidator', 'exclude'], callback);
 }
 
@@ -206,6 +206,7 @@ async function updateContentConfig(directory, options) {
   }
 
   let text = await readFile(path, 'utf8');
+  const hasTopicSchemaExtension = text.includes('merge(topicSchema)') || text.includes('extend: () => topicSchema');
   if (options.blog) text = addImport(text, "import { blogSchema } from 'starlight-blog/schema';", 'starlight-blog/schema');
   text = addImport(text, "import { topicSchema } from 'starlight-sidebar-topics/schema';", 'starlight-sidebar-topics/schema');
   if (options.versioning) text = addImport(text, "import { docsVersionsLoader } from 'starlight-versions/loader';", 'starlight-versions/loader');
@@ -214,7 +215,7 @@ async function updateContentConfig(directory, options) {
     if (text.includes('docsSchema()')) text = text.replace('docsSchema()', 'docsSchema({ extend: (context) => blogSchema(context).merge(topicSchema) })');
     else if (text.includes('extend: () => topicSchema')) text = text.replace('extend: () => topicSchema', 'extend: (context) => blogSchema(context).merge(topicSchema)');
     else throw new Error('Custom docs schema detected. Add blogSchema(context).merge(topicSchema) to docsSchema({ extend }) manually, then rerun n0ct add blog.');
-  } else if (!text.includes('topicSchema') && text.includes('docsSchema()')) {
+  } else if (!hasTopicSchemaExtension && text.includes('docsSchema()')) {
     text = text.replace('docsSchema()', 'docsSchema({ extend: () => topicSchema })');
   }
 
