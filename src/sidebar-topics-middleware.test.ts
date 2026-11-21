@@ -53,7 +53,7 @@ describe('Sidebar Topics route middleware adapter', () => {
       },
     };
 
-    await onRequest(context);
+    await onRequest(context, async () => {});
 
     expect(sidebarSeenByResolver).toEqual([startTopic, guidesTopic]);
     expect(context.locals.starlightRoute.sidebar).toEqual([
@@ -78,7 +78,7 @@ describe('Sidebar Topics route middleware adapter', () => {
       },
     };
 
-    await onRequest(context);
+    await onRequest(context, async () => {});
 
     expect(context.locals.starlightRoute.sidebar).toEqual(blogSidebar);
     expect(resolveTopicMiddleware).toHaveBeenCalledOnce();
@@ -95,7 +95,7 @@ describe('Sidebar Topics route middleware adapter', () => {
       },
     };
 
-    await onRequest(context);
+    await onRequest(context, async () => {});
 
     expect(context.locals.starlightRoute.sidebar).toEqual(sidebar);
     expect(resolveTopicMiddleware).toHaveBeenCalledOnce();
