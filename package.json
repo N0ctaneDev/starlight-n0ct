@@ -103,7 +103,7 @@
   "devDependencies": {
     "@astrojs/starlight": "^0.43.1",
     "@iconify-json/lucide": "^1.2.155",
-    "@types/node": "^22.19.0",
+    "@types/node": "^26.6.6",
     "astro": "^7.4.12",
     "tsup": "^8.5.0",
     "typescript": "^5.9.0",
